@@ -99,6 +99,27 @@ def validate_profiles() -> None:
             fail(f"profile {path.name} missing {sorted(missing)}")
 
 
+def validate_brand_profiles(source_ids: set[str]) -> None:
+    mappings_dir = KB / "brand_profiles"
+    if not mappings_dir.exists():
+        fail("brand_profiles directory missing")
+    profile_ids = {load_json(path)["id"] for path in sorted((KB / "profiles").glob("*.json"))}
+    for path in sorted(mappings_dir.glob("*.json")):
+        mapping = load_json(path)
+        for field in ("id", "source", "defaultProfileId", "supportedProfileIds", "brands", "selectionNotes"):
+            if field not in mapping:
+                fail(f"brand mapping {path.name} missing {field}")
+        if mapping["source"] not in source_ids:
+            fail(f"brand mapping {path.name} references unknown source {mapping['source']}")
+        if mapping["defaultProfileId"] not in profile_ids:
+            fail(f"brand mapping {path.name} default profile missing: {mapping['defaultProfileId']}")
+        for profile_id in mapping["supportedProfileIds"]:
+            if profile_id not in profile_ids:
+                fail(f"brand mapping {path.name} supported profile missing: {profile_id}")
+        if len(mapping["brands"]) < 30:
+            fail(f"brand mapping {path.name} has too few brands for global fallback coverage")
+
+
 def validate_pids() -> None:
     for path in sorted((KB / "pids").glob("*.json")):
         entries = load_json(path)
@@ -152,6 +173,7 @@ def main() -> None:
     source_ids = validate_sources()
     rules = validate_rules(source_ids)
     validate_profiles()
+    validate_brand_profiles(source_ids)
     validate_pids()
     validate_encyclopedia(source_ids)
     validate_reference_curves(source_ids)

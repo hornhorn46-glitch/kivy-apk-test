@@ -1,0 +1,25 @@
+{
+  "id": "universal-gasoline-hybrid",
+  "make": "Universal",
+  "model": "Gasoline hybrid",
+  "year": null,
+  "engineCode": null,
+  "displacementLiters": 1.8,
+  "powerKw": null,
+  "torqueNm": null,
+  "massKg": null,
+  "induction": "HybridAssist",
+  "injection": "PortFuelInjection",
+  "airMetering": "MafAndMap",
+  "redlineRpm": 6000,
+  "transmission": "Cvt",
+  "obdType": "Obd2",
+  "supportedPids": ["RPM", "SPEED", "LOAD", "MAF", "MAP", "THROTTLE", "COOLANT_TEMP", "INTAKE_TEMP", "STFT_B1", "LTFT_B1", "TIMING_ADVANCE", "LAMBDA", "CONTROL_MODULE_VOLTAGE"],
+  "references": {
+    "coolantNormalCelsius": { "min": 70.0, "max": 105.0 },
+    "intakeAirNormalCelsius": { "min": -20.0, "max": 70.0 },
+    "idleRpm": { "min": 0.0, "max": 1100.0 },
+    "fuelTrimNormalPercent": { "min": -8.0, "max": 8.0 },
+    "wotThrottlePercent": { "min": 75.0, "max": 100.0 }
+  }
+}

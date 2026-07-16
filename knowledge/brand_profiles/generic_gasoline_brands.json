@@ -1,0 +1,29 @@
+{
+  "id": "global-gasoline-brand-fallbacks",
+  "source": "dataset.cardata.wiki",
+  "defaultProfileId": "universal-gasoline-pfi-maf-na",
+  "supportedProfileIds": [
+    "universal-gasoline-pfi-maf-na",
+    "universal-gasoline-pfi-map-na",
+    "universal-gasoline-gdi-maf-na",
+    "universal-gasoline-turbo-maf-map",
+    "universal-gasoline-hybrid"
+  ],
+  "brands": [
+    "Abarth", "Acura", "Alfa Romeo", "Alpina", "Aston Martin", "Audi", "BAIC", "BMW", "BYD", "Bentley",
+    "Buick", "Cadillac", "Changan", "Chery", "Chevrolet", "Chrysler", "Citroen", "Cupra", "Dacia",
+    "Daewoo", "Daihatsu", "Dodge", "Dongfeng", "DS", "Exeed", "FAW", "Ferrari", "Fiat", "Ford",
+    "Genesis", "Geely", "GMC", "Great Wall", "Haval", "Honda", "Hongqi", "Hyundai", "Infiniti",
+    "Iran Khodro", "Isuzu", "JAC", "Jaguar", "Jeep", "Jetour", "Kia", "Lada", "Lamborghini",
+    "Lancia", "Land Rover", "Lexus", "Lifan", "Lincoln", "Lotus", "Maserati", "Mazda", "Mercedes-Benz",
+    "Mercury", "MG", "Mini", "Mitsubishi", "Nissan", "Oldsmobile", "Opel", "Peugeot", "Plymouth",
+    "Pontiac", "Porsche", "Proton", "Ram", "Ravon", "Renault", "Rolls-Royce", "Rover", "Saab",
+    "Saturn", "Scion", "Seat", "Skoda", "Smart", "SsangYong", "Subaru", "Suzuki", "Tata", "Tesla",
+    "Toyota", "Vauxhall", "Volkswagen", "Volvo", "Voyah", "Zeekr", "Zotye"
+  ],
+  "selectionNotes": [
+    "Exact engine profile wins when make/model/engine are known.",
+    "If exact profile is absent, the app chooses a universal gasoline profile by induction, injection and air-metering type.",
+    "If vehicle details are unknown, the default gasoline OBD-II profile is used and diagnostic confidence is reduced by missing profile data."
+  ]
+}

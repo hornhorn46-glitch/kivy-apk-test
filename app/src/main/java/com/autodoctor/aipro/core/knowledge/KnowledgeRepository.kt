@@ -2,6 +2,7 @@ package com.autodoctor.aipro.core.knowledge
 
 import android.content.Context
 import com.autodoctor.aipro.core.diagnostics.DiagnosticRule
+import com.autodoctor.aipro.core.model.BrandProfileMapping
 import com.autodoctor.aipro.core.model.PidDefinition
 import com.autodoctor.aipro.core.model.VehicleProfile
 import com.autodoctor.aipro.core.reference.ReferenceCurveSet
@@ -50,6 +51,17 @@ class KnowledgeRepository(
             ?.map { file ->
                 context.assets.open("knowledge/reference_curves/$file").bufferedReader().use { reader ->
                     json.decodeFromString<ReferenceCurveSet>(reader.readText())
+                }
+            }
+            ?: emptyList()
+    }
+
+    fun loadBrandProfileMappings(): List<BrandProfileMapping> {
+        return context.assets.list("knowledge/brand_profiles")
+            ?.filter { it.endsWith(".json") }
+            ?.map { file ->
+                context.assets.open("knowledge/brand_profiles/$file").bufferedReader().use { reader ->
+                    json.decodeFromString<BrandProfileMapping>(reader.readText())
                 }
             }
             ?: emptyList()

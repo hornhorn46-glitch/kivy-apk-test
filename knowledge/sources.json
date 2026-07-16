@@ -61,5 +61,40 @@
     "url": "https://cardata.wiki/about",
     "license": "CC BY 4.0",
     "notes": "Open vehicle specifications source suitable for expanding vehicle profiles."
+  },
+  {
+    "id": "source.ross-tech.fuel-trim",
+    "title": "Ross-Tech Wiki: Fuel Trim Info",
+    "url": "https://wiki.ross-tech.com/wiki/index.php/Fuel_Trim_Info",
+    "license": "Open web reference; attribution URL stored",
+    "notes": "Used as engineering reference for additive/multiplicative fuel trim interpretation."
+  },
+  {
+    "id": "source.motor.fuel-trim",
+    "title": "MOTOR: Fuel Trim Data, A Powerful Diagnostic Tool",
+    "url": "https://www.motor.com/magazine-summary/fuel-trim-data-powerful-diagnostic-tool/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for high-level diagnostic workflow ideas around trims in multiple load ranges."
+  },
+  {
+    "id": "source.motor.lambda",
+    "title": "MOTOR: Harnessing Lambda as a Diagnostic Tool",
+    "url": "https://www.motor.com/magazine-summary/goes-harnessing-lambda-diagnostic-tool/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for high-level lambda/fuel-trim reasoning under load."
+  },
+  {
+    "id": "source.motor.generic-obd",
+    "title": "MOTOR: Generic OBD II Parameters",
+    "url": "https://www.motor.com/magazine-summary/driveability-corner-october-1998/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for public discussion of generic OBD-II live data and driveability limits."
+  },
+  {
+    "id": "source.obd2.p2192",
+    "title": "OBD2.com: P2192 System Too Rich at Higher Load",
+    "url": "https://obd2.com/dtc/p2192-system-too-rich-at-higher-load/",
+    "license": "Open web DTC reference; attribution URL stored",
+    "notes": "Used for public generic DTC description of rich mixture under high load."
   }
 ]

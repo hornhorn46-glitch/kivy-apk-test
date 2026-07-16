@@ -1,104 +1,227 @@
 [
   {
-    "id": "engine.unmetered_air_lean_condition",
+    "id": "gasoline.unmetered_air_lean_idle",
     "title": "Подсос воздуха или неучтенный воздух во впуске",
-    "category": "engine.air_fuel",
+    "category": "gasoline.air_fuel",
     "conditions": [
       { "metric": "combined_trim_b1", "operator": "GreaterThan", "value": 15.0, "weight": 1.4, "required": true },
       { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0171", "P0174"], "weight": 1.1 },
-      { "metric": "maf_ratio_to_expected", "operator": "LessThan", "value": 0.78, "weight": 0.9 },
-      { "metric": "throttle_percent", "operator": "LessThan", "value": 35.0, "weight": 0.45 },
-      { "metric": "fuel_pressure_kpa", "operator": "Exists", "weight": 0.35 }
+      { "metric": "maf_ratio_to_expected", "operator": "LessThan", "value": 0.80, "weight": 0.8 },
+      { "metric": "throttle_percent", "operator": "LessThan", "value": 40.0, "weight": 0.4 },
+      { "metric": "map_kpa", "operator": "GreaterThan", "value": 38.0, "weight": 0.4 }
     ],
     "probability": 0.86,
-    "physicalExplanation": "Если измеренный или расчетный воздух не соответствует топливу, ЭБУ увеличивает длительность впрыска и формирует положительные коррекции. При подсосе после ДМРВ часть воздуха не измеряется, смесь становится бедной, а коррекции растут особенно на холостом ходу и малой нагрузке.",
-    "symptoms": ["Неровный холостой ход", "Провалы при трогании", "Повышенный расход", "Ошибки P0171 или P0174"],
-    "possibleCauses": ["Трещина патрубка после ДМРВ", "Негерметичный вакуумный шланг", "Подсос через прокладки впуска", "Негерметичный клапан PCV", "Заниженные показания ДМРВ"],
-    "recommendedChecks": ["Проверить STFT и LTFT на холостом ходу и при 2500 RPM", "Провести дым-тест впуска", "Сравнить MAF с расчетным расходом воздуха", "Проверить давление топлива, чтобы отделить подсос от нехватки топлива"],
-    "repairRecommendations": ["Устранить негерметичность впуска", "Заменить поврежденные патрубки или вакуумные линии", "Очистить или заменить ДМРВ только после проверки герметичности"],
+    "physicalExplanation": "На бензиновом двигателе ЭБУ стремится держать смесь около lambda 1.0 в closed loop. Если после MAF или через вакуумные линии поступает неучтенный воздух, кислородный датчик видит бедную смесь, и ЭБУ добавляет топливо через STFT/LTFT. На холостом ходу подсос составляет большую долю общего воздуха, поэтому признаки обычно сильнее на малой нагрузке.",
+    "symptoms": ["Неровный холостой ход", "Провалы при трогании", "Повышенный расход", "Ошибки P0171/P0174", "Свист или шипение во впуске"],
+    "possibleCauses": ["Трещина патрубка после MAF", "Вакуумная утечка", "Клапан PCV", "Прокладка впуска", "Подсос через EVAP purge", "Заниженный MAF"],
+    "recommendedChecks": ["Сравнить STFT/LTFT на холостом ходу и при 2500 RPM", "Провести дым-тест впуска", "Проверить PCV и EVAP purge", "Проверить MAF/MAP на правдоподобие", "Проверить давление топлива, чтобы не спутать подсос с нехваткой топлива"],
+    "repairRecommendations": ["Устранить негерметичность", "Заменить поврежденные патрубки или прокладки", "Чистить или менять MAF только после проверки герметичности"],
     "confidence": 0.82,
     "severity": "Warning",
-    "sources": ["engineering.fuel.trim.generic", "engineering.maf.speed-density.generic", "obd.pids.public"]
+    "sources": ["engineering.fuel.trim.generic", "source.ross-tech.fuel-trim", "source.motor.fuel-trim", "obd.pids.public"]
   },
   {
-    "id": "engine.rich_condition_excess_fuel_or_low_air",
+    "id": "gasoline.fuel_delivery_lean_under_load",
+    "title": "Нехватка топлива под нагрузкой",
+    "category": "gasoline.performance",
+    "conditions": [
+      { "metric": "combined_trim_b1", "operator": "GreaterThan", "value": 12.0, "weight": 1.1, "required": true },
+      { "metric": "max_throttle_percent", "operator": "GreaterThan", "value": 70.0, "weight": 0.8 },
+      { "metric": "max_load_percent", "operator": "GreaterThan", "value": 65.0, "weight": 0.7 },
+      { "metric": "lambda", "operator": "GreaterThan", "value": 1.03, "weight": 0.7 },
+      { "metric": "fuel_pressure_kpa", "operator": "LessThan", "value": 280.0, "weight": 0.9 },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0087", "P0190", "P0191", "P0171", "P0174"], "weight": 0.8 }
+    ],
+    "probability": 0.82,
+    "physicalExplanation": "Если бедная смесь усиливается при нагрузке, вакуумная утечка становится менее вероятной: ее доля в общем потоке воздуха падает. Приоритет смещается к топливоподаче, насосу, фильтру, регулятору, форсункам или неверному MAF. Двигатель может не ехать, потому что ЭБУ ограничивает момент или смесь фактически беднеет под нагрузкой.",
+    "symptoms": ["Плохо разгоняется", "Провалы при резком газе", "Детонация", "Ошибки бедной смеси", "Ограничение мощности"],
+    "possibleCauses": ["Слабый топливный насос", "Забитый фильтр", "Низкое давление топлива", "Неисправный регулятор", "Загрязненные форсунки", "Неверный MAF"],
+    "recommendedChecks": ["Записать разгон с RPM, throttle, load, trims, lambda, fuel pressure", "Проверить давление топлива под нагрузкой", "Проверить производительность насоса", "Проверить MAF по расчетной модели", "Проверить форсунки на баланс"],
+    "repairRecommendations": ["Устранить подтвержденную нехватку топлива", "Не менять насос без проверки давления и питания", "После ремонта сбросить адаптации только при необходимости и выполнить повторный тест"],
+    "confidence": 0.80,
+    "severity": "Critical",
+    "sources": ["engineering.fuel.trim.generic", "source.motor.lambda", "source.motor.fuel-trim", "obd.pids.public"]
+  },
+  {
+    "id": "gasoline.rich_excess_fuel_or_low_air",
     "title": "Богатая смесь: избыток топлива или недостаток воздуха",
-    "category": "engine.air_fuel",
+    "category": "gasoline.air_fuel",
     "conditions": [
       { "metric": "combined_trim_b1", "operator": "LessThan", "value": -12.0, "weight": 1.3, "required": true },
-      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0172", "P0175"], "weight": 1.1 },
-      { "metric": "maf_ratio_to_expected", "operator": "GreaterThan", "value": 1.18, "weight": 0.7 },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0172", "P0175", "P2192"], "weight": 1.1 },
       { "metric": "lambda", "operator": "LessThan", "value": 0.97, "weight": 0.7 },
-      { "metric": "coolant_c", "operator": "GreaterThan", "value": 70.0, "weight": 0.35 }
+      { "metric": "maf_ratio_to_expected", "operator": "GreaterThan", "value": 1.18, "weight": 0.6 },
+      { "metric": "coolant_c", "operator": "GreaterThan", "value": 70.0, "weight": 0.3 }
     ],
     "probability": 0.80,
-    "physicalExplanation": "Отрицательные топливные коррекции означают, что ЭБУ уменьшает подачу топлива, потому что обратная связь по кислороду показывает богатую смесь. Причина может быть в завышенном измерении воздуха, избыточном давлении топлива, негерметичных форсунках или неверной температурной информации.",
-    "symptoms": ["Запах топлива", "Черный дым", "Плавающий холостой ход", "Повышенный расход", "Ошибки P0172 или P0175"],
-    "possibleCauses": ["Завышенные показания ДМРВ", "Подтекающая форсунка", "Высокое давление топлива", "Неисправный регулятор давления", "Некорректный датчик температуры"],
-    "recommendedChecks": ["Проверить давление топлива и удержание давления после остановки", "Сравнить MAF с расчетной моделью", "Проверить температуру ОЖ после прогрева", "Проверить лямбда-регулирование в закрытом контуре"],
-    "repairRecommendations": ["Устранить причину переобогащения", "Проверить форсунки на герметичность", "Заменить датчик только после подтверждения неверных показаний"],
+    "physicalExplanation": "Отрицательные коррекции означают, что ЭБУ уменьшает топливо, потому что обратная связь показывает богатую смесь. Причина может быть в избыточном давлении топлива, подтекающих форсунках, завышенном MAF, неверной температуре двигателя или ограничении воздуха.",
+    "symptoms": ["Высокий расход", "Запах топлива", "Черный дым", "Плохой запуск на горячую", "Плавающий холостой ход"],
+    "possibleCauses": ["Подтекающая форсунка", "Высокое давление топлива", "Завышенный MAF", "Забитый воздушный фильтр", "Неверный ECT/IAT", "Адсорбер EVAP подает пары постоянно"],
+    "recommendedChecks": ["Проверить давление и удержание давления топлива", "Проверить форсунки на герметичность", "Сравнить MAF/MAP с расчетом", "Проверить ECT после прогрева", "Проверить EVAP purge"],
+    "repairRecommendations": ["Устранить фактическую причину переобогащения", "Не заменять кислородный датчик без проверки lambda и коррекций", "После ремонта проверить катализатор"],
     "confidence": 0.78,
     "severity": "Serious",
-    "sources": ["engineering.fuel.trim.generic", "engineering.maf.speed-density.generic", "obd.pids.public"]
+    "sources": ["engineering.fuel.trim.generic", "source.ross-tech.fuel-trim", "source.obd2.p2192", "obd.pids.public"]
   },
   {
-    "id": "engine.low_airflow_under_load",
+    "id": "gasoline.low_airflow_under_load",
     "title": "Недостаточное наполнение цилиндров под нагрузкой",
-    "category": "engine.performance",
+    "category": "gasoline.performance",
     "conditions": [
       { "metric": "rpm", "operator": "GreaterThan", "value": 2500.0, "weight": 0.5, "required": true },
-      { "metric": "throttle_percent", "operator": "GreaterThan", "value": 75.0, "weight": 0.7, "required": true },
-      { "metric": "maf_ratio_to_expected", "operator": "LessThan", "value": 0.72, "weight": 1.3, "required": true },
-      { "metric": "load_percent", "operator": "LessThan", "value": 70.0, "weight": 0.7 }
+      { "metric": "max_throttle_percent", "operator": "GreaterThan", "value": 75.0, "weight": 0.7, "required": true },
+      { "metric": "maf_ratio_to_expected", "operator": "LessThan", "value": 0.72, "weight": 1.3 },
+      { "metric": "max_load_percent", "operator": "LessThan", "value": 70.0, "weight": 0.8 },
+      { "metric": "max_map_kpa", "operator": "LessThan", "value": 82.0, "weight": 0.5 }
     ],
     "probability": 0.77,
-    "physicalExplanation": "При широком открытии дросселя двигатель должен прокачивать воздух, близкий к расчетной модели с учетом объемной эффективности. Сильно заниженный MAF при высокой команде дросселя указывает на ограничение впуска, выпускное противодавление, ошибку датчика или механическую потерю наполнения.",
-    "symptoms": ["Машина плохо разгоняется", "Нет мощности на высоких оборотах", "Дроссель открыт, но ускорение слабое"],
-    "possibleCauses": ["Забитый воздушный фильтр", "Ограничение выпускной системы", "Заниженный ДМРВ", "Низкое давление наддува", "Нарушение фаз ГРМ"],
-    "recommendedChecks": ["Провести тест разгона с записью MAF, MAP, RPM и throttle", "Проверить воздушный фильтр и впуск", "Проверить противодавление выпуска", "Сравнить график MAF с эталоном профиля"],
-    "repairRecommendations": ["Устранить ограничение впуска или выпуска", "Проверить датчик MAF контрольным методом", "Проверить механические фазы при отсутствии внешних причин"],
+    "physicalExplanation": "При открытом дросселе двигатель должен прокачивать воздух, соответствующий объему, оборотам и объемной эффективности. Если throttle высокий, а load/MAF/MAP ниже ожидаемого, двигатель физически не наполняет цилиндры: он не может развить момент, поэтому автомобиль не едет.",
+    "symptoms": ["Дроссель открыт, но тяги нет", "Слабый разгон на верхах", "Ощущение задушенного двигателя"],
+    "possibleCauses": ["Забитый воздушный фильтр", "Ограничение впуска", "Ограничение выпуска", "Заниженный MAF", "Фазы ГРМ", "Низкая компрессия"],
+    "recommendedChecks": ["Проверить впуск и фильтр", "Проверить выпускное противодавление", "Сравнить MAF/MAP/load в разгоне", "Проверить фазы ГРМ и компрессию, если внешних причин нет"],
+    "repairRecommendations": ["Устранить ограничение воздуха или выпуска", "Проверить датчики контрольным методом", "Переходить к механике только после исключения впуска/выпуска/датчиков"],
     "confidence": 0.75,
     "severity": "Serious",
-    "sources": ["engineering.maf.speed-density.generic", "obd.pids.public"]
+    "sources": ["engineering.maf.speed-density.generic", "source.motor.generic-obd", "obd.pids.public"]
   },
   {
-    "id": "engine.misfire_lean_or_ignition",
-    "title": "Пропуски воспламенения: смесь, зажигание или компрессия",
-    "category": "engine.misfire",
+    "id": "gasoline.restricted_exhaust_or_catalyst",
+    "title": "Ограничение выпуска или забитый катализатор",
+    "category": "gasoline.performance",
     "conditions": [
-      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0300", "P0301", "P0302", "P0303", "P0304", "P0305", "P0306", "P0307", "P0308"], "weight": 1.3, "required": true },
-      { "metric": "combined_trim_b1", "operator": "GreaterThan", "value": 10.0, "weight": 0.7 },
-      { "metric": "coolant_c", "operator": "GreaterThan", "value": 60.0, "weight": 0.3 },
-      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0171", "P0174"], "weight": 0.7 }
-    ],
-    "probability": 0.74,
-    "physicalExplanation": "Пропуск возникает, когда смесь в цилиндре не сгорает стабильно. Если одновременно присутствуют положительные коррекции или бедные ошибки, вероятна нехватка топлива или избыток воздуха. Без признаков бедной смеси приоритет смещается к свече, катушке, форсунке или компрессии конкретного цилиндра.",
-    "symptoms": ["Троение двигателя", "Мигание Check Engine", "Вибрации", "Потеря тяги"],
-    "possibleCauses": ["Свеча зажигания", "Катушка", "Форсунка", "Подсос воздуха", "Низкая компрессия", "Низкое давление топлива"],
-    "recommendedChecks": ["Определить цилиндр по DTC", "Поменять катушку местами и проверить миграцию ошибки", "Проверить свечу и компрессию", "Сопоставить пропуски с топливными коррекциями"],
-    "repairRecommendations": ["Ремонтировать подтвержденную причину, а не только очищать ошибки", "При мигающем индикаторе ограничить нагрузку до проверки катализатора"],
-    "confidence": 0.72,
-    "severity": "Critical",
-    "sources": ["engineering.fuel.trim.generic", "obd.pids.public"]
-  },
-  {
-    "id": "engine.boost_under_target_generic",
-    "title": "Недостаточное давление наддува под нагрузкой",
-    "category": "engine.boost",
-    "conditions": [
-      { "metric": "map_kpa", "operator": "LessThan", "value": 135.0, "weight": 1.0, "required": true },
-      { "metric": "throttle_percent", "operator": "GreaterThan", "value": 75.0, "weight": 0.8, "required": true },
-      { "metric": "rpm", "operator": "GreaterThan", "value": 2200.0, "weight": 0.5 },
-      { "metric": "maf_ratio_to_expected", "operator": "LessThan", "value": 0.88, "weight": 0.8 }
+      { "metric": "max_throttle_percent", "operator": "GreaterThan", "value": 75.0, "weight": 0.7, "required": true },
+      { "metric": "rpm", "operator": "GreaterThan", "value": 2500.0, "weight": 0.5 },
+      { "metric": "max_load_percent", "operator": "LessThan", "value": 72.0, "weight": 0.7 },
+      { "metric": "maf_ratio_to_expected", "operator": "LessThan", "value": 0.78, "weight": 0.7 },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0420", "P0430"], "weight": 0.8 }
     ],
     "probability": 0.70,
-    "physicalExplanation": "На турбированном двигателе при высокой нагрузке абсолютное давление во впуске должно превышать атмосферное. Если дроссель открыт, обороты достаточные, а MAP остается низким, двигатель не получает ожидаемый наддув или датчик давления сообщает неверные данные.",
-    "symptoms": ["Нет тяги на наддуве", "Задержка реакции на газ", "Разгон хуже эталона"],
-    "possibleCauses": ["Утечка наддувочного тракта", "Неисправность управления wastegate", "Проблема вакуумного управления", "Неверный MAP", "Износ турбокомпрессора"],
-    "recommendedChecks": ["Записать MAP, RPM, throttle и MAF при разгоне", "Проверить герметичность патрубков наддува", "Проверить актуатор и управление wastegate", "Сравнить MAP на заглушенном двигателе с атмосферным давлением"],
-    "repairRecommendations": ["Устранить утечки наддува", "Проверить актуатор и электромагнитный клапан управления", "Заменять турбокомпрессор только после проверки управления и герметичности"],
-    "confidence": 0.68,
+    "physicalExplanation": "Забитый выпуск увеличивает противодавление. Цилиндры хуже освобождаются от отработавших газов, свежий заряд уменьшается, MAF/load падают, а двигатель не набирает мощность при открытом дросселе. P0420/P0430 сами по себе говорят об эффективности катализатора, но вместе с потерей наполнения усиливают подозрение на физическое ограничение выпуска.",
+    "symptoms": ["Машина не едет после 2500-3500 RPM", "Двигатель ревет, но скорость растет плохо", "Может греться выпуск", "Ошибки катализатора"],
+    "possibleCauses": ["Оплавленный катализатор", "Смятый выпуск", "Разрушение внутренностей глушителя", "Последствие длительных пропусков или богатой смеси"],
+    "recommendedChecks": ["Проверить противодавление выпуска", "Сравнить MAP/MAF/load на WOT", "Проверить температуру до/после катализатора", "Проверить причины повреждения катализатора: пропуски, богатая смесь, масло"],
+    "repairRecommendations": ["Устранить ограничение выпуска", "Перед заменой катализатора устранить первопричину перегрева или пропусков", "После ремонта повторить тест разгона"],
+    "confidence": 0.66,
+    "severity": "Serious",
+    "sources": ["engineering.maf.speed-density.generic", "source.motor.fuel-trim", "obd.pids.public"]
+  },
+  {
+    "id": "gasoline.throttle_not_opening_or_etc_fault",
+    "title": "Дроссель не открывается или ЭБУ ограничивает момент",
+    "category": "gasoline.performance",
+    "conditions": [
+      { "metric": "throttle_percent", "operator": "LessThan", "value": 65.0, "weight": 0.9, "required": true },
+      { "metric": "max_load_percent", "operator": "LessThan", "value": 65.0, "weight": 0.6 },
+      { "metric": "rpm", "operator": "GreaterThan", "value": 1800.0, "weight": 0.3 },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0120", "P0121", "P0122", "P0123", "P0220", "P0221", "P0222", "P0223", "P2101", "P2119", "P2135"], "weight": 1.1 }
+    ],
+    "probability": 0.72,
+    "physicalExplanation": "Если водитель требует разгон, но фактическое положение дросселя остается низким или есть ошибки ETC/TPS, двигатель не получает воздух и ЭБУ может ограничивать момент. Это ощущается как резкое отсутствие тяги без обязательных признаков бедной или богатой смеси.",
+    "symptoms": ["Не реагирует на газ", "Аварийный режим", "Обороты ограничены", "Check Engine по дросселю"],
+    "possibleCauses": ["Дроссельный узел", "Датчик положения дросселя", "Педальный модуль", "Проводка", "Загрязнение дросселя", "Ограничение момента из-за другой ошибки"],
+    "recommendedChecks": ["Сравнить pedal и throttle, если PID доступны", "Проверить DTC по ETC/TPS", "Проверить питание и массу дросселя", "Проверить адаптацию дросселя после очистки"],
+    "repairRecommendations": ["Устранить причину ETC", "Не принудительно открывать электронный дроссель без процедуры производителя", "После ремонта выполнить адаптацию при необходимости"],
+    "confidence": 0.70,
+    "severity": "Serious",
+    "sources": ["source.motor.generic-obd", "obd.pids.public"]
+  },
+  {
+    "id": "gasoline.ignition_timing_retard_or_knock",
+    "title": "Позднее зажигание, детонация или ограничение момента",
+    "category": "gasoline.ignition",
+    "conditions": [
+      { "metric": "max_throttle_percent", "operator": "GreaterThan", "value": 65.0, "weight": 0.6 },
+      { "metric": "max_load_percent", "operator": "GreaterThan", "value": 60.0, "weight": 0.6 },
+      { "metric": "min_timing_deg", "operator": "LessThan", "value": 6.0, "weight": 1.0, "required": true },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0325", "P0326", "P0327", "P0328", "P0330", "P0332", "P0333"], "weight": 0.9 }
+    ],
+    "probability": 0.68,
+    "physicalExplanation": "Момент бензинового двигателя сильно зависит от угла зажигания. Если под нагрузкой зажигание сильно запаздывает, пик давления уходит позже оптимума, двигатель теряет тягу и греет выпуск. Причиной может быть детонация, плохое топливо, перегрев воздуха, неверный датчик детонации или защитная стратегия ЭБУ.",
+    "symptoms": ["Вялый разгон", "Звон/детонация", "Потеря мощности в жару", "Высокая температура выпуска"],
+    "possibleCauses": ["Низкое октановое число", "Перегрев впускного воздуха", "Датчик детонации", "Бедная смесь под нагрузкой", "Нагар", "Неверные фазы"],
+    "recommendedChecks": ["Записать timing, load, IAT, coolant и trims при разгоне", "Проверить топливо", "Проверить датчик детонации и проводку", "Исключить бедную смесь под нагрузкой"],
+    "repairRecommendations": ["Устранить причину ретарда", "Использовать рекомендованное топливо", "Не прошивать ЭБУ до устранения механической или топливной причины"],
+    "confidence": 0.62,
+    "severity": "Serious",
+    "sources": ["source.motor.lambda", "engineering.fuel.trim.generic", "obd.pids.public"]
+  },
+  {
+    "id": "gasoline.misfire_ignition_fuel_or_compression",
+    "title": "Пропуски воспламенения: зажигание, топливо или компрессия",
+    "category": "gasoline.misfire",
+    "conditions": [
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0300", "P0301", "P0302", "P0303", "P0304", "P0305", "P0306", "P0307", "P0308"], "weight": 1.4, "required": true },
+      { "metric": "combined_trim_b1", "operator": "GreaterThan", "value": 10.0, "weight": 0.6 },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0171", "P0174", "P0201", "P0202", "P0203", "P0204", "P0205", "P0206"], "weight": 0.8 },
+      { "metric": "coolant_c", "operator": "GreaterThan", "value": 60.0, "weight": 0.3 }
+    ],
+    "probability": 0.78,
+    "physicalExplanation": "Пропуск означает, что цилиндр не дал ожидаемый вклад в крутящий момент. Если вместе с P030x есть бедные коррекции, вероятна смесь или топливо. Если ошибка по одному цилиндру без общей бедной смеси, вероятнее свеча, катушка, форсунка или компрессия этого цилиндра.",
+    "symptoms": ["Троение", "Вибрации", "Мигание Check Engine", "Потеря тяги", "Запах несгоревшего топлива"],
+    "possibleCauses": ["Свеча", "Катушка", "Форсунка", "Подсос воздуха", "Низкая компрессия", "Проводка", "Низкое давление топлива"],
+    "recommendedChecks": ["Определить цилиндр по DTC", "Поменять катушку местами и проверить миграцию", "Проверить свечу", "Проверить форсунку", "Проверить компрессию", "Сопоставить с trims"],
+    "repairRecommendations": ["При мигающем Check Engine снизить нагрузку", "Устранить подтвержденную причину, а не только очищать ошибку", "Проверить катализатор после длительных пропусков"],
+    "confidence": 0.76,
+    "severity": "Critical",
+    "sources": ["engineering.fuel.trim.generic", "source.motor.fuel-trim", "obd.pids.public"]
+  },
+  {
+    "id": "gasoline.turbo_underboost",
+    "title": "Недостаточное давление наддува",
+    "category": "gasoline.boost",
+    "conditions": [
+      { "metric": "max_map_kpa", "operator": "LessThan", "value": 135.0, "weight": 1.0, "required": true },
+      { "metric": "max_throttle_percent", "operator": "GreaterThan", "value": 75.0, "weight": 0.8, "required": true },
+      { "metric": "rpm", "operator": "GreaterThan", "value": 2200.0, "weight": 0.5 },
+      { "metric": "maf_ratio_to_expected", "operator": "LessThan", "value": 0.88, "weight": 0.8 },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0299", "P0234", "P0243", "P0244"], "weight": 0.9 }
+    ],
+    "probability": 0.76,
+    "physicalExplanation": "На турбированном бензиновом двигателе при высокой нагрузке MAP должен превышать атмосферное давление. Если дроссель открыт, обороты достаточные, а MAP низкий, двигатель не получает расчетный воздух и теряет момент.",
+    "symptoms": ["Нет тяги на наддуве", "Поздний подхват", "P0299", "Свист или шипение патрубков"],
+    "possibleCauses": ["Утечка наддува", "Wastegate открыт", "Клапан управления наддувом", "DV/BOV", "Неверный MAP", "Износ турбокомпрессора"],
+    "recommendedChecks": ["Записать MAP/MAF/RPM/throttle при разгоне", "Проверить герметичность наддува", "Проверить актуатор wastegate", "Сравнить MAP на заглушенном двигателе с атмосферным давлением"],
+    "repairRecommendations": ["Сначала устранить утечки и управление", "Турбину менять только после проверки актуатора, клапанов и датчиков", "Повторить разгон после ремонта"],
+    "confidence": 0.72,
     "severity": "Serious",
     "sources": ["engineering.maf.speed-density.generic", "obd.pids.public"]
+  },
+  {
+    "id": "gasoline.low_operating_temperature",
+    "title": "Двигатель не выходит на рабочую температуру",
+    "category": "gasoline.thermal",
+    "conditions": [
+      { "metric": "coolant_c", "operator": "LessThan", "value": 75.0, "weight": 1.0, "required": true },
+      { "metric": "combined_trim_b1", "operator": "GreaterThan", "value": 6.0, "weight": 0.4 },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0128"], "weight": 1.0 }
+    ],
+    "probability": 0.64,
+    "physicalExplanation": "Если двигатель долго остается холодным, ЭБУ может держать другие топливные и фазовые стратегии, расход растет, а тяга и адаптации меняются. На многих автомобилях это связано с термостатом или неверным датчиком температуры.",
+    "symptoms": ["Высокий расход", "Печка греет слабо", "Температура ниже нормы", "P0128", "Двигатель работает грубее"],
+    "possibleCauses": ["Термостат открыт", "Неверный ECT", "Проблема проводки ECT", "Низкий уровень ОЖ"],
+    "recommendedChecks": ["Проверить фактическую температуру сканером и ИК-термометром", "Проверить прогрев патрубков радиатора", "Проверить P0128 и freeze frame"],
+    "repairRecommendations": ["Заменить термостат или датчик только после подтверждения", "Удалить воздух из системы охлаждения после ремонта"],
+    "confidence": 0.60,
+    "severity": "Warning",
+    "sources": ["source.motor.generic-obd", "obd.pids.public"]
+  },
+  {
+    "id": "gasoline.low_system_voltage",
+    "title": "Низкое напряжение бортовой сети влияет на управление двигателем",
+    "category": "gasoline.electrical",
+    "conditions": [
+      { "metric": "module_voltage_v", "operator": "LessThan", "value": 12.6, "weight": 1.0, "required": true },
+      { "metric": "dtc_codes", "operator": "ContainsAny", "values": ["P0560", "P0562", "P0563"], "weight": 1.0 }
+    ],
+    "probability": 0.66,
+    "physicalExplanation": "Низкое напряжение ухудшает работу катушек, форсунок, электронного дросселя и датчиков. Автомобиль может плохо ехать не из-за смеси как таковой, а из-за нестабильного питания исполнительных механизмов и ЭБУ.",
+    "symptoms": ["Слабый запуск", "Плавающие ошибки", "Провалы", "Ошибки по напряжению", "Нестабильная работа на нагрузке"],
+    "possibleCauses": ["Генератор", "АКБ", "Массы двигателя", "Плохие клеммы", "Ремень генератора", "Провод питания ЭБУ"],
+    "recommendedChecks": ["Проверить напряжение на АКБ и на ЭБУ под нагрузкой", "Проверить падение напряжения на массах", "Проверить заряд генератора", "Сопоставить ошибки с просадками voltage PID"],
+    "repairRecommendations": ["Восстановить питание и массы до диагностики сложных симптомов", "После ремонта повторить OBD-запись"],
+    "confidence": 0.62,
+    "severity": "Serious",
+    "sources": ["source.motor.generic-obd", "obd.pids.public"]
   }
 ]
+

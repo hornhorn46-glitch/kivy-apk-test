@@ -81,10 +81,28 @@ private fun DashboardScreen(referenceCurves: List<ReferenceCurveSet>) {
                 HealthCard("Engine", "Needs analysis", 0.72, Modifier.weight(1f))
                 HealthCard("Fuel system", "Trim drift", 0.61, Modifier.weight(1f))
             }
+            CoverageCard()
             DiagnosisCard()
             LiveDataPreview()
             ReferenceCurvesPreview(referenceCurves.firstOrNull())
             Spacer(Modifier.height(10.dp))
+        }
+    }
+}
+
+@Composable
+private fun CoverageCard() {
+    Card(
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xEE101827)),
+    ) {
+        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Generic gasoline diagnosis", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text(
+                text = "Universal OBD-II profiles cover PFI/MAF, PFI/MAP, GDI, turbo and hybrid gasoline engines. Exact vehicle profiles improve confidence, but the diagnostic engine works with any gasoline OBD-II car when live data is available.",
+                color = Color(0xFFD7E3F1),
+                lineHeight = 20.sp,
+            )
         }
     }
 }
@@ -174,7 +192,8 @@ private fun ReferenceCurvesPreview(curveSet: ReferenceCurveSet?) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Text("Reference curves", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
             Text(
-                text = curveSet?.title ?: "Reference data is not loaded",
+                text = curveSet?.let { "Public sample source: ${it.title}. Generic rules do not depend on this vehicle." }
+                    ?: "Reference data is not loaded",
                 color = Color(0xFF9FB3C8),
                 fontSize = 13.sp,
             )

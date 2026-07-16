@@ -52,7 +52,7 @@ def main() -> None:
     }
     ranked = sorted(((score(rule, facts), rule["id"]) for rule in rules), reverse=True)
     top_score, top_id = ranked[0]
-    if top_id != "engine.unmetered_air_lean_condition" or top_score < 0.80:
+    if top_id != "gasoline.unmetered_air_lean_idle" or top_score < 0.80:
         raise SystemExit(f"smoke failed: top={top_id}, score={top_score:.2f}")
     print(f"diagnostic smoke valid: top={top_id}, score={top_score:.2f}")
 
