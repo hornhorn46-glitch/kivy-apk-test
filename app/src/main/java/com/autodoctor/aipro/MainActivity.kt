@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -29,21 +31,27 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.autodoctor.aipro.core.reference.ReferenceCurve
+import com.autodoctor.aipro.core.reference.ReferenceCurveSet
 import com.autodoctor.aipro.ui.design.AutoDoctorTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val referenceCurves = runCatching {
+            (application as AutoDoctorApp).knowledgeRepository.loadReferenceCurves()
+        }.getOrDefault(emptyList())
+
         setContent {
             AutoDoctorTheme {
-                DashboardScreen()
+                DashboardScreen(referenceCurves)
             }
         }
     }
 }
 
 @Composable
-private fun DashboardScreen() {
+private fun DashboardScreen(referenceCurves: List<ReferenceCurveSet>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +62,10 @@ private fun DashboardScreen() {
             )
             .padding(20.dp),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
             Text(
                 text = "AutoDoctor AI Pro",
                 color = Color.White,
@@ -72,6 +83,8 @@ private fun DashboardScreen() {
             }
             DiagnosisCard()
             LiveDataPreview()
+            ReferenceCurvesPreview(referenceCurves.firstOrNull())
+            Spacer(Modifier.height(10.dp))
         }
     }
 }
@@ -147,6 +160,76 @@ private fun LiveDataPreview() {
                         cap = StrokeCap.Round,
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReferenceCurvesPreview(curveSet: ReferenceCurveSet?) {
+    Card(
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xDD101827)),
+    ) {
+        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            Text("Reference curves", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text(
+                text = curveSet?.title ?: "Reference data is not loaded",
+                color = Color(0xFF9FB3C8),
+                fontSize = 13.sp,
+            )
+            curveSet?.curves
+                ?.filter { it.xMetric == "rpm" && it.points.size >= 2 }
+                ?.take(3)
+                ?.forEach { curve ->
+                    ReferenceCurveChart(curve)
+                }
+        }
+    }
+}
+
+@Composable
+private fun ReferenceCurveChart(curve: ReferenceCurve) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = "${curve.metric} / ${curve.xMetric}",
+            color = Color(0xFFD7E3F1),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+        )
+        Canvas(Modifier.fillMaxWidth().height(112.dp)) {
+            val points = curve.points.sortedBy { it.x }
+            val minX = points.first().x
+            val maxX = points.last().x.coerceAtLeast(minX + 1.0)
+            val minY = points.minOf { it.p10 }
+            val maxY = points.maxOf { it.p90 }.coerceAtLeast(minY + 1.0)
+            fun x(value: Double): Float = ((value - minX) / (maxX - minX) * size.width).toFloat()
+            fun y(value: Double): Float = (size.height - (value - minY) / (maxY - minY) * size.height).toFloat()
+
+            for (i in 0 until points.lastIndex) {
+                val a = points[i]
+                val b = points[i + 1]
+                drawLine(
+                    color = Color(0x6642D392),
+                    start = Offset(x(a.x), y(a.p10)),
+                    end = Offset(x(b.x), y(b.p10)),
+                    strokeWidth = 2.dp.toPx(),
+                    cap = StrokeCap.Round,
+                )
+                drawLine(
+                    color = Color(0x6642D392),
+                    start = Offset(x(a.x), y(a.p90)),
+                    end = Offset(x(b.x), y(b.p90)),
+                    strokeWidth = 2.dp.toPx(),
+                    cap = StrokeCap.Round,
+                )
+                drawLine(
+                    color = Color(0xFF42D392),
+                    start = Offset(x(a.x), y(a.p50)),
+                    end = Offset(x(b.x), y(b.p50)),
+                    strokeWidth = 4.dp.toPx(),
+                    cap = StrokeCap.Round,
+                )
             }
         }
     }
