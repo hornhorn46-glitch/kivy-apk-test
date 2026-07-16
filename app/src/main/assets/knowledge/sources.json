@@ -33,5 +33,33 @@
     "url": "docs/DIAGNOSTIC_MODEL.md",
     "license": "Project-authored synthesis",
     "notes": "Derived from first-principles four-stroke engine airflow approximation."
+  },
+  {
+    "id": "dataset.carobd.toyota.etios.2014",
+    "title": "carOBD dataset for Toyota Etios 2014 OBD-II telemetry",
+    "url": "https://github.com/eron93br/carOBD",
+    "license": "Public dataset; Kaggle mirror lists CC BY-SA 4.0",
+    "notes": "Used to generate compact reference curves from road and idle OBD-II CSV files. The app stores derived statistical curves, not full raw logs."
+  },
+  {
+    "id": "dataset.ved.umich",
+    "title": "Vehicle Energy Dataset (VED)",
+    "url": "https://github.com/gsoh/VED",
+    "license": "Apache-2.0",
+    "notes": "Large OBD-II and GPS telemetry dataset from University of Michigan; planned source for expanding reference curves."
+  },
+  {
+    "id": "dataset.kit.obd2",
+    "title": "Automotive OBD-II Dataset by Karlsruhe Institute of Technology",
+    "url": "https://radar.kit.edu/radar/en/dataset/bCtGxdTklQlfQcAq",
+    "license": "CC BY 4.0",
+    "notes": "Compact OBD-II telemetry dataset; RADAR was under maintenance during this implementation pass."
+  },
+  {
+    "id": "dataset.cardata.wiki",
+    "title": "cardata.wiki open vehicle specifications",
+    "url": "https://cardata.wiki/about",
+    "license": "CC BY 4.0",
+    "notes": "Open vehicle specifications source suitable for expanding vehicle profiles."
   }
 ]

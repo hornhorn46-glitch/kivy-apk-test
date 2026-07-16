@@ -4,6 +4,7 @@ import android.content.Context
 import com.autodoctor.aipro.core.diagnostics.DiagnosticRule
 import com.autodoctor.aipro.core.model.PidDefinition
 import com.autodoctor.aipro.core.model.VehicleProfile
+import com.autodoctor.aipro.core.reference.ReferenceCurveSet
 import kotlinx.serialization.json.Json
 
 class KnowledgeRepository(
@@ -38,6 +39,17 @@ class KnowledgeRepository(
             ?.flatMap { file ->
                 context.assets.open("knowledge/pids/$file").bufferedReader().use { reader ->
                     json.decodeFromString<List<PidDefinition>>(reader.readText())
+                }
+            }
+            ?: emptyList()
+    }
+
+    fun loadReferenceCurves(): List<ReferenceCurveSet> {
+        return context.assets.list("knowledge/reference_curves")
+            ?.filter { it.endsWith(".json") }
+            ?.map { file ->
+                context.assets.open("knowledge/reference_curves/$file").bufferedReader().use { reader ->
+                    json.decodeFromString<ReferenceCurveSet>(reader.readText())
                 }
             }
             ?: emptyList()

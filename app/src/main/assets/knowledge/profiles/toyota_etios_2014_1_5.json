@@ -1,0 +1,25 @@
+{
+  "id": "toyota-etios-2014-1-5",
+  "make": "Toyota",
+  "model": "Etios",
+  "year": 2014,
+  "engineCode": null,
+  "displacementLiters": 1.496,
+  "powerKw": 66.0,
+  "torqueNm": 132.0,
+  "massKg": 1020.0,
+  "induction": "NaturallyAspirated",
+  "injection": "PortFuelInjection",
+  "airMetering": "Map",
+  "redlineRpm": 6200,
+  "transmission": "Manual",
+  "obdType": "Obd2",
+  "supportedPids": ["RPM", "SPEED", "LOAD", "MAP", "THROTTLE", "COOLANT_TEMP", "INTAKE_TEMP", "STFT_B1", "LTFT_B1", "TIMING_ADVANCE", "CONTROL_MODULE_VOLTAGE"],
+  "references": {
+    "coolantNormalCelsius": { "min": 82.0, "max": 105.0 },
+    "intakeAirNormalCelsius": { "min": -10.0, "max": 65.0 },
+    "idleRpm": { "min": 650.0, "max": 850.0 },
+    "fuelTrimNormalPercent": { "min": -8.0, "max": 8.0 },
+    "wotThrottlePercent": { "min": 85.0, "max": 100.0 }
+  }
+}

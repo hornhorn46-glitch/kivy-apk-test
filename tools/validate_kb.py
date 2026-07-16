@@ -119,12 +119,42 @@ def validate_encyclopedia(source_ids: set[str]) -> None:
                 fail(f"encyclopedia {path.name} references unknown source {source}")
 
 
+def validate_reference_curves(source_ids: set[str]) -> None:
+    curves_dir = KB / "reference_curves"
+    if not curves_dir.exists():
+        fail("reference_curves directory missing")
+    for path in sorted(curves_dir.glob("*.json")):
+        document = load_json(path)
+        for field in ("id", "vehicleProfileId", "title", "source", "license", "curveKind", "limitations", "curves"):
+            if field not in document:
+                fail(f"reference curve {path.name} missing {field}")
+        if document["source"] not in source_ids:
+            fail(f"reference curve {path.name} references unknown source {document['source']}")
+        if not document["curves"]:
+            fail(f"reference curve {path.name} has no curves")
+        for curve in document["curves"]:
+            for field in ("metric", "xMetric", "xUnit", "yUnit", "points"):
+                if field not in curve:
+                    fail(f"curve in {path.name} missing {field}")
+            if not curve["points"]:
+                fail(f"curve {curve['metric']} in {path.name} has no points")
+            for point in curve["points"]:
+                for field in ("x", "p10", "p50", "p90", "sampleCount"):
+                    if field not in point:
+                        fail(f"curve {curve['metric']} in {path.name} point missing {field}")
+                if not (float(point["p10"]) <= float(point["p50"]) <= float(point["p90"])):
+                    fail(f"curve {curve['metric']} in {path.name} has invalid percentile order")
+                if int(point["sampleCount"]) <= 0:
+                    fail(f"curve {curve['metric']} in {path.name} has empty sample bin")
+
+
 def main() -> None:
     source_ids = validate_sources()
     rules = validate_rules(source_ids)
     validate_profiles()
     validate_pids()
     validate_encyclopedia(source_ids)
+    validate_reference_curves(source_ids)
     print(f"knowledge base valid: {len(rules)} rules, {len(source_ids)} sources")
 
 

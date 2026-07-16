@@ -1,0 +1,300 @@
+{
+  "id": "toyota-etios-2014-1-5-carobd",
+  "vehicleProfileId": "toyota-etios-2014-1-5",
+  "title": "Toyota Etios 2014 1.5 public OBD-II reference curves",
+  "source": "dataset.carobd.toyota.etios.2014",
+  "license": "Derived compact statistics from public OBD-II CSV logs; source attribution required.",
+  "curveKind": "publicRoadAndIdleBaseline",
+  "limitations": [
+    "Road curves are not guaranteed wide-open-throttle dyno references.",
+    "Use as soft comparison bands, not as an OEM specification.",
+    "Dataset is from one Toyota Etios 2014 1.5 vehicle and must not be generalized blindly."
+  ],
+  "curves": [
+    {
+      "metric": "speed_kph",
+      "xMetric": "rpm",
+      "xUnit": "rpm",
+      "yUnit": "km/h",
+      "points": [
+        {
+          "x": 500,
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 23.0,
+          "sampleCount": 880
+        },
+        {
+          "x": 1000,
+          "p10": 0.0,
+          "p50": 13.0,
+          "p90": 27.0,
+          "sampleCount": 2104
+        },
+        {
+          "x": 1500,
+          "p10": 17.0,
+          "p50": 31.0,
+          "p90": 38.0,
+          "sampleCount": 1660
+        },
+        {
+          "x": 2000,
+          "p10": 26.0,
+          "p50": 38.0,
+          "p90": 41.0,
+          "sampleCount": 374
+        }
+      ]
+    },
+    {
+      "metric": "throttle_percent",
+      "xMetric": "rpm",
+      "xUnit": "rpm",
+      "yUnit": "%",
+      "points": [
+        {
+          "x": 500,
+          "p10": 15.69,
+          "p50": 16.08,
+          "p90": 18.82,
+          "sampleCount": 880
+        },
+        {
+          "x": 1000,
+          "p10": 16.08,
+          "p50": 18.82,
+          "p90": 20.78,
+          "sampleCount": 2104
+        },
+        {
+          "x": 1500,
+          "p10": 17.25,
+          "p50": 19.22,
+          "p90": 22.35,
+          "sampleCount": 1660
+        },
+        {
+          "x": 2000,
+          "p10": 18.82,
+          "p50": 20.39,
+          "p90": 22.75,
+          "sampleCount": 374
+        }
+      ]
+    },
+    {
+      "metric": "load_percent",
+      "xMetric": "rpm",
+      "xUnit": "rpm",
+      "yUnit": "%",
+      "points": [
+        {
+          "x": 500,
+          "p10": 25.49,
+          "p50": 28.24,
+          "p90": 43.61,
+          "sampleCount": 880
+        },
+        {
+          "x": 1000,
+          "p10": 22.75,
+          "p50": 34.12,
+          "p90": 47.45,
+          "sampleCount": 2104
+        },
+        {
+          "x": 1500,
+          "p10": 21.18,
+          "p50": 30.2,
+          "p90": 57.29,
+          "sampleCount": 1660
+        },
+        {
+          "x": 2000,
+          "p10": 22.59,
+          "p50": 32.35,
+          "p90": 50.59,
+          "sampleCount": 374
+        }
+      ]
+    },
+    {
+      "metric": "map_kpa",
+      "xMetric": "rpm",
+      "xUnit": "rpm",
+      "yUnit": "kPa",
+      "points": [
+        {
+          "x": 500,
+          "p10": 26.0,
+          "p50": 28.0,
+          "p90": 45.0,
+          "sampleCount": 880
+        },
+        {
+          "x": 1000,
+          "p10": 23.0,
+          "p50": 35.0,
+          "p90": 52.0,
+          "sampleCount": 2104
+        },
+        {
+          "x": 1500,
+          "p10": 21.0,
+          "p50": 31.0,
+          "p90": 56.0,
+          "sampleCount": 1660
+        },
+        {
+          "x": 2000,
+          "p10": 22.3,
+          "p50": 32.0,
+          "p90": 51.0,
+          "sampleCount": 374
+        }
+      ]
+    },
+    {
+      "metric": "timing_deg",
+      "xMetric": "rpm",
+      "xUnit": "rpm",
+      "yUnit": "deg",
+      "points": [
+        {
+          "x": 500,
+          "p10": -4.0,
+          "p50": 0.0,
+          "p90": 7.0,
+          "sampleCount": 880
+        },
+        {
+          "x": 1000,
+          "p10": -6.0,
+          "p50": 2.0,
+          "p90": 15.0,
+          "sampleCount": 2104
+        },
+        {
+          "x": 1500,
+          "p10": 5.0,
+          "p50": 20.0,
+          "p90": 25.0,
+          "sampleCount": 1660
+        },
+        {
+          "x": 2000,
+          "p10": 13.0,
+          "p50": 25.0,
+          "p90": 28.0,
+          "sampleCount": 374
+        }
+      ]
+    },
+    {
+      "metric": "rpm",
+      "xMetric": "idle",
+      "xUnit": "state",
+      "yUnit": "rpm",
+      "points": [
+        {
+          "x": 0,
+          "p10": 653.6,
+          "p50": 771.75,
+          "p90": 925.0,
+          "sampleCount": 1199
+        }
+      ]
+    },
+    {
+      "metric": "throttle_percent",
+      "xMetric": "idle",
+      "xUnit": "state",
+      "yUnit": "%",
+      "points": [
+        {
+          "x": 0,
+          "p10": 15.69,
+          "p50": 16.47,
+          "p90": 19.22,
+          "sampleCount": 1199
+        }
+      ]
+    },
+    {
+      "metric": "load_percent",
+      "xMetric": "idle",
+      "xUnit": "state",
+      "yUnit": "%",
+      "points": [
+        {
+          "x": 0,
+          "p10": 25.88,
+          "p50": 26.67,
+          "p90": 36.08,
+          "sampleCount": 1199
+        }
+      ]
+    },
+    {
+      "metric": "map_kpa",
+      "xMetric": "idle",
+      "xUnit": "state",
+      "yUnit": "kPa",
+      "points": [
+        {
+          "x": 0,
+          "p10": 26.0,
+          "p50": 27.0,
+          "p90": 36.0,
+          "sampleCount": 1199
+        }
+      ]
+    },
+    {
+      "metric": "stft_b1",
+      "xMetric": "idle",
+      "xUnit": "state",
+      "yUnit": "%",
+      "points": [
+        {
+          "x": 0,
+          "p10": -7.81,
+          "p50": -2.34,
+          "p90": 0.78,
+          "sampleCount": 1199
+        }
+      ]
+    },
+    {
+      "metric": "ltft_b1",
+      "xMetric": "idle",
+      "xUnit": "state",
+      "yUnit": "%",
+      "points": [
+        {
+          "x": 0,
+          "p10": -0.78,
+          "p50": 3.12,
+          "p90": 3.91,
+          "sampleCount": 1199
+        }
+      ]
+    },
+    {
+      "metric": "module_voltage_v",
+      "xMetric": "idle",
+      "xUnit": "state",
+      "yUnit": "V",
+      "points": [
+        {
+          "x": 0,
+          "p10": 13.89,
+          "p50": 14.04,
+          "p90": 14.14,
+          "sampleCount": 1198
+        }
+      ]
+    }
+  ]
+}
