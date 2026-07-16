@@ -1,0 +1,132 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+KB = ROOT / "knowledge"
+
+
+RULE_FIELDS = {
+    "id",
+    "title",
+    "category",
+    "conditions",
+    "probability",
+    "physicalExplanation",
+    "symptoms",
+    "possibleCauses",
+    "recommendedChecks",
+    "repairRecommendations",
+    "confidence",
+    "severity",
+    "sources",
+}
+
+CONDITION_OPERATORS = {"GreaterThan", "LessThan", "Between", "Outside", "Exists", "ContainsAny"}
+SEVERITIES = {"Info", "Warning", "Serious", "Critical"}
+ENCYCLOPEDIA_FIELDS = {"id", "title", "parameterIds", "whatItIs", "normalValues", "deviations", "influence", "checks", "sources"}
+
+
+def load_json(path: Path):
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def fail(message: str) -> None:
+    raise SystemExit(f"validation failed: {message}")
+
+
+def validate_sources() -> set[str]:
+    sources = load_json(KB / "sources.json")
+    ids = set()
+    for item in sources:
+        source_id = item.get("id")
+        if not source_id:
+            fail("source without id")
+        if source_id in ids:
+            fail(f"duplicate source id {source_id}")
+        ids.add(source_id)
+        for field in ("title", "url", "license"):
+            if not item.get(field):
+                fail(f"source {source_id} missing {field}")
+    return ids
+
+
+def validate_rules(source_ids: set[str]) -> list[dict]:
+    rules: list[dict] = []
+    rule_ids = set()
+    for path in sorted((KB / "rules").glob("*.json")):
+        data = load_json(path)
+        if not isinstance(data, list):
+            fail(f"{path} must contain a rule list")
+        for rule in data:
+            missing = RULE_FIELDS - set(rule)
+            if missing:
+                fail(f"rule {rule.get('id', path.name)} missing {sorted(missing)}")
+            if rule["id"] in rule_ids:
+                fail(f"duplicate rule id {rule['id']}")
+            rule_ids.add(rule["id"])
+            if not 0.0 <= float(rule["probability"]) <= 1.0:
+                fail(f"rule {rule['id']} probability outside 0..1")
+            if not 0.0 <= float(rule["confidence"]) <= 1.0:
+                fail(f"rule {rule['id']} confidence outside 0..1")
+            if rule["severity"] not in SEVERITIES:
+                fail(f"rule {rule['id']} invalid severity")
+            if len(rule["conditions"]) < 2:
+                fail(f"rule {rule['id']} must use multiple signals")
+            for condition in rule["conditions"]:
+                if condition.get("operator") not in CONDITION_OPERATORS:
+                    fail(f"rule {rule['id']} invalid operator {condition.get('operator')}")
+                if not condition.get("metric"):
+                    fail(f"rule {rule['id']} has condition without metric")
+            for source in rule["sources"]:
+                if source not in source_ids:
+                    fail(f"rule {rule['id']} references unknown source {source}")
+            rules.append(rule)
+    if not rules:
+        fail("no diagnostic rules found")
+    return rules
+
+
+def validate_profiles() -> None:
+    required = {"id", "make", "model", "induction", "injection", "airMetering", "transmission", "obdType", "supportedPids", "references"}
+    for path in sorted((KB / "profiles").glob("*.json")):
+        profile = load_json(path)
+        missing = required - set(profile)
+        if missing:
+            fail(f"profile {path.name} missing {sorted(missing)}")
+
+
+def validate_pids() -> None:
+    for path in sorted((KB / "pids").glob("*.json")):
+        entries = load_json(path)
+        for entry in entries:
+            for field in ("id", "service", "pid", "name", "unit", "min", "max"):
+                if field not in entry:
+                    fail(f"pid entry in {path.name} missing {field}")
+
+
+def validate_encyclopedia(source_ids: set[str]) -> None:
+    for path in sorted((KB / "encyclopedia").glob("*.json")):
+        article = load_json(path)
+        missing = ENCYCLOPEDIA_FIELDS - set(article)
+        if missing:
+            fail(f"encyclopedia {path.name} missing {sorted(missing)}")
+        for source in article["sources"]:
+            if source not in source_ids:
+                fail(f"encyclopedia {path.name} references unknown source {source}")
+
+
+def main() -> None:
+    source_ids = validate_sources()
+    rules = validate_rules(source_ids)
+    validate_profiles()
+    validate_pids()
+    validate_encyclopedia(source_ids)
+    print(f"knowledge base valid: {len(rules)} rules, {len(source_ids)} sources")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "obd.overview.public",
+    "title": "Public overview of On-board diagnostics and OBD-II",
+    "url": "https://en.wikipedia.org/wiki/On-board_diagnostics",
+    "license": "CC BY-SA",
+    "notes": "Used only for high-level terminology and public OBD-II context."
+  },
+  {
+    "id": "obd.pids.public",
+    "title": "Public overview of OBD-II PIDs",
+    "url": "https://en.wikipedia.org/wiki/OBD-II_PIDs",
+    "license": "CC BY-SA",
+    "notes": "Used for standard PID names and public formula references."
+  },
+  {
+    "id": "elm327.public",
+    "title": "Public overview of ELM327 adapters",
+    "url": "https://en.wikipedia.org/wiki/ELM327",
+    "license": "CC BY-SA",
+    "notes": "Used for adapter family context and supported connection types."
+  },
+  {
+    "id": "engineering.fuel.trim.generic",
+    "title": "Generic closed-loop fuel trim diagnostic practice",
+    "url": "docs/SOURCES.md",
+    "license": "Project-authored synthesis",
+    "notes": "Project-authored engineering synthesis from common open diagnostic practice; not copied from proprietary service data."
+  },
+  {
+    "id": "engineering.maf.speed-density.generic",
+    "title": "Generic air mass and volumetric-efficiency model",
+    "url": "docs/DIAGNOSTIC_MODEL.md",
+    "license": "Project-authored synthesis",
+    "notes": "Derived from first-principles four-stroke engine airflow approximation."
+  }
+]

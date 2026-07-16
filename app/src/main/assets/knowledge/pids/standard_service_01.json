@@ -1,0 +1,16 @@
+[
+  { "id": "LOAD", "service": "01", "pid": "04", "name": "Calculated engine load", "unit": "%", "min": 0.0, "max": 100.0 },
+  { "id": "COOLANT_TEMP", "service": "01", "pid": "05", "name": "Engine coolant temperature", "unit": "C", "min": -40.0, "max": 215.0 },
+  { "id": "FUEL_PRESSURE", "service": "01", "pid": "0A", "name": "Fuel pressure", "unit": "kPa", "min": 0.0, "max": 765.0 },
+  { "id": "MAP", "service": "01", "pid": "0B", "name": "Intake manifold absolute pressure", "unit": "kPa", "min": 0.0, "max": 255.0 },
+  { "id": "RPM", "service": "01", "pid": "0C", "name": "Engine speed", "unit": "rpm", "min": 0.0, "max": 16383.75 },
+  { "id": "SPEED", "service": "01", "pid": "0D", "name": "Vehicle speed", "unit": "km/h", "min": 0.0, "max": 255.0 },
+  { "id": "TIMING_ADVANCE", "service": "01", "pid": "0E", "name": "Timing advance", "unit": "deg", "min": -64.0, "max": 63.5 },
+  { "id": "INTAKE_TEMP", "service": "01", "pid": "0F", "name": "Intake air temperature", "unit": "C", "min": -40.0, "max": 215.0 },
+  { "id": "MAF", "service": "01", "pid": "10", "name": "Mass air flow", "unit": "g/s", "min": 0.0, "max": 655.35 },
+  { "id": "THROTTLE", "service": "01", "pid": "11", "name": "Throttle position", "unit": "%", "min": 0.0, "max": 100.0 },
+  { "id": "STFT_B1", "service": "01", "pid": "06", "name": "Short term fuel trim bank 1", "unit": "%", "min": -100.0, "max": 99.22 },
+  { "id": "LTFT_B1", "service": "01", "pid": "07", "name": "Long term fuel trim bank 1", "unit": "%", "min": -100.0, "max": 99.22 },
+  { "id": "LAMBDA", "service": "01", "pid": "44", "name": "Commanded equivalence ratio", "unit": "lambda", "min": 0.0, "max": 2.0 },
+  { "id": "CONTROL_MODULE_VOLTAGE", "service": "01", "pid": "42", "name": "Control module voltage", "unit": "V", "min": 0.0, "max": 65.535 }
+]

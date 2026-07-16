@@ -1,0 +1,25 @@
+{
+  "id": "universal-obd2",
+  "make": "Universal",
+  "model": "OBD-II",
+  "year": null,
+  "engineCode": null,
+  "displacementLiters": null,
+  "powerKw": null,
+  "torqueNm": null,
+  "massKg": null,
+  "induction": "Unknown",
+  "injection": "Unknown",
+  "airMetering": "Unknown",
+  "redlineRpm": null,
+  "transmission": "Unknown",
+  "obdType": "Obd2",
+  "supportedPids": ["RPM", "SPEED", "LOAD", "MAF", "MAP", "THROTTLE", "COOLANT_TEMP", "INTAKE_TEMP", "STFT_B1", "LTFT_B1", "FUEL_PRESSURE", "TIMING_ADVANCE", "LAMBDA", "CONTROL_MODULE_VOLTAGE"],
+  "references": {
+    "coolantNormalCelsius": { "min": 82.0, "max": 108.0 },
+    "intakeAirNormalCelsius": { "min": -20.0, "max": 70.0 },
+    "idleRpm": { "min": 600.0, "max": 900.0 },
+    "fuelTrimNormalPercent": { "min": -8.0, "max": 8.0 },
+    "wotThrottlePercent": { "min": 85.0, "max": 100.0 }
+  }
+}
