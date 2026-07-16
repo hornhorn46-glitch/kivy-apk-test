@@ -2,6 +2,8 @@ package com.autodoctor.aipro.core.diagnostics
 
 import com.autodoctor.aipro.core.model.ObdSession
 import com.autodoctor.aipro.core.model.VehicleProfile
+import com.autodoctor.aipro.core.model.latest
+import com.autodoctor.aipro.core.model.values
 import kotlin.math.max
 
 class FactExtractor {

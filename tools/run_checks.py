@@ -15,7 +15,7 @@ def run(args: list[str]) -> None:
 def scan_unfinished_markers() -> None:
     marker = "TO" + "DO"
     extensions = {".kt", ".kts", ".json", ".md", ".py", ".xml"}
-    ignored = {".git", ".gradle", "build"}
+    ignored = {".git", ".gradle", ".toolchain", "build"}
     hits = []
     for path in ROOT.rglob("*"):
         if any(part in ignored for part in path.parts):
