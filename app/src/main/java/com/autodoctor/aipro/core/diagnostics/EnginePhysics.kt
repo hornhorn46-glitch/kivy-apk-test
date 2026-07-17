@@ -22,8 +22,15 @@ class EnginePhysics {
         val ltft = samples.byPid("LTFT_B1")
         val timing = samples.byPid("TIMING_ADVANCE")
         val voltage = samples.byPid("CONTROL_MODULE_VOLTAGE")
+        val coolant = samples.byPid("COOLANT_TEMP")
+        val iat = samples.byPid("INTAKE_TEMP")
+        val fuelLevel = samples.byPid("FUEL_LEVEL")
+        val baro = samples.byPid("BARO")
+        val o2B1S1 = samples.byPid("O2_B1S1")
+        val o2B1S2 = samples.byPid("O2_B1S2")
 
         facts["sample_count"] = samples.size
+        facts["unique_pid_count"] = samples.map { it.pid }.distinct().size
         if (samples.size >= 2) {
             facts["duration_sec"] = ((samples.maxOf { it.timestampMillis } - samples.minOf { it.timestampMillis }) / 1000.0).round2()
         }
@@ -39,9 +46,24 @@ class EnginePhysics {
         val maxMap = map.maxOfOrNull { it.value }
         val minTiming = timing.minOfOrNull { it.value }
         val minVoltage = voltage.minOfOrNull { it.value }
-        val maxIat = samples.byPid("INTAKE_TEMP").maxOfOrNull { it.value }
+        val maxVoltage = voltage.maxOfOrNull { it.value }
+        val maxIat = iat.maxOfOrNull { it.value }
+        val maxCoolant = coolant.maxOfOrNull { it.value }
+        val minCoolant = coolant.minOfOrNull { it.value }
+        val minFuelLevel = fuelLevel.minOfOrNull { it.value }
+        val latestBaro = baro.lastOrNull()?.value
         val displacement = profile.displacementLiters
 
+        idleRpmStdDev(rpm, speed)?.let { idleStd ->
+            facts["idle_rpm_stddev"] = idleStd.round2()
+            facts["rough_idle_index"] = max(0.0, (idleStd - 55.0) / 145.0).round3()
+        }
+        if (rpm.size >= 2) {
+            facts["rpm_delta"] = ((rpm.maxOf { it.value } - rpm.minOf { it.value }).coerceAtLeast(0.0)).round1()
+        }
+        if (speed.size >= 2) {
+            facts["speed_delta_kph"] = ((speed.maxOf { it.value } - speed.minOf { it.value }).coerceAtLeast(0.0)).round1()
+        }
         if (maxThrottle != null && maxLoad != null) {
             facts["load_response_ratio"] = (maxLoad / max(maxThrottle, 1.0)).round3()
             facts["throttle_load_mismatch"] = (maxThrottle - maxLoad).round2()
@@ -52,6 +74,9 @@ class EnginePhysics {
         if (maxMap != null) {
             facts["estimated_boost_kpa"] = (maxMap - ATMOSPHERIC_KPA).round1()
             facts["boost_expected_for_profile"] = profile.induction == InductionType.Turbocharged
+        }
+        if (latestBaro != null && maxMap != null) {
+            facts["map_minus_baro_peak_kpa"] = (maxMap - latestBaro).round1()
         }
         if (maxMaf != null) {
             facts["estimated_power_kw_from_maf"] = (maxMaf * AIR_MASS_TO_KW).round1()
@@ -86,9 +111,36 @@ class EnginePhysics {
         }
         if (minVoltage != null) {
             facts["low_voltage_seen"] = minVoltage < 12.6
+            facts["low_voltage_index"] = max(0.0, (12.6 - minVoltage) / 2.0).round3()
+        }
+        if (maxVoltage != null) {
+            facts["high_voltage_index"] = max(0.0, (maxVoltage - 15.1) / 1.5).round3()
+        }
+        if (maxCoolant != null) {
+            facts["overheat_index"] = max(0.0, (maxCoolant - 108.0) / 18.0).round3()
+        }
+        if (minCoolant != null && maxCoolant != null) {
+            facts["cold_operation_index"] = if (maxCoolant < 75.0) max(0.0, (75.0 - maxCoolant) / 30.0).round3() else 0.0
         }
         maxIat?.let {
             facts["thermal_air_density_loss_index"] = max(0.0, (it - 35.0) * 0.0032).round3()
+            facts["iat_heat_soak_index"] = max(0.0, (it - 55.0) / 45.0).round3()
+        }
+        minFuelLevel?.let {
+            facts["low_fuel_level_index"] = max(0.0, (12.0 - it) / 12.0).round3()
+        }
+        o2Stats("front_o2_b1", o2B1S1).forEach { (key, value) -> facts[key] = value }
+        o2Stats("downstream_o2_b1", o2B1S2).forEach { (key, value) -> facts[key] = value }
+        val frontRange = facts["front_o2_b1_range_v"] as? Double
+        val rearRange = facts["downstream_o2_b1_range_v"] as? Double
+        if (frontRange != null && rearRange != null) {
+            facts["rear_o2_activity_ratio_b1"] = (rearRange / max(frontRange, 0.05)).round3()
+            facts["catalyst_o2_similarity_index_b1"] = max(0.0, rearRange / max(frontRange, 0.05) - 0.55).round3()
+        }
+        if (maxThrottle != null && maxThrottle > 70.0) {
+            val speedDelta = facts["speed_delta_kph"] as? Double ?: 0.0
+            val rpmDelta = facts["rpm_delta"] as? Double ?: 0.0
+            facts["wot_no_speed_gain_index"] = if (speedDelta < 8.0 && rpmDelta > 700.0) 1.0 else 0.0
         }
 
         trimByMode(stft, ltft, rpm, speed, throttle, load, idle = true)?.let {
@@ -181,6 +233,35 @@ class EnginePhysics {
             }
         }
         return values.takeIf { it.size >= 3 }?.average()
+    }
+
+    private fun idleRpmStdDev(
+        rpm: List<PidSample>,
+        speed: List<PidSample>,
+    ): Double? {
+        val values = rpm.mapNotNull { rpmSample ->
+            val speedValue = speed.nearest(rpmSample.timestampMillis, 800L)?.value ?: 0.0
+            rpmSample.value.takeIf { it in 450.0..1_300.0 && speedValue < 5.0 }
+        }
+        if (values.size < 5) return null
+        val mean = values.average()
+        return kotlin.math.sqrt(values.sumOf { (it - mean) * (it - mean) } / values.size)
+    }
+
+    private fun o2Stats(prefix: String, samples: List<PidSample>): Map<String, Any> {
+        if (samples.size < 5) return emptyMap()
+        val values = samples.map { it.value }
+        val min = values.min()
+        val max = values.max()
+        val switchCount = values.zipWithNext().count { (a, b) -> (a < 0.45 && b >= 0.45) || (a >= 0.45 && b < 0.45) }
+        val range = max - min
+        return mapOf(
+            "${prefix}_min_v" to min.round3(),
+            "${prefix}_max_v" to max.round3(),
+            "${prefix}_range_v" to range.round3(),
+            "${prefix}_switch_count" to switchCount.toDouble(),
+            "${prefix}_stuck_index" to if (range < 0.12 && switchCount <= 1) 1.0 else 0.0,
+        )
     }
 
     private fun List<PidSample>.byPid(pid: String): List<PidSample> =

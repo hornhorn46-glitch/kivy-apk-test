@@ -6,7 +6,7 @@
   "validation": {
     "targetAccuracy": 0.98,
     "measuredTestAccuracy": 0.9833,
-    "measuredMacroF1": 0.9819,
+    "measuredMacroF1": 0.9778,
     "testGraphCount": 60,
     "testVehicleGraphCount": 60,
     "validationKind": "physics_fault_injection_on_real_obd_templates",
@@ -200,6 +200,146 @@
       "description": "clean wot adequacy index"
     },
     {
+      "id": "combined_trim_b2",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 30.0,
+      "description": "combined trim b2"
+    },
+    {
+      "id": "bank_trim_split",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 24.0,
+      "description": "bank trim split"
+    },
+    {
+      "id": "global_combined_trim_avg",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 30.0,
+      "description": "global combined trim avg"
+    },
+    {
+      "id": "combined_trim_max_abs",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 30.0,
+      "description": "combined trim max abs"
+    },
+    {
+      "id": "front_o2_b1_range_v",
+      "missingValue": 0.65,
+      "center": 0.65,
+      "scale": 0.35,
+      "description": "front o2 b1 range v"
+    },
+    {
+      "id": "front_o2_b1_switch_count",
+      "missingValue": 0.0,
+      "center": 6.0,
+      "scale": 6.0,
+      "description": "front o2 b1 switch count"
+    },
+    {
+      "id": "front_o2_b1_stuck_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "front o2 b1 stuck index"
+    },
+    {
+      "id": "rear_o2_activity_ratio_b1",
+      "missingValue": 0.22,
+      "center": 0.22,
+      "scale": 0.55,
+      "description": "rear o2 activity ratio b1"
+    },
+    {
+      "id": "catalyst_o2_similarity_index_b1",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 0.65,
+      "description": "catalyst o2 similarity index b1"
+    },
+    {
+      "id": "rough_idle_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "rough idle index"
+    },
+    {
+      "id": "low_voltage_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "low voltage index"
+    },
+    {
+      "id": "high_voltage_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "high voltage index"
+    },
+    {
+      "id": "overheat_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "overheat index"
+    },
+    {
+      "id": "cold_operation_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "cold operation index"
+    },
+    {
+      "id": "iat_heat_soak_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "iat heat soak index"
+    },
+    {
+      "id": "low_fuel_level_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "low fuel level index"
+    },
+    {
+      "id": "wot_no_speed_gain_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "wot no speed gain index"
+    },
+    {
+      "id": "map_minus_baro_peak_kpa",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 45.0,
+      "description": "map minus baro peak kpa"
+    },
+    {
+      "id": "unique_pid_count",
+      "missingValue": 10.0,
+      "center": 10.0,
+      "scale": 12.0,
+      "description": "unique pid count"
+    },
+    {
+      "id": "dtc_count",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 4.0,
+      "description": "dtc count"
+    },
+    {
       "id": "has_misfire_dtc",
       "missingValue": 0.0,
       "center": 0.0,
@@ -221,6 +361,13 @@
       "description": "has rich dtc"
     },
     {
+      "id": "has_catalyst_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has catalyst dtc"
+    },
+    {
       "id": "has_throttle_dtc",
       "missingValue": 0.0,
       "center": 0.0,
@@ -240,6 +387,76 @@
       "center": 0.0,
       "scale": 1.0,
       "description": "has voltage dtc"
+    },
+    {
+      "id": "has_fuel_pressure_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has fuel pressure dtc"
+    },
+    {
+      "id": "has_o2_sensor_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has o2 sensor dtc"
+    },
+    {
+      "id": "has_evap_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has evap dtc"
+    },
+    {
+      "id": "has_egr_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has egr dtc"
+    },
+    {
+      "id": "has_vvt_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has vvt dtc"
+    },
+    {
+      "id": "has_cam_crank_sync_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has cam crank sync dtc"
+    },
+    {
+      "id": "has_boost_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has boost dtc"
+    },
+    {
+      "id": "has_transmission_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has transmission dtc"
+    },
+    {
+      "id": "has_dpf_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has dpf dtc"
+    },
+    {
+      "id": "has_injector_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has injector dtc"
     },
     {
       "id": "diagnostic_data_coverage",
@@ -268,13 +485,35 @@
         "sensor_implausibility_index": -2.0,
         "mechanical_breathing_index": -3.0,
         "clean_wot_adequacy_index": 3.2,
+        "bank_trim_split": -0.9,
+        "front_o2_b1_stuck_index": -2.4,
+        "catalyst_o2_similarity_index_b1": -2.2,
+        "rough_idle_index": -1.6,
+        "low_voltage_index": -2.8,
+        "high_voltage_index": -2.4,
+        "overheat_index": -2.6,
+        "cold_operation_index": -2.0,
+        "low_fuel_level_index": -1.7,
+        "wot_no_speed_gain_index": -3.4,
         "coolant_c": -0.5,
         "iat_c": -0.2,
+        "dtc_count": -0.6,
         "has_misfire_dtc": -4.0,
         "has_lean_dtc": -2.2,
         "has_rich_dtc": -2.2,
+        "has_catalyst_dtc": -3.0,
         "has_throttle_dtc": -3.0,
-        "has_voltage_dtc": -3.0
+        "has_voltage_dtc": -3.0,
+        "has_fuel_pressure_dtc": -2.8,
+        "has_o2_sensor_dtc": -3.0,
+        "has_evap_dtc": -2.0,
+        "has_egr_dtc": -2.7,
+        "has_vvt_dtc": -2.8,
+        "has_cam_crank_sync_dtc": -3.0,
+        "has_boost_dtc": -2.6,
+        "has_transmission_dtc": -2.8,
+        "has_dpf_dtc": -2.8,
+        "has_injector_dtc": -2.8
       },
       "physicalExplanation": "Параметры согласованы между собой: коррекции, воздух, нагрузка, зажигание и питание не дают устойчивой неисправности.",
       "recommendedChecks": [
@@ -301,7 +540,8 @@
         "combined_trim_load_b1": 0.8,
         "trim_load_delta_b1": -4.4,
         "idle_vacuum_kpa": -1.8,
-        "has_lean_dtc": 2.0
+        "has_lean_dtc": 2.0,
+        "has_evap_dtc": -2.0
       },
       "physicalExplanation": "На холостом ходу смесь уходит в бедную сторону сильнее, чем под нагрузкой: типичная физика подсоса воздуха после расходомера или утечки вакуума.",
       "recommendedChecks": [
@@ -579,7 +819,7 @@
         "combined_trim_load_b1": 0.1,
         "power_ratio_to_reference": -1.6,
         "specific_airflow_gps_per_liter": -1.0,
-        "sensor_implausibility_index": -0.9
+        "sensor_implausibility_index": -2.0
       },
       "physicalExplanation": "Дроссель открыт, но наполнение и удельный расход воздуха низкие без сильного перекоса топливных коррекций и без яркого признака забитого впуска или выпуска. Такая форма графиков чаще указывает на механическое дыхание двигателя: фазы ГРМ, компрессия, герметичность клапанов или управление фазовращателями.",
       "recommendedChecks": [
@@ -603,7 +843,7 @@
       "title": "Air metering sensor plausibility fault",
       "bias": -1.55,
       "weights": {
-        "sensor_implausibility_index": 5.8,
+        "sensor_implausibility_index": 8.2,
         "mechanical_breathing_index": -1.3,
         "clean_wot_adequacy_index": -0.8,
         "max_load_percent": 1.1,
@@ -665,6 +905,8 @@
       "bias": -1.0,
       "weights": {
         "module_voltage_avg_v": -6.4,
+        "low_voltage_index": 5.8,
+        "high_voltage_index": 3.4,
         "has_voltage_dtc": 3.2,
         "max_load_percent": -0.5
       },
@@ -673,6 +915,296 @@
         "Load-test АКБ и генератор.",
         "Проверить массы двигателя/кузова.",
         "Снять падение напряжения на питании ЭБУ и насоса."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "oxygen_sensor",
+      "title": "Oxygen sensor or lambda feedback fault",
+      "bias": -1.15,
+      "weights": {
+        "has_o2_sensor_dtc": 5.8,
+        "front_o2_b1_stuck_index": 5.4,
+        "front_o2_b1_range_v": -3.8,
+        "front_o2_b1_switch_count": -2.2,
+        "sensor_implausibility_index": 1.8,
+        "power_ratio_to_reference": -0.2
+      },
+      "physicalExplanation": "Передний кислородный датчик или lambda-сигнал завис, медленно переключается либо физически не согласуется с коррекциями и нагрузкой. Модель сначала подозревает ошибку обратной связи, а не сразу топливо или воздух.",
+      "recommendedChecks": [
+        "Сравнить переключение переднего O2/lambda на прогретом холостом и 2500 RPM.",
+        "Проверить питание нагревателя, массу и сигнальную линию датчика.",
+        "Не менять датчик до исключения подсоса и давления топлива."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "catalyst_efficiency",
+      "title": "Catalyst efficiency or rear O2 tracking",
+      "bias": -1.2,
+      "weights": {
+        "has_catalyst_dtc": 6.0,
+        "rear_o2_activity_ratio_b1": 4.2,
+        "catalyst_o2_similarity_index_b1": 5.4,
+        "front_o2_b1_stuck_index": -1.4,
+        "power_ratio_to_reference": 0.1
+      },
+      "physicalExplanation": "Задний кислородный датчик повторяет передний слишком активно либо есть коды эффективности катализатора. Это указывает на слабый кислородный буфер катализатора, утечку выпуска или ошибку заднего датчика.",
+      "recommendedChecks": [
+        "Сравнить графики переднего и заднего O2 после прогрева.",
+        "Проверить утечки выпуска перед задним датчиком.",
+        "Убедиться, что нет активных пропусков и ошибок смеси, убивающих катализатор."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "evap_purge",
+      "title": "EVAP purge stuck open / vapor leak into intake",
+      "bias": -0.95,
+      "weights": {
+        "has_evap_dtc": 5.7,
+        "combined_trim_idle_b1": 3.8,
+        "combined_trim_load_b1": -1.1,
+        "trim_load_delta_b1": -4.2,
+        "idle_vacuum_kpa": -0.7,
+        "rough_idle_index": 2.4,
+        "has_lean_dtc": 0.8
+      },
+      "physicalExplanation": "Бедный холостой ход, нестабильность и EVAP-признаки похожи на неконтролируемый подсос паров топлива или воздуха через purge-контур, особенно если под нагрузкой коррекции меняются меньше.",
+      "recommendedChecks": [
+        "Перекрыть или командно закрыть purge и посмотреть реакцию STFT.",
+        "Проверить герметичность клапана purge на холостом.",
+        "Осмотреть EVAP-шланги и насыщение адсорбера."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "egr_fault",
+      "title": "EGR stuck open or excess EGR flow",
+      "bias": -1.25,
+      "weights": {
+        "has_egr_dtc": 5.2,
+        "rough_idle_index": 4.8,
+        "idle_vacuum_kpa": -2.0,
+        "peak_maf_ratio_to_expected": -1.0,
+        "max_load_percent": -1.2,
+        "power_ratio_to_reference": -0.6
+      },
+      "physicalExplanation": "Неровный холостой ход, низкий вакуум и EGR-признаки говорят о попадании инертных выхлопных газов тогда, когда их быть не должно. Смесь разбавляется, горение слабеет.",
+      "recommendedChecks": [
+        "Закрыть/открыть EGR командой, если ЭБУ поддерживает тест.",
+        "Проверить положение EGR, загрязнение, вакуум или соленоид управления.",
+        "Подтвердить по реакции MAP и стабильности холостого хода."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "vvt_fault",
+      "title": "Variable valve timing or cam/crank sync fault",
+      "bias": -1.25,
+      "weights": {
+        "has_vvt_dtc": 4.8,
+        "has_cam_crank_sync_dtc": 4.5,
+        "mechanical_breathing_index": 4.4,
+        "estimated_peak_ve": -2.0,
+        "peak_maf_ratio_to_expected": -1.7,
+        "rough_idle_index": 0.8,
+        "power_ratio_to_reference": -1.0
+      },
+      "physicalExplanation": "Низкое наполнение и расход воздуха вместе с VVT или cam/crank признаками указывают на управление фазами, фазовращатель, установку ГРМ или датчики синхронизации.",
+      "recommendedChecks": [
+        "Проверить уровень масла, давление масла и соленоиды фаз.",
+        "Сравнить заданный и фактический угол распредвала, если есть расширенный PID.",
+        "Механически проверить метки ГРМ до замены датчиков."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "injector_balance",
+      "title": "Injector circuit or cylinder fuel balance fault",
+      "bias": -1.2,
+      "weights": {
+        "has_injector_dtc": 5.8,
+        "has_misfire_dtc": 1.4,
+        "bank_trim_split": 4.7,
+        "combined_trim_b2": 1.2,
+        "rough_idle_index": 3.0,
+        "power_ratio_to_reference": -0.7
+      },
+      "physicalExplanation": "Перекос банков, неровный холостой и injector/misfire признаки указывают на неравномерную подачу топлива по цилиндрам или банкам, а не на общую ошибку смеси.",
+      "recommendedChecks": [
+        "Проверить injector circuit коды по цилиндрам.",
+        "Сделать cylinder balance или injector cut test.",
+        "Сравнить свечи, компрессию и коррекции по банкам."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "low_fuel_starvation",
+      "title": "Low fuel level / pickup starvation under load",
+      "bias": -1.15,
+      "weights": {
+        "low_fuel_level_index": 5.8,
+        "combined_trim_load_b1": 2.8,
+        "trim_load_delta_b1": 2.4,
+        "has_fuel_pressure_dtc": 1.8,
+        "max_load_percent": -1.0,
+        "power_ratio_to_reference": -0.9
+      },
+      "physicalExplanation": "Низкий запас топлива вместе с бедным поведением под нагрузкой может означать, что заборник оголяется при разгоне или насос не удерживает подачу.",
+      "recommendedChecks": [
+        "Повторить безопасный нагрузочный тест при уровне топлива выше четверти бака.",
+        "Измерить давление топлива во время разгона.",
+        "Проверить заборник, фильтр, насос и загрязнение бака."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "thermostat_cold",
+      "title": "Thermostat stuck open / cold engine strategy",
+      "bias": -1.2,
+      "weights": {
+        "cold_operation_index": 6.0,
+        "coolant_c": -4.2,
+        "combined_trim_idle_b1": -0.7,
+        "combined_trim_load_b1": -0.5,
+        "power_ratio_to_reference": -0.2
+      },
+      "physicalExplanation": "Охлаждающая жидкость остается холодной для прогретого режима, поэтому активны прогревочные обогащения, и часть выводов по смеси становится менее надежной.",
+      "recommendedChecks": [
+        "Сверить ECT внешним измерением.",
+        "Проверить температуру открытия термостата и циркуляцию охлаждения.",
+        "Повторить тест только после выхода двигателя на рабочую температуру."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "transmission_slip",
+      "title": "Transmission slip or torque converter problem",
+      "bias": -1.15,
+      "weights": {
+        "wot_no_speed_gain_index": 6.2,
+        "has_transmission_dtc": 3.8,
+        "max_throttle_percent": 1.0,
+        "max_load_percent": 0.7,
+        "peak_maf_ratio_to_expected": 0.5,
+        "power_ratio_to_reference": 0.5
+      },
+      "physicalExplanation": "Двигатель принимает газ и нагрузку, но скорость не растет пропорционально. Потеря находится после коленвала: коробка, гидротрансформатор или сцепление.",
+      "recommendedChecks": [
+        "Сравнить рост RPM и скорости при безопасном разгоне.",
+        "Прочитать DTC коробки и температуру ATF.",
+        "Проверить состояние жидкости, блокировку гидротрансформатора и счетчики проскальзывания, если доступны."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "dpf_restriction",
+      "title": "DPF or exhaust aftertreatment restriction",
+      "bias": -1.25,
+      "weights": {
+        "has_dpf_dtc": 5.8,
+        "exhaust_restriction_index": 4.8,
+        "peak_maf_ratio_to_expected": -1.8,
+        "max_map_kpa": 1.4,
+        "spark_torque_loss_index": 0.7,
+        "power_ratio_to_reference": -1.1
+      },
+      "physicalExplanation": "DPF-признаки вместе с высоким индексом ограничения выпуска и низким расходом воздуха указывают на противодавление после двигателя.",
+      "recommendedChecks": [
+        "Прочитать дифференциальное давление DPF и soot load, если поддерживается.",
+        "Измерить противодавление выпуска до DPF/катализатора.",
+        "Проверить историю регенераций и датчики температуры."
       ],
       "sources": [
         "sae-j1979",

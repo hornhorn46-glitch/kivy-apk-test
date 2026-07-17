@@ -42,14 +42,15 @@ class InferenceEngine(
         var requiredFailed = false
 
         for (condition in rule.conditions) {
-            possibleWeight += condition.weight
             val value = facts[condition.metric]
             if (value == null) {
+                possibleWeight += if (condition.required) condition.weight else condition.weight * 0.25
                 missing += condition.metric
                 if (condition.required) requiredFailed = true
                 continue
             }
 
+            possibleWeight += condition.weight
             if (matches(condition, value)) {
                 matchedWeight += condition.weight
                 evidence += Evidence(condition.metric, value.toString(), condition.weight)
@@ -63,10 +64,10 @@ class InferenceEngine(
 
         val matchRatio = matchedWeight / possibleWeight.coerceAtLeast(1.0)
         val contradictionPenalty = (contradicted.size * 0.08).coerceAtMost(0.35)
-        val missingPenalty = (missing.size * 0.05).coerceAtMost(0.30)
+        val missingPenalty = (missing.size * 0.035).coerceAtMost(0.25)
         val probability = (rule.probability * (0.55 + matchRatio * 0.55) - contradictionPenalty)
             .coerceIn(0.0, 0.99)
-        val confidence = (rule.confidence * matchRatio - missingPenalty - contradictionPenalty)
+        val confidence = (rule.confidence * (0.30 + matchRatio * 0.70) - missingPenalty - contradictionPenalty)
             .coerceIn(0.0, 0.99)
 
         if (probability < 0.25) return null

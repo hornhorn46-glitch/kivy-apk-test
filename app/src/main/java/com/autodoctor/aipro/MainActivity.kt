@@ -57,7 +57,10 @@ import com.autodoctor.aipro.core.cloud.CloudAiSettingsStore
 import com.autodoctor.aipro.core.cloud.CloudDiagnosticMode
 import com.autodoctor.aipro.core.cloud.OpenAiDiagnosticAssistant
 import com.autodoctor.aipro.core.diagnostics.FactExtractor
+import com.autodoctor.aipro.core.diagnostics.DiagnosticReport
+import com.autodoctor.aipro.core.diagnostics.InferenceEngine
 import com.autodoctor.aipro.core.knowledge.DiagnosticCasePatternSummary
+import com.autodoctor.aipro.core.diagnostics.DiagnosticRule
 import com.autodoctor.aipro.core.model.DiagnosticTroubleCode
 import com.autodoctor.aipro.core.model.FreezeFrame
 import com.autodoctor.aipro.core.model.ObdSession
@@ -99,8 +102,9 @@ class MainActivity : ComponentActivity() {
         val referenceCurves = runCatching { repository.loadReferenceCurves() }.getOrDefault(emptyList())
         val profiles = runCatching { repository.loadVehicleProfiles() }.getOrDefault(emptyList())
         val pids = runCatching { repository.loadPidDefinitions() }.getOrDefault(emptyList())
+        val rules = runCatching { repository.loadRules() }.getOrDefault(emptyList())
         val profileCount = profiles.size
-        val ruleCount = runCatching { repository.loadRules().size }.getOrDefault(0)
+        val ruleCount = rules.size
         val brandCount = runCatching {
             repository.loadBrandProfileMappings().sumOf { it.brands.size }
         }.getOrDefault(0)
@@ -115,6 +119,7 @@ class MainActivity : ComponentActivity() {
                     referenceCurves = referenceCurves,
                     profiles = profiles,
                     pids = pids,
+                    rules = rules,
                     profileCount = profileCount,
                     ruleCount = ruleCount,
                     brandCount = brandCount,
@@ -135,6 +140,7 @@ private data class EngineTestUiResult(
     val power: CombinedPowerEstimate,
     val comparison: ReferenceComparisonReport?,
     val analysis: DriveabilityAnalysis?,
+    val diagnosticReport: DiagnosticReport?,
     val session: ObdSession,
 )
 
@@ -169,6 +175,7 @@ private fun DiagnosticCockpit(
     referenceCurves: List<ReferenceCurveSet>,
     profiles: List<VehicleProfile>,
     pids: List<PidDefinition>,
+    rules: List<DiagnosticRule>,
     profileCount: Int,
     ruleCount: Int,
     brandCount: Int,
@@ -191,6 +198,7 @@ private fun DiagnosticCockpit(
     val powerAnalyzer = remember { AccelerationAnalyzer() }
     val referenceComparator = remember { ReferenceCurveComparator() }
     val factExtractor = remember { FactExtractor() }
+    val inferenceEngine = remember(rules) { InferenceEngine(rules) }
     val driveabilityAnalyzer = remember(model) { model?.let(::NeuroSymbolicDriveabilityAnalyzer) }
     val cloudSettingsStore = remember { CloudAiSettingsStore(context.applicationContext) }
     val cloudAssistant = remember { OpenAiDiagnosticAssistant(context.applicationContext) }
@@ -258,8 +266,9 @@ private fun DiagnosticCockpit(
             ),
         )
         val comparison = reference?.let { referenceComparator.compare(session, it) }
+        val diagnosticReport = inferenceEngine.analyze(selectedProfile, session)
         val analysis = driveabilityAnalyzer?.analyze(factExtractor.extract(selectedProfile, session))
-        testResult = EngineTestUiResult(step, selectedProfile, validation, power, comparison, analysis, session)
+        testResult = EngineTestUiResult(step, selectedProfile, validation, power, comparison, analysis, diagnosticReport, session)
         recordingSince = null
     }
 
@@ -840,6 +849,7 @@ private fun TestResultCard(
             PowerBlock(result.power)
             PowerLossBlock(result)
             DeviationSummaryBlock(result.comparison)
+            LocalDiagnosticBlock(result.diagnosticReport)
             if (!result.validation.valid) {
                 Text(
                     text = "Диагноз не фиксирую: график не прошел контроль качества. Повторите этот же тест, иначе приложение будет угадывать вместо диагностики.",
@@ -903,6 +913,52 @@ private fun DeviationSummaryBlock(comparison: ReferenceComparisonReport?) {
                 lineHeight = 18.sp,
                 fontSize = 13.sp,
             )
+        }
+    }
+}
+
+@Composable
+private fun LocalDiagnosticBlock(report: DiagnosticReport?) {
+    if (report == null) {
+        Text("Локальный эксперт пока не дал отчёт.", color = Color(0xFF9FB3C8), lineHeight = 18.sp, fontSize = 13.sp)
+        return
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Локальная диагностика без интернета", color = Color.White, fontWeight = FontWeight.SemiBold)
+        Text(report.message, color = if (report.insufficientData) Color(0xFFFFD166) else Color(0xFF42D392), lineHeight = 18.sp, fontSize = 13.sp)
+        report.hypotheses.take(3).forEach { hypothesis ->
+            Card(shape = RoundedCornerShape(14.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF172235))) {
+                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(hypothesis.title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(
+                        "Вероятность ${(hypothesis.probability * 100).roundToInt()}%, confidence ${(hypothesis.confidence * 100).roundToInt()}%, severity ${hypothesis.severity}.",
+                        color = Color(0xFF42D392),
+                        fontSize = 12.sp,
+                    )
+                    if (hypothesis.evidence.isNotEmpty()) {
+                        Text(
+                            "Зацепки: ${hypothesis.evidence.take(4).joinToString("; ") { "${it.label}=${it.value}" }}.",
+                            color = Color(0xFFD7E3F1),
+                            lineHeight = 17.sp,
+                            fontSize = 12.sp,
+                        )
+                    }
+                    if (hypothesis.missingData.isNotEmpty()) {
+                        Text(
+                            "Не хватает: ${hypothesis.missingData.take(5).joinToString(", ")}.",
+                            color = Color(0xFFFFD166),
+                            lineHeight = 17.sp,
+                            fontSize = 12.sp,
+                        )
+                    }
+                    Text(
+                        "Проверить: ${hypothesis.recommendedChecks.take(3).joinToString("; ")}.",
+                        color = Color(0xFF9FB3C8),
+                        lineHeight = 17.sp,
+                        fontSize = 12.sp,
+                    )
+                }
+            }
         }
     }
 }

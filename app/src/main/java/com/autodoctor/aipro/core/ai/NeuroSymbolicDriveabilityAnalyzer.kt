@@ -23,12 +23,16 @@ class NeuroSymbolicDriveabilityAnalyzer(
             }
         }
         val probabilities = softmax(scores)
-        val dataCompleteness = 1.0 - (missingFeatures.size.toDouble() / max(model.features.size, 1))
+        val observedFeatureCount = model.features.count { rawFeatureValue(facts[it.id]) != null }
+        val observedFeatureRatio = (observedFeatureCount.toDouble() / max(model.features.size, 1)).coerceIn(0.0, 1.0)
         val coverage = rawFeatureValue(facts["diagnostic_data_coverage"]) ?: 0.0
+        val dtcSignal = if ((rawFeatureValue(facts["dtc_count"]) ?: 0.0) > 0.0) 0.55 else 0.0
+        val dataCompleteness = max(max(coverage, observedFeatureRatio), dtcSignal).coerceIn(0.0, 1.0)
 
         val predictions = model.outputs.map { output ->
             val probability = probabilities[output] ?: 0.0
-            val confidence = (probability * max(dataCompleteness, 0.0) * max(coverage, 0.25)).coerceIn(0.0, 1.0)
+            val signalCoverage = max(dataCompleteness, coverage).coerceIn(0.0, 1.0)
+            val confidence = (probability * (0.35 + signalCoverage * 0.65)).coerceIn(0.0, 1.0)
             DriveabilityPrediction(
                 rootCause = output.rootCause,
                 title = output.title,
@@ -43,7 +47,7 @@ class NeuroSymbolicDriveabilityAnalyzer(
 
         return DriveabilityAnalysis(
             predictions = predictions,
-            insufficientData = dataCompleteness < 0.45 || coverage < 0.45,
+            insufficientData = dataCompleteness < 0.45 && coverage < 0.45,
             dataCompleteness = dataCompleteness,
             missingFeatures = missingFeatures,
         )
