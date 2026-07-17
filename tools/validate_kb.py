@@ -92,11 +92,20 @@ def validate_rules(source_ids: set[str]) -> list[dict]:
 
 def validate_profiles() -> None:
     required = {"id", "make", "model", "induction", "injection", "airMetering", "transmission", "obdType", "supportedPids", "references"}
+    profile_count = 0
+    generic_gasoline_count = 0
     for path in sorted((KB / "profiles").glob("*.json")):
         profile = load_json(path)
+        profile_count += 1
+        if profile["id"].startswith("generic-gasoline-"):
+            generic_gasoline_count += 1
         missing = required - set(profile)
         if missing:
             fail(f"profile {path.name} missing {sorted(missing)}")
+    if profile_count < 50:
+        fail(f"too few vehicle profiles: {profile_count}")
+    if generic_gasoline_count < 40:
+        fail(f"too few generic gasoline profiles: {generic_gasoline_count}")
 
 
 def validate_brand_profiles(source_ids: set[str]) -> None:

@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.autodoctor.aipro.core.narration.GarageChiefNarrator
+import com.autodoctor.aipro.core.narration.GarageChiefVerdict
 import com.autodoctor.aipro.core.reference.ReferenceCurve
 import com.autodoctor.aipro.core.reference.ReferenceCurveSet
 import com.autodoctor.aipro.ui.design.AutoDoctorTheme
@@ -38,20 +40,37 @@ import com.autodoctor.aipro.ui.design.AutoDoctorTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val referenceCurves = runCatching {
-            (application as AutoDoctorApp).knowledgeRepository.loadReferenceCurves()
-        }.getOrDefault(emptyList())
+        val repository = (application as AutoDoctorApp).knowledgeRepository
+        val referenceCurves = runCatching { repository.loadReferenceCurves() }.getOrDefault(emptyList())
+        val profileCount = runCatching { repository.loadVehicleProfiles().size }.getOrDefault(0)
+        val ruleCount = runCatching { repository.loadRules().size }.getOrDefault(0)
+        val brandCount = runCatching {
+            repository.loadBrandProfileMappings().sumOf { it.brands.size }
+        }.getOrDefault(0)
+        val garageVerdict = GarageChiefNarrator().preview()
 
         setContent {
             AutoDoctorTheme {
-                DashboardScreen(referenceCurves)
+                DashboardScreen(
+                    referenceCurves = referenceCurves,
+                    profileCount = profileCount,
+                    ruleCount = ruleCount,
+                    brandCount = brandCount,
+                    garageVerdict = garageVerdict,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun DashboardScreen(referenceCurves: List<ReferenceCurveSet>) {
+private fun DashboardScreen(
+    referenceCurves: List<ReferenceCurveSet>,
+    profileCount: Int,
+    ruleCount: Int,
+    brandCount: Int,
+    garageVerdict: GarageChiefVerdict,
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -78,10 +97,11 @@ private fun DashboardScreen(referenceCurves: List<ReferenceCurveSet>) {
                 fontSize = 15.sp,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(14.dp), modifier = Modifier.fillMaxWidth()) {
-                HealthCard("Engine", "Needs analysis", 0.72, Modifier.weight(1f))
-                HealthCard("Fuel system", "Trim drift", 0.61, Modifier.weight(1f))
+                HealthCard("Profiles", "$profileCount gasoline baselines", 0.86, Modifier.weight(1f))
+                HealthCard("Rules", "$ruleCount expert checks", 0.78, Modifier.weight(1f))
             }
-            CoverageCard()
+            CoverageCard(profileCount, brandCount)
+            GarageChiefCard(garageVerdict)
             DiagnosisCard()
             LiveDataPreview()
             ReferenceCurvesPreview(referenceCurves.firstOrNull())
@@ -91,7 +111,7 @@ private fun DashboardScreen(referenceCurves: List<ReferenceCurveSet>) {
 }
 
 @Composable
-private fun CoverageCard() {
+private fun CoverageCard(profileCount: Int, brandCount: Int) {
     Card(
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xEE101827)),
@@ -99,10 +119,26 @@ private fun CoverageCard() {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("Generic gasoline diagnosis", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
             Text(
-                text = "Universal OBD-II profiles cover PFI/MAF, PFI/MAP, GDI, turbo and hybrid gasoline engines. Exact vehicle profiles improve confidence, but the diagnostic engine works with any gasoline OBD-II car when live data is available.",
+                text = "Сейчас в базе $profileCount профилей: универсальные бензиновые PFI/MAF, PFI/MAP, GDI, turbo и hybrid по разным объемам. Mapping покрывает $brandCount марок; точный профиль повышает уверенность, но диагностика работает и через общий OBD-II fallback.",
                 color = Color(0xFFD7E3F1),
                 lineHeight = 20.sp,
             )
+        }
+    }
+}
+
+@Composable
+private fun GarageChiefCard(verdict: GarageChiefVerdict) {
+    Card(
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xF0141C2C)),
+    ) {
+        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text("Garage Chief", color = Color(0xFFFFD166), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            Text(verdict.headline, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+            Text(verdict.feeling, color = Color(0xFFD7E3F1), lineHeight = 20.sp)
+            Text("Почему: ${verdict.why}", color = Color(0xFF9FB3C8), lineHeight = 19.sp, fontSize = 13.sp)
+            Text("Следующий ход: ${verdict.nextMove}", color = Color(0xFF42D392), lineHeight = 19.sp, fontSize = 14.sp)
         }
     }
 }
@@ -145,11 +181,11 @@ private fun DiagnosisCard() {
         colors = CardDefaults.cardColors(containerColor = Color(0xEE101827)),
     ) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("Вероятная гипотеза", color = Color(0xFF9FB3C8), fontSize = 13.sp)
-            Text("Подсос воздуха во впуске", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
-            Text("Вероятность: 91%  |  Серьезность: Warning", color = Color(0xFFFFD166), fontSize = 14.sp)
+            Text("Пример гипотезы", color = Color(0xFF9FB3C8), fontSize = 13.sp)
+            Text("Мотор не едет под нагрузкой", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+            Text("Приложение ищет не один параметр, а связку причин", color = Color(0xFFFFD166), fontSize = 14.sp)
             Text(
-                text = "Положительные топливные коррекции вместе с бедной смесью и заниженным расчетным наполнением цилиндров указывают, что ЭБУ добавляет топливо для компенсации неучтенного воздуха.",
+                text = "Если throttle высокий, load низкий, MAF/MAP не растут, trims уходят в плюс, а зажигание откатывается поздно, приоритеты проверок меняются: топливо, воздух, выпуск, дроссель, зажигание, пропуски и питание.",
                 color = Color(0xFFD7E3F1),
                 lineHeight = 20.sp,
             )

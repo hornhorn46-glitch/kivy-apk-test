@@ -36,6 +36,7 @@ def check_required_files() -> None:
         "knowledge/rules/engine_air_fuel.json",
         "knowledge/profiles/universal_obd2.json",
         "knowledge/profiles/universal_gasoline_pfi_maf_na.json",
+        "knowledge/profiles/generic_gasoline_turbo_gdi_mafmap_2_0l.json",
         "knowledge/brand_profiles/generic_gasoline_brands.json",
         "knowledge/reference_curves/toyota_etios_2014_1_5_carobd.json",
         "knowledge/encyclopedia/fuel_trim.json",

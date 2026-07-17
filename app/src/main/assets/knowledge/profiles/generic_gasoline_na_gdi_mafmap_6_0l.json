@@ -1,0 +1,55 @@
+{
+  "id": "generic-gasoline-na-gdi-mafmap-6_0l",
+  "make": "Generic",
+  "model": "Gasoline NA GDI MAF MAP 6.0L",
+  "year": null,
+  "engineCode": null,
+  "displacementLiters": 6.0,
+  "powerKw": 288.0,
+  "torqueNm": 690.0,
+  "massKg": null,
+  "induction": "NaturallyAspirated",
+  "injection": "DirectInjection",
+  "airMetering": "MafAndMap",
+  "redlineRpm": 6000,
+  "transmission": "Unknown",
+  "obdType": "Obd2",
+  "supportedPids": [
+    "RPM",
+    "SPEED",
+    "LOAD",
+    "MAF",
+    "MAP",
+    "THROTTLE",
+    "COOLANT_TEMP",
+    "INTAKE_TEMP",
+    "STFT_B1",
+    "LTFT_B1",
+    "FUEL_PRESSURE",
+    "TIMING_ADVANCE",
+    "LAMBDA",
+    "CONTROL_MODULE_VOLTAGE"
+  ],
+  "references": {
+    "coolantNormalCelsius": {
+      "min": 82.0,
+      "max": 108.0
+    },
+    "intakeAirNormalCelsius": {
+      "min": -20.0,
+      "max": 72.0
+    },
+    "idleRpm": {
+      "min": 580.0,
+      "max": 950.0
+    },
+    "fuelTrimNormalPercent": {
+      "min": -8.0,
+      "max": 8.0
+    },
+    "wotThrottlePercent": {
+      "min": 85.0,
+      "max": 100.0
+    }
+  }
+}

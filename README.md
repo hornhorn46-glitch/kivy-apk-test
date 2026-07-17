@@ -16,6 +16,8 @@ Implemented in this repository:
 - Rule loader and inference engine contracts.
 - Mathematical/physical model interfaces for power, air mass, fuel trim, boost, misfire, and plausibility analysis.
 - Initial open-licensed knowledge rules and encyclopedia entries.
+- Universal gasoline fallback profile grid by displacement, injection, induction, and air-metering.
+- Garage Chief narration layer that turns diagnostic evidence into direct driveability explanations.
 - JVM/Python validation scripts for the knowledge base.
 
 Not claimed as finished:
