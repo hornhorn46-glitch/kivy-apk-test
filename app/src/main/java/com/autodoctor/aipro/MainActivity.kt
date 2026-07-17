@@ -149,8 +149,8 @@ private val coreLivePidIds = listOf(
     "SPEED",
     "THROTTLE",
     "LOAD",
-    "MAP",
     "MAF",
+    "MAP",
     "COOLANT_TEMP",
     "INTAKE_TEMP",
     "STFT_B1",
@@ -163,11 +163,15 @@ private fun selectLiveStreamPids(
 ): List<PidDefinition> {
     val selected = PidSelection.engineTest(pids).ifEmpty { pids.filter { it.service == "01" } }
     val supportedIds = healthScan?.coverage?.supportedPidIds?.toSet().orEmpty()
-    if (supportedIds.isNotEmpty()) {
-        return selected.filter { it.id in supportedIds }.ifEmpty { selected.take(8) }
-    }
     val byId = selected.associateBy { it.id }
-    return coreLivePidIds.mapNotNull { byId[it] }.ifEmpty { selected.take(8) }
+    if (supportedIds.isNotEmpty()) {
+        val supportedCore = coreLivePidIds.mapNotNull { id -> byId[id]?.takeIf { id in supportedIds } }
+        val supportedExtra = selected.filter { it.id in supportedIds && it.id !in coreLivePidIds }
+        return (supportedCore + supportedExtra).take(10).ifEmpty {
+            coreLivePidIds.mapNotNull { byId[it] }.take(6)
+        }
+    }
+    return coreLivePidIds.mapNotNull { byId[it] }.take(8).ifEmpty { selected.take(6) }
 }
 
 @Composable
@@ -299,6 +303,16 @@ private fun DiagnosticCockpit(
     fun connect() {
         scope.launch {
             ObdTraceLog.clear()
+            samplingJob?.cancel()
+            runCatching { connection?.close() }
+            connection = null
+            liveSamples = emptyList()
+            recordedSamples = emptyList()
+            streamStartedAt = null
+            streamPidCount = 0
+            healthScan = null
+            scanningHealth = false
+            recordingSince = null
             connectResult = ObdConnectResult(ObdConnectStatus.Searching, "Ищу Bluetooth, Wi-Fi и USB ELM327...")
             val result = connectionManager.connectFirstReady()
             connectResult = result
@@ -510,10 +524,16 @@ private fun ConnectionCard(
                     Text(if (connected) "OBD подключен" else "OBD не подключен", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                     Text(result.message, color = Color(0xFFD7E3F1), lineHeight = 19.sp, fontSize = 13.sp)
                     if (connected) {
+                        val streamReady = sampleRateHz >= 0.05
                         Text(
-                            text = "Поток: ${sampleRateHz.roundDisplay()} samples/s, быстрый профиль $pidCount PID.",
+                            text = if (streamReady) {
+                                "Поток: ${sampleRateHz.roundDisplay()} samples/s, быстрый профиль $pidCount PID."
+                            } else {
+                                "Поток: нет live data. Заведите двигатель; если не оживет, нажмите Заново."
+                            },
                             color = if (sampleRateHz >= 4.0) Color(0xFF42D392) else Color(0xFFFFD166),
                             fontSize = 12.sp,
+                            lineHeight = 17.sp,
                         )
                     }
                 }
@@ -525,10 +545,10 @@ private fun ConnectionCard(
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2F80FF)),
                 ) {
-                    Text(if (connected) "Переподключить" else "Подключиться к OBD")
+                    Text(if (connected) "Заново" else "Подключить", maxLines = 1)
                 }
                 OutlinedButton(onClick = onDisconnect, enabled = connected, modifier = Modifier.weight(0.72f)) {
-                    Text("Отключить")
+                    Text("Стоп", maxLines = 1)
                 }
                 if (result.status == ObdConnectStatus.Searching) {
                     CircularProgressIndicator(Modifier.size(28.dp), color = Color(0xFFFFD166), strokeWidth = 3.dp)
@@ -702,8 +722,21 @@ private fun LiveGaugeGrid(samples: List<PidSample>, connected: Boolean) {
     Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE101827))) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                val liveReady = connected && samples.isNotEmpty()
                 Text("Live data", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Text(if (connected) "streaming" else "waiting", color = if (connected) Color(0xFF42D392) else Color(0xFF9FB3C8), fontSize = 13.sp)
+                Text(
+                    text = when {
+                        liveReady -> "streaming"
+                        connected -> "no data"
+                        else -> "waiting"
+                    },
+                    color = when {
+                        liveReady -> Color(0xFF42D392)
+                        connected -> Color(0xFFFFD166)
+                        else -> Color(0xFF9FB3C8)
+                    },
+                    fontSize = 13.sp,
+                )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                 Gauge("RPM", samples.latestValue("RPM"), 0.0, 7_000.0, "rpm", Color(0xFF2F80FF), Modifier.weight(1f))
