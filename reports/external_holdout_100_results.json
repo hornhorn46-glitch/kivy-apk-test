@@ -1,0 +1,3160 @@
+{
+  "summary": {
+    "total": 100,
+    "counts": {
+      "exact": 81,
+      "partial": 18,
+      "miss": 1,
+      "insufficient": 0
+    },
+    "exactRate": 0.81,
+    "usefulRate": 0.99,
+    "byExpected": {
+      "unmetered_air": {
+        "exact": 14,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "fuel_delivery": {
+        "exact": 10,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "sensor_plausibility": {
+        "exact": 8,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "evap_purge": {
+        "exact": 8,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "catalyst_efficiency": {
+        "exact": 9,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "oxygen_sensor": {
+        "exact": 7,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "injector_or_fuel_regulator_rich": {
+        "exact": 0,
+        "partial": 8,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "ignition_secondary_repair": {
+        "exact": 0,
+        "partial": 10,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "thermostat_cold": {
+        "exact": 6,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "egr_fault": {
+        "exact": 5,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "vvt_fault": {
+        "exact": 5,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "electrical": {
+        "exact": 4,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "throttle_limited": {
+        "exact": 3,
+        "partial": 0,
+        "miss": 0,
+        "insufficient": 0
+      },
+      "transmission_slip": {
+        "exact": 2,
+        "partial": 0,
+        "miss": 1,
+        "insufficient": 0
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "EXT-LEAN-VAC-01",
+      "source": "obdcodes-f150-p0171",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 18.0,
+        "combined_trim_idle_b1": 20.0,
+        "combined_trim_load_b1": 6,
+        "trim_load_delta_b1": -13,
+        "maf_ratio_to_expected": 0.62,
+        "throttle_percent": 16,
+        "map_kpa": 41,
+        "idle_map_kpa": 43,
+        "global_combined_trim_avg": 18,
+        "dtc_codes": [
+          "P0171",
+          "P0174"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-02",
+      "source": "obdcodes-silverado-lean",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 20.0,
+        "combined_trim_idle_b1": 22.2,
+        "combined_trim_load_b1": 7,
+        "trim_load_delta_b1": -14,
+        "maf_ratio_to_expected": 0.65,
+        "throttle_percent": 17,
+        "map_kpa": 42,
+        "idle_map_kpa": 44,
+        "global_combined_trim_avg": 19,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-03",
+      "source": "obdcodes-f150-p0171",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 22.0,
+        "combined_trim_idle_b1": 24.4,
+        "combined_trim_load_b1": 8,
+        "trim_load_delta_b1": -15,
+        "maf_ratio_to_expected": 0.6799999999999999,
+        "throttle_percent": 18,
+        "map_kpa": 43,
+        "idle_map_kpa": 45,
+        "global_combined_trim_avg": 20,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-04",
+      "source": "obdcodes-silverado-lean",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 24.0,
+        "combined_trim_idle_b1": 26.6,
+        "combined_trim_load_b1": 6,
+        "trim_load_delta_b1": -16,
+        "maf_ratio_to_expected": 0.71,
+        "throttle_percent": 19,
+        "map_kpa": 44,
+        "idle_map_kpa": 46,
+        "global_combined_trim_avg": 21,
+        "dtc_codes": [
+          "P0171",
+          "P0174"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-05",
+      "source": "obdcodes-f150-p0171",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 26.0,
+        "combined_trim_idle_b1": 20.0,
+        "combined_trim_load_b1": 7,
+        "trim_load_delta_b1": -13,
+        "maf_ratio_to_expected": 0.74,
+        "throttle_percent": 20,
+        "map_kpa": 45,
+        "idle_map_kpa": 47,
+        "global_combined_trim_avg": 22,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-06",
+      "source": "obdcodes-silverado-lean",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 28.0,
+        "combined_trim_idle_b1": 22.2,
+        "combined_trim_load_b1": 8,
+        "trim_load_delta_b1": -14,
+        "maf_ratio_to_expected": 0.62,
+        "throttle_percent": 21,
+        "map_kpa": 46,
+        "idle_map_kpa": 43,
+        "global_combined_trim_avg": 18,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-07",
+      "source": "obdcodes-f150-p0171",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 18.0,
+        "combined_trim_idle_b1": 24.4,
+        "combined_trim_load_b1": 6,
+        "trim_load_delta_b1": -15,
+        "maf_ratio_to_expected": 0.65,
+        "throttle_percent": 22,
+        "map_kpa": 41,
+        "idle_map_kpa": 44,
+        "global_combined_trim_avg": 19,
+        "dtc_codes": [
+          "P0171",
+          "P0174"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-08",
+      "source": "obdcodes-silverado-lean",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 20.0,
+        "combined_trim_idle_b1": 26.6,
+        "combined_trim_load_b1": 7,
+        "trim_load_delta_b1": -16,
+        "maf_ratio_to_expected": 0.6799999999999999,
+        "throttle_percent": 16,
+        "map_kpa": 42,
+        "idle_map_kpa": 45,
+        "global_combined_trim_avg": 20,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-09",
+      "source": "obdcodes-f150-p0171",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 22.0,
+        "combined_trim_idle_b1": 20.0,
+        "combined_trim_load_b1": 8,
+        "trim_load_delta_b1": -13,
+        "maf_ratio_to_expected": 0.71,
+        "throttle_percent": 17,
+        "map_kpa": 43,
+        "idle_map_kpa": 46,
+        "global_combined_trim_avg": 21,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-10",
+      "source": "obdcodes-silverado-lean",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 24.0,
+        "combined_trim_idle_b1": 22.2,
+        "combined_trim_load_b1": 6,
+        "trim_load_delta_b1": -14,
+        "maf_ratio_to_expected": 0.74,
+        "throttle_percent": 18,
+        "map_kpa": 44,
+        "idle_map_kpa": 47,
+        "global_combined_trim_avg": 22,
+        "dtc_codes": [
+          "P0171",
+          "P0174"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-11",
+      "source": "obdcodes-f150-p0171",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 26.0,
+        "combined_trim_idle_b1": 24.4,
+        "combined_trim_load_b1": 7,
+        "trim_load_delta_b1": -15,
+        "maf_ratio_to_expected": 0.62,
+        "throttle_percent": 19,
+        "map_kpa": 45,
+        "idle_map_kpa": 43,
+        "global_combined_trim_avg": 18,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-12",
+      "source": "obdcodes-silverado-lean",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 28.0,
+        "combined_trim_idle_b1": 26.6,
+        "combined_trim_load_b1": 8,
+        "trim_load_delta_b1": -16,
+        "maf_ratio_to_expected": 0.65,
+        "throttle_percent": 20,
+        "map_kpa": 46,
+        "idle_map_kpa": 44,
+        "global_combined_trim_avg": 19,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-13",
+      "source": "obdcodes-f150-p0171",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 18.0,
+        "combined_trim_idle_b1": 20.0,
+        "combined_trim_load_b1": 6,
+        "trim_load_delta_b1": -13,
+        "maf_ratio_to_expected": 0.6799999999999999,
+        "throttle_percent": 21,
+        "map_kpa": 41,
+        "idle_map_kpa": 45,
+        "global_combined_trim_avg": 20,
+        "dtc_codes": [
+          "P0171",
+          "P0174"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-LEAN-VAC-14",
+      "source": "obdcodes-silverado-lean",
+      "oracle": "Lean idle/load trims and forum repair pattern point to intake/vacuum leak.",
+      "expected": "unmetered_air",
+      "acceptable": [
+        "evap_purge"
+      ],
+      "predicted": "unmetered_air",
+      "ruleId": "gasoline.unmetered_air_lean_idle",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить STFT/LTFT на холостом ходу и при 2500 RPM",
+      "facts": {
+        "combined_trim_b1": 20.0,
+        "combined_trim_idle_b1": 22.2,
+        "combined_trim_load_b1": 7,
+        "trim_load_delta_b1": -14,
+        "maf_ratio_to_expected": 0.71,
+        "throttle_percent": 22,
+        "map_kpa": 42,
+        "idle_map_kpa": 46,
+        "global_combined_trim_avg": 21,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-01",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "generic.fuel_pressure_or_rail_supply_fault",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить давление топлива под нагрузкой",
+      "facts": {
+        "combined_trim_b1": 15,
+        "combined_trim_idle_b1": 3,
+        "combined_trim_load_b1": 17,
+        "trim_load_delta_b1": 13,
+        "max_throttle_percent": 78,
+        "max_load_percent": 70,
+        "lambda": 1.05,
+        "fuel_pressure_kpa": 210,
+        "global_combined_trim_avg": 13,
+        "dtc_codes": [
+          "P0087"
+        ],
+        "dtc_groups": [
+          "fuel_pressure"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-02",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "gasoline.fuel_delivery_lean_under_load",
+      "probability": 0.9,
+      "confidence": 0.8,
+      "outcome": "exact",
+      "recommendedCheck": "Записать разгон с RPM, throttle, load, trims, lambda, fuel pressure",
+      "facts": {
+        "combined_trim_b1": 16,
+        "combined_trim_idle_b1": 4,
+        "combined_trim_load_b1": 18,
+        "trim_load_delta_b1": 14,
+        "max_throttle_percent": 79,
+        "max_load_percent": 71,
+        "lambda": 1.06,
+        "fuel_pressure_kpa": 224,
+        "global_combined_trim_avg": 14,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-03",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "generic.fuel_pressure_or_rail_supply_fault",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить давление топлива под нагрузкой",
+      "facts": {
+        "combined_trim_b1": 17,
+        "combined_trim_idle_b1": 5,
+        "combined_trim_load_b1": 19,
+        "trim_load_delta_b1": 15,
+        "max_throttle_percent": 80,
+        "max_load_percent": 72,
+        "lambda": 1.07,
+        "fuel_pressure_kpa": 238,
+        "global_combined_trim_avg": 15,
+        "dtc_codes": [
+          "P0087"
+        ],
+        "dtc_groups": [
+          "fuel_pressure"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-04",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "gasoline.fuel_delivery_lean_under_load",
+      "probability": 0.9,
+      "confidence": 0.8,
+      "outcome": "exact",
+      "recommendedCheck": "Записать разгон с RPM, throttle, load, trims, lambda, fuel pressure",
+      "facts": {
+        "combined_trim_b1": 18,
+        "combined_trim_idle_b1": 6,
+        "combined_trim_load_b1": 20,
+        "trim_load_delta_b1": 16,
+        "max_throttle_percent": 81,
+        "max_load_percent": 73,
+        "lambda": 1.08,
+        "fuel_pressure_kpa": 252,
+        "global_combined_trim_avg": 16,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-05",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "generic.fuel_pressure_or_rail_supply_fault",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить давление топлива под нагрузкой",
+      "facts": {
+        "combined_trim_b1": 19,
+        "combined_trim_idle_b1": 3,
+        "combined_trim_load_b1": 21,
+        "trim_load_delta_b1": 17,
+        "max_throttle_percent": 82,
+        "max_load_percent": 74,
+        "lambda": 1.05,
+        "fuel_pressure_kpa": 266,
+        "global_combined_trim_avg": 17,
+        "dtc_codes": [
+          "P0087"
+        ],
+        "dtc_groups": [
+          "fuel_pressure"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-06",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "gasoline.fuel_delivery_lean_under_load",
+      "probability": 0.9,
+      "confidence": 0.8,
+      "outcome": "exact",
+      "recommendedCheck": "Записать разгон с RPM, throttle, load, trims, lambda, fuel pressure",
+      "facts": {
+        "combined_trim_b1": 20,
+        "combined_trim_idle_b1": 4,
+        "combined_trim_load_b1": 22,
+        "trim_load_delta_b1": 13,
+        "max_throttle_percent": 83,
+        "max_load_percent": 75,
+        "lambda": 1.06,
+        "fuel_pressure_kpa": 210,
+        "global_combined_trim_avg": 18,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-07",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "generic.fuel_pressure_or_rail_supply_fault",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить давление топлива под нагрузкой",
+      "facts": {
+        "combined_trim_b1": 21,
+        "combined_trim_idle_b1": 5,
+        "combined_trim_load_b1": 23,
+        "trim_load_delta_b1": 14,
+        "max_throttle_percent": 84,
+        "max_load_percent": 76,
+        "lambda": 1.07,
+        "fuel_pressure_kpa": 224,
+        "global_combined_trim_avg": 19,
+        "dtc_codes": [
+          "P0087"
+        ],
+        "dtc_groups": [
+          "fuel_pressure"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-08",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "gasoline.fuel_delivery_lean_under_load",
+      "probability": 0.9,
+      "confidence": 0.8,
+      "outcome": "exact",
+      "recommendedCheck": "Записать разгон с RPM, throttle, load, trims, lambda, fuel pressure",
+      "facts": {
+        "combined_trim_b1": 22,
+        "combined_trim_idle_b1": 6,
+        "combined_trim_load_b1": 24,
+        "trim_load_delta_b1": 15,
+        "max_throttle_percent": 85,
+        "max_load_percent": 77,
+        "lambda": 1.08,
+        "fuel_pressure_kpa": 238,
+        "global_combined_trim_avg": 20,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-09",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "generic.fuel_pressure_or_rail_supply_fault",
+      "probability": 0.95,
+      "confidence": 0.82,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить давление топлива под нагрузкой",
+      "facts": {
+        "combined_trim_b1": 23,
+        "combined_trim_idle_b1": 3,
+        "combined_trim_load_b1": 17,
+        "trim_load_delta_b1": 16,
+        "max_throttle_percent": 86,
+        "max_load_percent": 78,
+        "lambda": 1.05,
+        "fuel_pressure_kpa": 252,
+        "global_combined_trim_avg": 21,
+        "dtc_codes": [
+          "P0087"
+        ],
+        "dtc_groups": [
+          "fuel_pressure"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-FUEL-LOAD-10",
+      "source": "underhood-fuel-delivery",
+      "oracle": "Lean only under load with weak fuel pressure follows fuel-delivery diagnostics.",
+      "expected": "fuel_delivery",
+      "acceptable": [
+        "low_fuel_starvation"
+      ],
+      "predicted": "fuel_delivery",
+      "ruleId": "gasoline.fuel_delivery_lean_under_load",
+      "probability": 0.9,
+      "confidence": 0.8,
+      "outcome": "exact",
+      "recommendedCheck": "Записать разгон с RPM, throttle, load, trims, lambda, fuel pressure",
+      "facts": {
+        "combined_trim_b1": 15,
+        "combined_trim_idle_b1": 4,
+        "combined_trim_load_b1": 18,
+        "trim_load_delta_b1": 17,
+        "max_throttle_percent": 87,
+        "max_load_percent": 79,
+        "lambda": 1.06,
+        "fuel_pressure_kpa": 266,
+        "global_combined_trim_avg": 13,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-01",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.36,
+        "peak_maf_ratio_to_expected": 0.38,
+        "map_load_coherence": 1.88,
+        "combined_trim_max_abs": 12,
+        "max_load_percent": 83,
+        "max_map_kpa": 89,
+        "dtc_codes": [],
+        "dtc_groups": [],
+        "dtc_count": 0
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-02",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.5,
+        "peak_maf_ratio_to_expected": 0.46,
+        "map_load_coherence": 2.06,
+        "combined_trim_max_abs": 13,
+        "max_load_percent": 84,
+        "max_map_kpa": 90,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-03",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.64,
+        "peak_maf_ratio_to_expected": 0.54,
+        "map_load_coherence": 2.2399999999999998,
+        "combined_trim_max_abs": 14,
+        "max_load_percent": 85,
+        "max_map_kpa": 91,
+        "dtc_codes": [],
+        "dtc_groups": [],
+        "dtc_count": 0
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-04",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.78,
+        "peak_maf_ratio_to_expected": 0.38,
+        "map_load_coherence": 1.88,
+        "combined_trim_max_abs": 15,
+        "max_load_percent": 86,
+        "max_map_kpa": 92,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-05",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.36,
+        "peak_maf_ratio_to_expected": 0.46,
+        "map_load_coherence": 2.06,
+        "combined_trim_max_abs": 16,
+        "max_load_percent": 87,
+        "max_map_kpa": 93,
+        "dtc_codes": [],
+        "dtc_groups": [],
+        "dtc_count": 0
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-06",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.5,
+        "peak_maf_ratio_to_expected": 0.54,
+        "map_load_coherence": 2.2399999999999998,
+        "combined_trim_max_abs": 17,
+        "max_load_percent": 88,
+        "max_map_kpa": 94,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-07",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.64,
+        "peak_maf_ratio_to_expected": 0.38,
+        "map_load_coherence": 1.88,
+        "combined_trim_max_abs": 18,
+        "max_load_percent": 89,
+        "max_map_kpa": 95,
+        "dtc_codes": [],
+        "dtc_groups": [],
+        "dtc_count": 0
+      }
+    },
+    {
+      "case_id": "EXT-MAF-PLAUS-08",
+      "source": "underhood-maf",
+      "oracle": "MAF/VE outside expected range with otherwise plausible MAP/load points to metering fault.",
+      "expected": "sensor_plausibility",
+      "acceptable": [
+        "air_restriction"
+      ],
+      "predicted": "sensor_plausibility",
+      "ruleId": "generic.map_or_maf_plausibility_fault",
+      "probability": 0.81,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить MAF на WOT с расчётным",
+      "facts": {
+        "sensor_implausibility_index": 0.78,
+        "peak_maf_ratio_to_expected": 0.46,
+        "map_load_coherence": 2.06,
+        "combined_trim_max_abs": 19,
+        "max_load_percent": 90,
+        "max_map_kpa": 96,
+        "dtc_codes": [
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-01",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 17,
+        "combined_trim_idle_b1": 15,
+        "combined_trim_load_b1": 2,
+        "trim_load_delta_b1": -12,
+        "idle_map_kpa": 41,
+        "rough_idle_index": 0.25,
+        "global_combined_trim_avg": 12,
+        "dtc_codes": [
+          "P0441"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-02",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 18,
+        "combined_trim_idle_b1": 16,
+        "combined_trim_load_b1": 3,
+        "trim_load_delta_b1": -13,
+        "idle_map_kpa": 42,
+        "rough_idle_index": 0.33,
+        "global_combined_trim_avg": 13,
+        "dtc_codes": [
+          "P0496"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-03",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 19,
+        "combined_trim_idle_b1": 17,
+        "combined_trim_load_b1": 4,
+        "trim_load_delta_b1": -14,
+        "idle_map_kpa": 43,
+        "rough_idle_index": 0.41000000000000003,
+        "global_combined_trim_avg": 14,
+        "dtc_codes": [
+          "P0441"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-04",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 20,
+        "combined_trim_idle_b1": 18,
+        "combined_trim_load_b1": 5,
+        "trim_load_delta_b1": -15,
+        "idle_map_kpa": 44,
+        "rough_idle_index": 0.49,
+        "global_combined_trim_avg": 15,
+        "dtc_codes": [
+          "P0496"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-05",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 21,
+        "combined_trim_idle_b1": 19,
+        "combined_trim_load_b1": 6,
+        "trim_load_delta_b1": -16,
+        "idle_map_kpa": 45,
+        "rough_idle_index": 0.25,
+        "global_combined_trim_avg": 16,
+        "dtc_codes": [
+          "P0441"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-06",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 22,
+        "combined_trim_idle_b1": 20,
+        "combined_trim_load_b1": 2,
+        "trim_load_delta_b1": -12,
+        "idle_map_kpa": 46,
+        "rough_idle_index": 0.33,
+        "global_combined_trim_avg": 17,
+        "dtc_codes": [
+          "P0496"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-07",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 23,
+        "combined_trim_idle_b1": 21,
+        "combined_trim_load_b1": 3,
+        "trim_load_delta_b1": -13,
+        "idle_map_kpa": 47,
+        "rough_idle_index": 0.41000000000000003,
+        "global_combined_trim_avg": 12,
+        "dtc_codes": [
+          "P0441"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EVAP-PURGE-08",
+      "source": "motor-fuel-trim",
+      "oracle": "Idle-biased lean trim with EVAP purge behavior points to purge stuck open.",
+      "expected": "evap_purge",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "evap_purge",
+      "ruleId": "generic.evap_purge_stuck_open_lean_idle",
+      "probability": 0.79,
+      "confidence": 0.66,
+      "outcome": "exact",
+      "recommendedCheck": "Пережать/отключить purge на холостом и смотреть STFT",
+      "facts": {
+        "combined_trim_b1": 17,
+        "combined_trim_idle_b1": 22,
+        "combined_trim_load_b1": 4,
+        "trim_load_delta_b1": -14,
+        "idle_map_kpa": 41,
+        "rough_idle_index": 0.49,
+        "global_combined_trim_avg": 13,
+        "dtc_codes": [
+          "P0496"
+        ],
+        "dtc_groups": [
+          "evap"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-01",
+      "source": "skanyx-live-data",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.28,
+        "downstream_o2_b1_range_v": 0.28,
+        "rear_o2_activity_ratio_b1": 0.78,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0430"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-02",
+      "source": "obdcodes-p0420-o2",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.43000000000000005,
+        "downstream_o2_b1_range_v": 0.36000000000000004,
+        "rear_o2_activity_ratio_b1": 0.86,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0420"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-03",
+      "source": "skanyx-live-data",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.5800000000000001,
+        "downstream_o2_b1_range_v": 0.44000000000000006,
+        "rear_o2_activity_ratio_b1": 0.9400000000000001,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0430"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-04",
+      "source": "obdcodes-p0420-o2",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.73,
+        "downstream_o2_b1_range_v": 0.52,
+        "rear_o2_activity_ratio_b1": 1.02,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0420"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-05",
+      "source": "skanyx-live-data",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.28,
+        "downstream_o2_b1_range_v": 0.6000000000000001,
+        "rear_o2_activity_ratio_b1": 1.1,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0430"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-06",
+      "source": "obdcodes-p0420-o2",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.43000000000000005,
+        "downstream_o2_b1_range_v": 0.28,
+        "rear_o2_activity_ratio_b1": 0.78,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0420"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-07",
+      "source": "skanyx-live-data",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.5800000000000001,
+        "downstream_o2_b1_range_v": 0.36000000000000004,
+        "rear_o2_activity_ratio_b1": 0.86,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0430"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-08",
+      "source": "obdcodes-p0420-o2",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.73,
+        "downstream_o2_b1_range_v": 0.44000000000000006,
+        "rear_o2_activity_ratio_b1": 0.9400000000000001,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0420"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-CAT-O2-09",
+      "source": "skanyx-live-data",
+      "oracle": "Rear O2 activity follows front O2 with P0420/P0430 catalyst-efficiency pattern.",
+      "expected": "catalyst_efficiency",
+      "acceptable": [
+        "oxygen_sensor",
+        "exhaust_restriction"
+      ],
+      "predicted": "catalyst_efficiency",
+      "ruleId": "generic.catalyst_efficiency_or_rear_o2_tracking",
+      "probability": 0.84,
+      "confidence": 0.68,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить передний и задний O2 на прогретом моторе",
+      "facts": {
+        "catalyst_o2_similarity_index_b1": 0.28,
+        "downstream_o2_b1_range_v": 0.52,
+        "rear_o2_activity_ratio_b1": 1.02,
+        "front_o2_b1_range_v": 0.68,
+        "dtc_codes": [
+          "P0430"
+        ],
+        "dtc_groups": [
+          "catalyst"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-O2-LAZY-01",
+      "source": "skanyx-live-data",
+      "oracle": "Front O2 signal slow/stuck with trim movement points to O2 feedback fault.",
+      "expected": "oxygen_sensor",
+      "acceptable": [
+        "sensor_plausibility"
+      ],
+      "predicted": "oxygen_sensor",
+      "ruleId": "generic.oxygen_sensor_fault_or_lazy_front_sensor",
+      "probability": 0.86,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить скорость переключений O2 на прогретом двигателе",
+      "facts": {
+        "front_o2_b1_stuck_index": 1.0,
+        "front_o2_b1_range_v": 0.05,
+        "front_o2_b1_switch_count": 0,
+        "duration_sec": 14,
+        "combined_trim_max_abs": 9,
+        "sensor_implausibility_index": 0.42,
+        "dtc_codes": [
+          "P0134"
+        ],
+        "dtc_groups": [
+          "oxygen_sensor"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-O2-LAZY-02",
+      "source": "skanyx-live-data",
+      "oracle": "Front O2 signal slow/stuck with trim movement points to O2 feedback fault.",
+      "expected": "oxygen_sensor",
+      "acceptable": [
+        "sensor_plausibility"
+      ],
+      "predicted": "oxygen_sensor",
+      "ruleId": "generic.oxygen_sensor_fault_or_lazy_front_sensor",
+      "probability": 0.86,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить скорость переключений O2 на прогретом двигателе",
+      "facts": {
+        "front_o2_b1_stuck_index": 1.0,
+        "front_o2_b1_range_v": 0.08,
+        "front_o2_b1_switch_count": 1,
+        "duration_sec": 15,
+        "combined_trim_max_abs": 10,
+        "sensor_implausibility_index": 0.54,
+        "dtc_codes": [
+          "P0133"
+        ],
+        "dtc_groups": [
+          "oxygen_sensor"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-O2-LAZY-03",
+      "source": "skanyx-live-data",
+      "oracle": "Front O2 signal slow/stuck with trim movement points to O2 feedback fault.",
+      "expected": "oxygen_sensor",
+      "acceptable": [
+        "sensor_plausibility"
+      ],
+      "predicted": "oxygen_sensor",
+      "ruleId": "generic.oxygen_sensor_fault_or_lazy_front_sensor",
+      "probability": 0.86,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить скорость переключений O2 на прогретом двигателе",
+      "facts": {
+        "front_o2_b1_stuck_index": 1.0,
+        "front_o2_b1_range_v": 0.11,
+        "front_o2_b1_switch_count": 0,
+        "duration_sec": 16,
+        "combined_trim_max_abs": 11,
+        "sensor_implausibility_index": 0.6599999999999999,
+        "dtc_codes": [
+          "P0134"
+        ],
+        "dtc_groups": [
+          "oxygen_sensor"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-O2-LAZY-04",
+      "source": "skanyx-live-data",
+      "oracle": "Front O2 signal slow/stuck with trim movement points to O2 feedback fault.",
+      "expected": "oxygen_sensor",
+      "acceptable": [
+        "sensor_plausibility"
+      ],
+      "predicted": "oxygen_sensor",
+      "ruleId": "generic.oxygen_sensor_fault_or_lazy_front_sensor",
+      "probability": 0.86,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить скорость переключений O2 на прогретом двигателе",
+      "facts": {
+        "front_o2_b1_stuck_index": 1.0,
+        "front_o2_b1_range_v": 0.05,
+        "front_o2_b1_switch_count": 1,
+        "duration_sec": 17,
+        "combined_trim_max_abs": 12,
+        "sensor_implausibility_index": 0.42,
+        "dtc_codes": [
+          "P0133"
+        ],
+        "dtc_groups": [
+          "oxygen_sensor"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-O2-LAZY-05",
+      "source": "skanyx-live-data",
+      "oracle": "Front O2 signal slow/stuck with trim movement points to O2 feedback fault.",
+      "expected": "oxygen_sensor",
+      "acceptable": [
+        "sensor_plausibility"
+      ],
+      "predicted": "oxygen_sensor",
+      "ruleId": "generic.oxygen_sensor_fault_or_lazy_front_sensor",
+      "probability": 0.86,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить скорость переключений O2 на прогретом двигателе",
+      "facts": {
+        "front_o2_b1_stuck_index": 1.0,
+        "front_o2_b1_range_v": 0.08,
+        "front_o2_b1_switch_count": 0,
+        "duration_sec": 18,
+        "combined_trim_max_abs": 13,
+        "sensor_implausibility_index": 0.54,
+        "dtc_codes": [
+          "P0134"
+        ],
+        "dtc_groups": [
+          "oxygen_sensor"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-O2-LAZY-06",
+      "source": "skanyx-live-data",
+      "oracle": "Front O2 signal slow/stuck with trim movement points to O2 feedback fault.",
+      "expected": "oxygen_sensor",
+      "acceptable": [
+        "sensor_plausibility"
+      ],
+      "predicted": "oxygen_sensor",
+      "ruleId": "generic.oxygen_sensor_fault_or_lazy_front_sensor",
+      "probability": 0.86,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить скорость переключений O2 на прогретом двигателе",
+      "facts": {
+        "front_o2_b1_stuck_index": 1.0,
+        "front_o2_b1_range_v": 0.11,
+        "front_o2_b1_switch_count": 1,
+        "duration_sec": 19,
+        "combined_trim_max_abs": 14,
+        "sensor_implausibility_index": 0.6599999999999999,
+        "dtc_codes": [
+          "P0133"
+        ],
+        "dtc_groups": [
+          "oxygen_sensor"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-O2-LAZY-07",
+      "source": "skanyx-live-data",
+      "oracle": "Front O2 signal slow/stuck with trim movement points to O2 feedback fault.",
+      "expected": "oxygen_sensor",
+      "acceptable": [
+        "sensor_plausibility"
+      ],
+      "predicted": "oxygen_sensor",
+      "ruleId": "generic.oxygen_sensor_fault_or_lazy_front_sensor",
+      "probability": 0.86,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить скорость переключений O2 на прогретом двигателе",
+      "facts": {
+        "front_o2_b1_stuck_index": 1.0,
+        "front_o2_b1_range_v": 0.05,
+        "front_o2_b1_switch_count": 0,
+        "duration_sec": 20,
+        "combined_trim_max_abs": 9,
+        "sensor_implausibility_index": 0.42,
+        "dtc_codes": [
+          "P0134"
+        ],
+        "dtc_groups": [
+          "oxygen_sensor"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-01",
+      "source": "motor-fuel-trim",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -15,
+        "global_combined_trim_avg": -14,
+        "combined_trim_max_abs": 14,
+        "lambda": 0.94,
+        "maf_ratio_to_expected": 1.22,
+        "coolant_c": 86,
+        "dtc_codes": [
+          "P0175"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-02",
+      "source": "obdcodes-cavalier-rich",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -16,
+        "global_combined_trim_avg": -15,
+        "combined_trim_max_abs": 15,
+        "lambda": 0.9299999999999999,
+        "maf_ratio_to_expected": 1.26,
+        "coolant_c": 87,
+        "dtc_codes": [
+          "P0172"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-03",
+      "source": "motor-fuel-trim",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -17,
+        "global_combined_trim_avg": -16,
+        "combined_trim_max_abs": 16,
+        "lambda": 0.9199999999999999,
+        "maf_ratio_to_expected": 1.3,
+        "coolant_c": 88,
+        "dtc_codes": [
+          "P0175"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-04",
+      "source": "obdcodes-cavalier-rich",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -18,
+        "global_combined_trim_avg": -17,
+        "combined_trim_max_abs": 17,
+        "lambda": 0.94,
+        "maf_ratio_to_expected": 1.3399999999999999,
+        "coolant_c": 89,
+        "dtc_codes": [
+          "P0172"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-05",
+      "source": "motor-fuel-trim",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -19,
+        "global_combined_trim_avg": -18,
+        "combined_trim_max_abs": 18,
+        "lambda": 0.9299999999999999,
+        "maf_ratio_to_expected": 1.22,
+        "coolant_c": 90,
+        "dtc_codes": [
+          "P0175"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-06",
+      "source": "obdcodes-cavalier-rich",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -20,
+        "global_combined_trim_avg": -14,
+        "combined_trim_max_abs": 19,
+        "lambda": 0.9199999999999999,
+        "maf_ratio_to_expected": 1.26,
+        "coolant_c": 91,
+        "dtc_codes": [
+          "P0172"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-07",
+      "source": "motor-fuel-trim",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -21,
+        "global_combined_trim_avg": -15,
+        "combined_trim_max_abs": 20,
+        "lambda": 0.94,
+        "maf_ratio_to_expected": 1.3,
+        "coolant_c": 92,
+        "dtc_codes": [
+          "P0175"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-RICH-08",
+      "source": "obdcodes-cavalier-rich",
+      "oracle": "Negative trims and rich DTC indicate excess fuel or low measured air.",
+      "expected": "injector_or_fuel_regulator_rich",
+      "acceptable": [
+        "rich_condition",
+        "injector_balance",
+        "fuel_delivery"
+      ],
+      "predicted": "rich_condition",
+      "ruleId": "gasoline.rich_excess_fuel_or_low_air",
+      "probability": 0.88,
+      "confidence": 0.78,
+      "outcome": "partial",
+      "recommendedCheck": "Проверить давление и удержание давления топлива",
+      "facts": {
+        "combined_trim_b1": -15,
+        "global_combined_trim_avg": -16,
+        "combined_trim_max_abs": 14,
+        "lambda": 0.9299999999999999,
+        "maf_ratio_to_expected": 1.3399999999999999,
+        "coolant_c": 93,
+        "dtc_codes": [
+          "P0172"
+        ],
+        "dtc_groups": [
+          "rich"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-01",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.69,
+      "confidence": 0.58,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 8,
+        "rough_idle_index": 0.35,
+        "coolant_c": 82,
+        "spark_torque_loss_index": 0.2,
+        "dtc_codes": [
+          "P0300",
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean",
+          "misfire"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-02",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.5,
+      "confidence": 0.36,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 9,
+        "rough_idle_index": 0.43999999999999995,
+        "coolant_c": 83,
+        "spark_torque_loss_index": 0.28,
+        "dtc_codes": [
+          "P0300"
+        ],
+        "dtc_groups": [
+          "misfire"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-03",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.5,
+      "confidence": 0.36,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 10,
+        "rough_idle_index": 0.53,
+        "coolant_c": 84,
+        "spark_torque_loss_index": 0.36,
+        "dtc_codes": [
+          "P0300"
+        ],
+        "dtc_groups": [
+          "misfire"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-04",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.67,
+      "confidence": 0.54,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 11,
+        "rough_idle_index": 0.62,
+        "coolant_c": 85,
+        "spark_torque_loss_index": 0.44,
+        "dtc_codes": [
+          "P0300"
+        ],
+        "dtc_groups": [
+          "misfire"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-05",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.86,
+      "confidence": 0.76,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 12,
+        "rough_idle_index": 0.71,
+        "coolant_c": 86,
+        "spark_torque_loss_index": 0.52,
+        "dtc_codes": [
+          "P0300",
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean",
+          "misfire"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-06",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.67,
+      "confidence": 0.54,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 13,
+        "rough_idle_index": 0.35,
+        "coolant_c": 87,
+        "spark_torque_loss_index": 0.2,
+        "dtc_codes": [
+          "P0300"
+        ],
+        "dtc_groups": [
+          "misfire"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-07",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.67,
+      "confidence": 0.54,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 14,
+        "rough_idle_index": 0.43999999999999995,
+        "coolant_c": 88,
+        "spark_torque_loss_index": 0.28,
+        "dtc_codes": [
+          "P0300"
+        ],
+        "dtc_groups": [
+          "misfire"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-08",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.5,
+      "confidence": 0.36,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 8,
+        "rough_idle_index": 0.53,
+        "coolant_c": 89,
+        "spark_torque_loss_index": 0.36,
+        "dtc_codes": [
+          "P0300"
+        ],
+        "dtc_groups": [
+          "misfire"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-09",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.69,
+      "confidence": 0.58,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 9,
+        "rough_idle_index": 0.62,
+        "coolant_c": 90,
+        "spark_torque_loss_index": 0.44,
+        "dtc_codes": [
+          "P0300",
+          "P0171"
+        ],
+        "dtc_groups": [
+          "lean",
+          "misfire"
+        ],
+        "dtc_count": 2
+      }
+    },
+    {
+      "case_id": "EXT-MISFIRE-10",
+      "source": "obdcodes-avalanche-misfire",
+      "oracle": "Forum repair was ignition wire/secondary ignition; app should keep this in misfire checks.",
+      "expected": "ignition_secondary_repair",
+      "acceptable": [
+        "misfire",
+        "ignition_retard",
+        "injector_balance"
+      ],
+      "predicted": "misfire",
+      "ruleId": "gasoline.misfire_ignition_fuel_or_compression",
+      "probability": 0.5,
+      "confidence": 0.36,
+      "outcome": "partial",
+      "recommendedCheck": "Определить цилиндр по DTC",
+      "facts": {
+        "combined_trim_b1": 10,
+        "rough_idle_index": 0.71,
+        "coolant_c": 91,
+        "spark_torque_loss_index": 0.52,
+        "dtc_codes": [
+          "P0300"
+        ],
+        "dtc_groups": [
+          "misfire"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-P0128-01",
+      "source": "repairpal-p0128",
+      "oracle": "P0128 and low coolant temperature point to thermostat/cold-operation strategy.",
+      "expected": "thermostat_cold",
+      "acceptable": [],
+      "predicted": "thermostat_cold",
+      "ruleId": "gasoline.low_operating_temperature",
+      "probability": 0.69,
+      "confidence": 0.54,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить фактическую температуру сканером и ИК-термометром",
+      "facts": {
+        "coolant_c": 58,
+        "cold_operation_index": 0.22,
+        "global_combined_trim_avg": 5,
+        "dtc_codes": [
+          "P0128"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-P0128-02",
+      "source": "repairpal-p0128",
+      "oracle": "P0128 and low coolant temperature point to thermostat/cold-operation strategy.",
+      "expected": "thermostat_cold",
+      "acceptable": [],
+      "predicted": "thermostat_cold",
+      "ruleId": "generic.thermostat_stuck_open_or_cold_engine_strategy",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить фактическую температуру и прогрев патрубков",
+      "facts": {
+        "coolant_c": 60,
+        "cold_operation_index": 0.33999999999999997,
+        "global_combined_trim_avg": 6,
+        "dtc_codes": [
+          "P0128"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-P0128-03",
+      "source": "repairpal-p0128",
+      "oracle": "P0128 and low coolant temperature point to thermostat/cold-operation strategy.",
+      "expected": "thermostat_cold",
+      "acceptable": [],
+      "predicted": "thermostat_cold",
+      "ruleId": "generic.thermostat_stuck_open_or_cold_engine_strategy",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить фактическую температуру и прогрев патрубков",
+      "facts": {
+        "coolant_c": 62,
+        "cold_operation_index": 0.45999999999999996,
+        "global_combined_trim_avg": 7,
+        "dtc_codes": [
+          "P0128"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-P0128-04",
+      "source": "repairpal-p0128",
+      "oracle": "P0128 and low coolant temperature point to thermostat/cold-operation strategy.",
+      "expected": "thermostat_cold",
+      "acceptable": [],
+      "predicted": "thermostat_cold",
+      "ruleId": "generic.thermostat_stuck_open_or_cold_engine_strategy",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить фактическую температуру и прогрев патрубков",
+      "facts": {
+        "coolant_c": 64,
+        "cold_operation_index": 0.58,
+        "global_combined_trim_avg": 8,
+        "dtc_codes": [
+          "P0128"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-P0128-05",
+      "source": "repairpal-p0128",
+      "oracle": "P0128 and low coolant temperature point to thermostat/cold-operation strategy.",
+      "expected": "thermostat_cold",
+      "acceptable": [],
+      "predicted": "thermostat_cold",
+      "ruleId": "generic.thermostat_stuck_open_or_cold_engine_strategy",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить фактическую температуру и прогрев патрубков",
+      "facts": {
+        "coolant_c": 66,
+        "cold_operation_index": 0.22,
+        "global_combined_trim_avg": 9,
+        "dtc_codes": [
+          "P0128"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-P0128-06",
+      "source": "repairpal-p0128",
+      "oracle": "P0128 and low coolant temperature point to thermostat/cold-operation strategy.",
+      "expected": "thermostat_cold",
+      "acceptable": [],
+      "predicted": "thermostat_cold",
+      "ruleId": "gasoline.low_operating_temperature",
+      "probability": 0.69,
+      "confidence": 0.54,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить фактическую температуру сканером и ИК-термометром",
+      "facts": {
+        "coolant_c": 68,
+        "cold_operation_index": 0.33999999999999997,
+        "global_combined_trim_avg": 5,
+        "dtc_codes": [
+          "P0128"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EGR-01",
+      "source": "obdii-egr",
+      "oracle": "EGR flow code with rough idle and high idle MAP points to excess/stuck EGR behavior.",
+      "expected": "egr_fault",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "egr_fault",
+      "ruleId": "generic.egr_stuck_open_or_excess_flow",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить команду и фактическое положение EGR",
+      "facts": {
+        "rough_idle_index": 0.32,
+        "idle_map_kpa": 44,
+        "max_load_percent": 62,
+        "dtc_codes": [
+          "P0402"
+        ],
+        "dtc_groups": [
+          "egr"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EGR-02",
+      "source": "obdii-egr",
+      "oracle": "EGR flow code with rough idle and high idle MAP points to excess/stuck EGR behavior.",
+      "expected": "egr_fault",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "egr_fault",
+      "ruleId": "generic.egr_stuck_open_or_excess_flow",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить команду и фактическое положение EGR",
+      "facts": {
+        "rough_idle_index": 0.42000000000000004,
+        "idle_map_kpa": 45,
+        "max_load_percent": 63,
+        "dtc_codes": [
+          "P0401"
+        ],
+        "dtc_groups": [
+          "egr"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EGR-03",
+      "source": "obdii-egr",
+      "oracle": "EGR flow code with rough idle and high idle MAP points to excess/stuck EGR behavior.",
+      "expected": "egr_fault",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "egr_fault",
+      "ruleId": "generic.egr_stuck_open_or_excess_flow",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить команду и фактическое положение EGR",
+      "facts": {
+        "rough_idle_index": 0.52,
+        "idle_map_kpa": 46,
+        "max_load_percent": 64,
+        "dtc_codes": [
+          "P0402"
+        ],
+        "dtc_groups": [
+          "egr"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EGR-04",
+      "source": "obdii-egr",
+      "oracle": "EGR flow code with rough idle and high idle MAP points to excess/stuck EGR behavior.",
+      "expected": "egr_fault",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "egr_fault",
+      "ruleId": "generic.egr_stuck_open_or_excess_flow",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить команду и фактическое положение EGR",
+      "facts": {
+        "rough_idle_index": 0.6200000000000001,
+        "idle_map_kpa": 47,
+        "max_load_percent": 65,
+        "dtc_codes": [
+          "P0401"
+        ],
+        "dtc_groups": [
+          "egr"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-EGR-05",
+      "source": "obdii-egr",
+      "oracle": "EGR flow code with rough idle and high idle MAP points to excess/stuck EGR behavior.",
+      "expected": "egr_fault",
+      "acceptable": [
+        "unmetered_air"
+      ],
+      "predicted": "egr_fault",
+      "ruleId": "generic.egr_stuck_open_or_excess_flow",
+      "probability": 0.77,
+      "confidence": 0.64,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить команду и фактическое положение EGR",
+      "facts": {
+        "rough_idle_index": 0.32,
+        "idle_map_kpa": 48,
+        "max_load_percent": 66,
+        "dtc_codes": [
+          "P0402"
+        ],
+        "dtc_groups": [
+          "egr"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VVT-01",
+      "source": "obdii-vvt",
+      "oracle": "Cam/crank or VVT codes with weak breathing point to mechanical timing or VVT control.",
+      "expected": "vvt_fault",
+      "acceptable": [
+        "mechanical_breathing"
+      ],
+      "predicted": "vvt_fault",
+      "ruleId": "generic.vvt_or_cam_timing_fault",
+      "probability": 0.76,
+      "confidence": 0.58,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить DTC и freeze-frame",
+      "facts": {
+        "mechanical_breathing_index": 0.22,
+        "rough_idle_index": 0.22,
+        "max_load_percent": 58,
+        "dtc_codes": [
+          "P0011"
+        ],
+        "dtc_groups": [
+          "vvt"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VVT-02",
+      "source": "obdii-vvt",
+      "oracle": "Cam/crank or VVT codes with weak breathing point to mechanical timing or VVT control.",
+      "expected": "vvt_fault",
+      "acceptable": [
+        "mechanical_breathing"
+      ],
+      "predicted": "vvt_fault",
+      "ruleId": "generic.vvt_or_cam_timing_fault",
+      "probability": 0.9,
+      "confidence": 0.74,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить DTC и freeze-frame",
+      "facts": {
+        "mechanical_breathing_index": 0.33999999999999997,
+        "rough_idle_index": 0.31,
+        "max_load_percent": 59,
+        "dtc_codes": [
+          "P0016"
+        ],
+        "dtc_groups": [
+          "cam_crank_sync",
+          "vvt"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VVT-03",
+      "source": "obdii-vvt",
+      "oracle": "Cam/crank or VVT codes with weak breathing point to mechanical timing or VVT control.",
+      "expected": "vvt_fault",
+      "acceptable": [
+        "mechanical_breathing"
+      ],
+      "predicted": "vvt_fault",
+      "ruleId": "generic.vvt_or_cam_timing_fault",
+      "probability": 0.9,
+      "confidence": 0.74,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить DTC и freeze-frame",
+      "facts": {
+        "mechanical_breathing_index": 0.45999999999999996,
+        "rough_idle_index": 0.4,
+        "max_load_percent": 60,
+        "dtc_codes": [
+          "P0011"
+        ],
+        "dtc_groups": [
+          "vvt"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VVT-04",
+      "source": "obdii-vvt",
+      "oracle": "Cam/crank or VVT codes with weak breathing point to mechanical timing or VVT control.",
+      "expected": "vvt_fault",
+      "acceptable": [
+        "mechanical_breathing"
+      ],
+      "predicted": "vvt_fault",
+      "ruleId": "generic.vvt_or_cam_timing_fault",
+      "probability": 0.9,
+      "confidence": 0.74,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить DTC и freeze-frame",
+      "facts": {
+        "mechanical_breathing_index": 0.58,
+        "rough_idle_index": 0.49,
+        "max_load_percent": 61,
+        "dtc_codes": [
+          "P0016"
+        ],
+        "dtc_groups": [
+          "cam_crank_sync",
+          "vvt"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VVT-05",
+      "source": "obdii-vvt",
+      "oracle": "Cam/crank or VVT codes with weak breathing point to mechanical timing or VVT control.",
+      "expected": "vvt_fault",
+      "acceptable": [
+        "mechanical_breathing"
+      ],
+      "predicted": "vvt_fault",
+      "ruleId": "generic.vvt_or_cam_timing_fault",
+      "probability": 0.76,
+      "confidence": 0.58,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить DTC и freeze-frame",
+      "facts": {
+        "mechanical_breathing_index": 0.7,
+        "rough_idle_index": 0.22,
+        "max_load_percent": 62,
+        "dtc_codes": [
+          "P0011"
+        ],
+        "dtc_groups": [
+          "vvt"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VOLT-01",
+      "source": "obdii-p0562",
+      "oracle": "Low module voltage DTC/reading should prioritize electrical checks.",
+      "expected": "electrical",
+      "acceptable": [],
+      "predicted": "electrical",
+      "ruleId": "gasoline.low_system_voltage",
+      "probability": 0.73,
+      "confidence": 0.62,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить напряжение на АКБ и на ЭБУ под нагрузкой",
+      "facts": {
+        "module_voltage_v": 11.4,
+        "low_voltage_index": 0.35,
+        "rough_idle_index": 0.18,
+        "dtc_codes": [
+          "P0562"
+        ],
+        "dtc_groups": [
+          "voltage"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VOLT-02",
+      "source": "obdii-p0562",
+      "oracle": "Low module voltage DTC/reading should prioritize electrical checks.",
+      "expected": "electrical",
+      "acceptable": [],
+      "predicted": "electrical",
+      "ruleId": "gasoline.low_system_voltage",
+      "probability": 0.73,
+      "confidence": 0.62,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить напряжение на АКБ и на ЭБУ под нагрузкой",
+      "facts": {
+        "module_voltage_v": 11.55,
+        "low_voltage_index": 0.44999999999999996,
+        "rough_idle_index": 0.22,
+        "dtc_codes": [
+          "P0562"
+        ],
+        "dtc_groups": [
+          "voltage"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VOLT-03",
+      "source": "obdii-p0562",
+      "oracle": "Low module voltage DTC/reading should prioritize electrical checks.",
+      "expected": "electrical",
+      "acceptable": [],
+      "predicted": "electrical",
+      "ruleId": "generic.low_or_unstable_system_voltage",
+      "probability": 0.81,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить напряжение на АКБ и ЭБУ под нагрузкой",
+      "facts": {
+        "module_voltage_v": 11.700000000000001,
+        "low_voltage_index": 0.55,
+        "rough_idle_index": 0.26,
+        "dtc_codes": [
+          "P0562"
+        ],
+        "dtc_groups": [
+          "voltage"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-VOLT-04",
+      "source": "obdii-p0562",
+      "oracle": "Low module voltage DTC/reading should prioritize electrical checks.",
+      "expected": "electrical",
+      "acceptable": [],
+      "predicted": "electrical",
+      "ruleId": "generic.low_or_unstable_system_voltage",
+      "probability": 0.81,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить напряжение на АКБ и ЭБУ под нагрузкой",
+      "facts": {
+        "module_voltage_v": 11.85,
+        "low_voltage_index": 0.65,
+        "rough_idle_index": 0.3,
+        "dtc_codes": [
+          "P0562"
+        ],
+        "dtc_groups": [
+          "voltage"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-THROTTLE-01",
+      "source": "skanyx-live-data",
+      "oracle": "Low throttle opening with ETC DTC and weak load response points to throttle/torque limitation.",
+      "expected": "throttle_limited",
+      "acceptable": [],
+      "predicted": "throttle_limited",
+      "ruleId": "gasoline.throttle_not_opening_or_etc_fault",
+      "probability": 0.79,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить pedal и throttle, если PID доступны",
+      "facts": {
+        "throttle_percent": 42,
+        "max_throttle_percent": 48,
+        "max_load_percent": 40,
+        "rpm": 2200,
+        "dtc_codes": [
+          "P0121"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-THROTTLE-02",
+      "source": "skanyx-live-data",
+      "oracle": "Low throttle opening with ETC DTC and weak load response points to throttle/torque limitation.",
+      "expected": "throttle_limited",
+      "acceptable": [],
+      "predicted": "throttle_limited",
+      "ruleId": "gasoline.throttle_not_opening_or_etc_fault",
+      "probability": 0.79,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить pedal и throttle, если PID доступны",
+      "facts": {
+        "throttle_percent": 46,
+        "max_throttle_percent": 51,
+        "max_load_percent": 45,
+        "rpm": 2550,
+        "dtc_codes": [
+          "P2135"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-THROTTLE-03",
+      "source": "skanyx-live-data",
+      "oracle": "Low throttle opening with ETC DTC and weak load response points to throttle/torque limitation.",
+      "expected": "throttle_limited",
+      "acceptable": [],
+      "predicted": "throttle_limited",
+      "ruleId": "gasoline.throttle_not_opening_or_etc_fault",
+      "probability": 0.79,
+      "confidence": 0.7,
+      "outcome": "exact",
+      "recommendedCheck": "Сравнить pedal и throttle, если PID доступны",
+      "facts": {
+        "throttle_percent": 50,
+        "max_throttle_percent": 54,
+        "max_load_percent": 50,
+        "rpm": 2900,
+        "dtc_codes": [
+          "P0121"
+        ],
+        "dtc_groups": [],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-TRANS-SLIP-01",
+      "source": "skanyx-live-data",
+      "oracle": "RPM rises under throttle without speed gain; expected downstream drivetrain/transmission issue.",
+      "expected": "transmission_slip",
+      "acceptable": [
+        "no_fault"
+      ],
+      "predicted": "exhaust_restriction",
+      "ruleId": "gasoline.restricted_exhaust_or_catalyst",
+      "probability": 0.52,
+      "confidence": 0.31,
+      "outcome": "miss",
+      "recommendedCheck": "Проверить противодавление выпуска",
+      "facts": {
+        "wot_no_speed_gain_index": 1.0,
+        "max_throttle_percent": 84,
+        "max_load_percent": 70,
+        "rpm_delta": 1200,
+        "speed_delta_kph": 3,
+        "peak_maf_ratio_to_expected": 0.92,
+        "dtc_codes": [],
+        "dtc_groups": [],
+        "dtc_count": 0
+      }
+    },
+    {
+      "case_id": "EXT-TRANS-SLIP-02",
+      "source": "skanyx-live-data",
+      "oracle": "RPM rises under throttle without speed gain; expected downstream drivetrain/transmission issue.",
+      "expected": "transmission_slip",
+      "acceptable": [
+        "no_fault"
+      ],
+      "predicted": "transmission_slip",
+      "ruleId": "generic.transmission_slip_or_converter_problem",
+      "probability": 0.75,
+      "confidence": 0.58,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить DTC трансмиссии",
+      "facts": {
+        "wot_no_speed_gain_index": 1.0,
+        "max_throttle_percent": 87,
+        "max_load_percent": 74,
+        "rpm_delta": 1550,
+        "speed_delta_kph": 4,
+        "peak_maf_ratio_to_expected": 0.92,
+        "dtc_codes": [
+          "P0730"
+        ],
+        "dtc_groups": [
+          "transmission"
+        ],
+        "dtc_count": 1
+      }
+    },
+    {
+      "case_id": "EXT-TRANS-SLIP-03",
+      "source": "skanyx-live-data",
+      "oracle": "RPM rises under throttle without speed gain; expected downstream drivetrain/transmission issue.",
+      "expected": "transmission_slip",
+      "acceptable": [
+        "no_fault"
+      ],
+      "predicted": "transmission_slip",
+      "ruleId": "generic.transmission_slip_or_converter_problem",
+      "probability": 0.49,
+      "confidence": 0.3,
+      "outcome": "exact",
+      "recommendedCheck": "Проверить DTC трансмиссии",
+      "facts": {
+        "wot_no_speed_gain_index": 1.0,
+        "max_throttle_percent": 90,
+        "max_load_percent": 78,
+        "rpm_delta": 1900,
+        "speed_delta_kph": 5,
+        "peak_maf_ratio_to_expected": 0.92,
+        "dtc_codes": [],
+        "dtc_groups": [],
+        "dtc_count": 0
+      }
+    }
+  ],
+  "sources": {
+    "underhood-fuel-delivery": {
+      "key": "underhood-fuel-delivery",
+      "title": "Underhood Service fuel-delivery diagnostic examples",
+      "url": "https://www.underhoodservice.com/diagnostic-solutions-testing-fuel-delivery-systems-checking-the-basics-first-can-facilitate-diagnostic-strategy/",
+      "source_kind": "article",
+      "note": "Fuel pump or supply faults show as lean load behavior and fuel delivery checks, not just idle trim."
+    },
+    "underhood-maf": {
+      "key": "underhood-maf",
+      "title": "Underhood Service MAF / VE diagnostic practice",
+      "url": "https://www.underhoodservice.com/troubleshooting-mass-air-flow-maf-sensors/",
+      "source_kind": "article",
+      "note": "MAF plausibility is checked against displacement, RPM, load and VE-like expectations."
+    },
+    "motor-fuel-trim": {
+      "key": "motor-fuel-trim",
+      "title": "MOTOR fuel-trim diagnosis article",
+      "url": "https://www.motor.com/magazine-summary/fuel-trim-data-powerful-diagnostic-tool/",
+      "source_kind": "article",
+      "note": "Fuel trim patterns across idle and load separate vacuum leaks, fuel delivery and MAF faults."
+    },
+    "skanyx-live-data": {
+      "key": "skanyx-live-data",
+      "title": "Skanyx live data stream analysis guide",
+      "url": "https://skanyx.com/blog/live-data-stream-analysis-guide",
+      "source_kind": "article",
+      "note": "Live-data guide covers vacuum leaks, fuel-delivery issues, O2 behavior and catalyst rear-O2 tracking."
+    },
+    "obdcodes-f150-p0171": {
+      "key": "obdcodes-f150-p0171",
+      "title": "OBD-Codes forum: Ford F-150 lean codes with vacuum leak discussion",
+      "url": "https://www.obd-codes.com/forums/viewtopic.php?t=11458",
+      "source_kind": "forum",
+      "note": "Forum-style lean-condition case used as an external oracle for vacuum-leak-like P0171/P0174 behavior."
+    },
+    "obdcodes-silverado-lean": {
+      "key": "obdcodes-silverado-lean",
+      "title": "OBD-Codes forum: Silverado lean condition solved with intake gaskets",
+      "url": "https://www.obd-codes.com/forums/viewtopic.php?t=5661",
+      "source_kind": "forum",
+      "note": "Repair-oriented lean case used to check whether the app flags intake/vacuum leak rather than generic sensor replacement."
+    },
+    "obdcodes-avalanche-misfire": {
+      "key": "obdcodes-avalanche-misfire",
+      "title": "OBD-Codes forum: Avalanche P0300/P0171 fixed by loose plug wire",
+      "url": "https://www.obd-codes.com/forums/viewtopic.php?t=11464",
+      "source_kind": "forum",
+      "note": "Misfire case where the precise repair is ignition wiring; app is expected to at least stay in misfire/ignition checks."
+    },
+    "obdcodes-cavalier-rich": {
+      "key": "obdcodes-cavalier-rich",
+      "title": "OBD-Codes forum: Cavalier P0172 rich / restricted injectors discussion",
+      "url": "https://www.obd-codes.com/forums/viewtopic.php?t=5662",
+      "source_kind": "forum",
+      "note": "Rich code case with injector/fuel-delivery ambiguity; useful for partial-hit behavior."
+    },
+    "obdcodes-p0420-o2": {
+      "key": "obdcodes-p0420-o2",
+      "title": "OBD-Codes forum: P0420 after replacing O2 sensors",
+      "url": "https://www.obd-codes.com/forums/viewtopic.php?t=1960",
+      "source_kind": "forum",
+      "note": "Catalyst-efficiency code case used to separate catalyst, rear O2 and upstream mixture prerequisites."
+    },
+    "repairpal-p0128": {
+      "key": "repairpal-p0128",
+      "title": "RepairPal P0128 thermostat/coolant diagnosis",
+      "url": "https://repairpal.com/obd-ii-code-p0128",
+      "source_kind": "reference",
+      "note": "Cold-running / thermostat case used as an external oracle for ECT/P0128 behavior."
+    },
+    "obdii-p0562": {
+      "key": "obdii-p0562",
+      "title": "OBD-II P0562 system voltage reference",
+      "url": "https://www.obd-codes.com/p0562",
+      "source_kind": "reference",
+      "note": "Low system voltage case used to check electrical-priority behavior before mixture conclusions."
+    },
+    "obdii-egr": {
+      "key": "obdii-egr",
+      "title": "OBD-II EGR flow DTC references",
+      "url": "https://www.obd-codes.com/p0401",
+      "source_kind": "reference",
+      "note": "EGR flow code pattern used for idle/MAP/EGR fault holdout cases."
+    },
+    "obdii-vvt": {
+      "key": "obdii-vvt",
+      "title": "OBD-II cam/crank and VVT DTC references",
+      "url": "https://www.obd-codes.com/p0016",
+      "source_kind": "reference",
+      "note": "Cam/crank correlation and VVT pattern used for mechanical timing holdout cases."
+    }
+  }
+}
