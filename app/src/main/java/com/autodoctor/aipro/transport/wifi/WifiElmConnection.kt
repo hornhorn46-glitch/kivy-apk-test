@@ -4,6 +4,8 @@ import com.autodoctor.aipro.core.obd.Elm327Connection
 import com.autodoctor.aipro.core.obd.ElmCommand
 import com.autodoctor.aipro.core.obd.ElmConnectionState
 import com.autodoctor.aipro.core.obd.ElmResponse
+import com.autodoctor.aipro.core.obd.ElmTraceEvent
+import com.autodoctor.aipro.core.obd.ObdTraceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,14 +45,40 @@ class WifiElmConnection(
     }
 
     override suspend fun send(command: ElmCommand): ElmResponse = withContext(Dispatchers.IO) {
+        val started = System.currentTimeMillis()
         val activeSocket = requireNotNull(socket) { "Wi-Fi ELM327 connection is not open" }
         val output = activeSocket.getOutputStream()
         val input = activeSocket.getInputStream()
-        drainInput(input)
-        output.write((command.request.trim() + "\r").toByteArray(Charsets.US_ASCII))
-        output.flush()
-        val raw = readUntilPrompt(input)
-        ElmResponse(raw = raw, lines = raw.split('\r', '\n').map { it.trim() }.filter { it.isNotEmpty() })
+        try {
+            drainInput(input)
+            output.write((command.request.trim() + "\r").toByteArray(Charsets.US_ASCII))
+            output.flush()
+            val raw = readUntilPrompt(input)
+            ObdTraceLog.record(
+                ElmTraceEvent(
+                    timestampMillis = started,
+                    transport = "wifi",
+                    command = command.request,
+                    description = command.description,
+                    rawResponse = raw,
+                    durationMillis = System.currentTimeMillis() - started,
+                ),
+            )
+            ElmResponse(raw = raw, lines = raw.split('\r', '\n').map { it.trim() }.filter { it.isNotEmpty() })
+        } catch (error: Throwable) {
+            ObdTraceLog.record(
+                ElmTraceEvent(
+                    timestampMillis = started,
+                    transport = "wifi",
+                    command = command.request,
+                    description = command.description,
+                    rawResponse = "",
+                    durationMillis = System.currentTimeMillis() - started,
+                    error = error.message ?: error::class.java.simpleName,
+                ),
+            )
+            throw error
+        }
     }
 
     private fun drainInput(input: InputStream) {

@@ -11,6 +11,8 @@ import com.autodoctor.aipro.core.obd.Elm327Connection
 import com.autodoctor.aipro.core.obd.ElmCommand
 import com.autodoctor.aipro.core.obd.ElmConnectionState
 import com.autodoctor.aipro.core.obd.ElmResponse
+import com.autodoctor.aipro.core.obd.ElmTraceEvent
+import com.autodoctor.aipro.core.obd.ObdTraceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,29 +65,55 @@ class UsbBulkElmConnection(
     }
 
     override suspend fun send(command: ElmCommand): ElmResponse = withContext(Dispatchers.IO) {
+        val started = System.currentTimeMillis()
         val opened = requireNotNull(connection) { "USB ELM327 connection is not open" }
         val out = requireNotNull(outputEndpoint) { "USB output endpoint is missing" }
         val input = requireNotNull(inputEndpoint) { "USB input endpoint is missing" }
-        drainInput(opened, input)
-        val request = (command.request.trim() + "\r").toByteArray(Charsets.US_ASCII)
-        val written = opened.bulkTransfer(out, request, request.size, timeoutMillis)
-        require(written == request.size) { "USB write failed: $written/${request.size}" }
+        try {
+            drainInput(opened, input)
+            val request = (command.request.trim() + "\r").toByteArray(Charsets.US_ASCII)
+            val written = opened.bulkTransfer(out, request, request.size, timeoutMillis)
+            require(written == request.size) { "USB write failed: $written/${request.size}" }
 
-        val raw = buildString {
-            val buffer = ByteArray(64)
-            while (true) {
-                val read = opened.bulkTransfer(input, buffer, buffer.size, timeoutMillis)
-                if (read <= 0) break
-                val chunk = buffer.decodeToString(endIndex = read)
-                val prompt = chunk.indexOf('>')
-                if (prompt >= 0) {
-                    append(chunk.substring(0, prompt))
-                    break
+            val raw = buildString {
+                val buffer = ByteArray(64)
+                while (true) {
+                    val read = opened.bulkTransfer(input, buffer, buffer.size, timeoutMillis)
+                    if (read <= 0) break
+                    val chunk = buffer.decodeToString(endIndex = read)
+                    val prompt = chunk.indexOf('>')
+                    if (prompt >= 0) {
+                        append(chunk.substring(0, prompt))
+                        break
+                    }
+                    append(chunk)
                 }
-                append(chunk)
             }
+            ObdTraceLog.record(
+                ElmTraceEvent(
+                    timestampMillis = started,
+                    transport = "usb",
+                    command = command.request,
+                    description = command.description,
+                    rawResponse = raw,
+                    durationMillis = System.currentTimeMillis() - started,
+                ),
+            )
+            ElmResponse(raw = raw, lines = raw.split('\r', '\n').map { it.trim() }.filter { it.isNotEmpty() })
+        } catch (error: Throwable) {
+            ObdTraceLog.record(
+                ElmTraceEvent(
+                    timestampMillis = started,
+                    transport = "usb",
+                    command = command.request,
+                    description = command.description,
+                    rawResponse = "",
+                    durationMillis = System.currentTimeMillis() - started,
+                    error = error.message ?: error::class.java.simpleName,
+                ),
+            )
+            throw error
         }
-        ElmResponse(raw = raw, lines = raw.split('\r', '\n').map { it.trim() }.filter { it.isNotEmpty() })
     }
 
     private fun drainInput(opened: UsbDeviceConnection, input: UsbEndpoint) {

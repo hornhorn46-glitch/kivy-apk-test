@@ -24,8 +24,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,11 +47,15 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.autodoctor.aipro.core.ai.DriveabilityAnalysis
 import com.autodoctor.aipro.core.ai.DriveabilityModel
 import com.autodoctor.aipro.core.ai.NeuroSymbolicDriveabilityAnalyzer
+import com.autodoctor.aipro.core.cloud.CloudAiSettingsStore
+import com.autodoctor.aipro.core.cloud.CloudDiagnosticMode
+import com.autodoctor.aipro.core.cloud.OpenAiDiagnosticAssistant
 import com.autodoctor.aipro.core.diagnostics.FactExtractor
 import com.autodoctor.aipro.core.knowledge.DiagnosticCasePatternSummary
 import com.autodoctor.aipro.core.model.DiagnosticTroubleCode
@@ -66,6 +72,7 @@ import com.autodoctor.aipro.core.obd.ObdConnectionManager
 import com.autodoctor.aipro.core.obd.ObdHealthScan
 import com.autodoctor.aipro.core.obd.ObdHealthScanner
 import com.autodoctor.aipro.core.obd.ObdPermissionPolicy
+import com.autodoctor.aipro.core.obd.ObdTraceLog
 import com.autodoctor.aipro.core.obd.PidSelection
 import com.autodoctor.aipro.core.performance.AccelerationAnalyzer
 import com.autodoctor.aipro.core.performance.AccelerationTestConfig
@@ -185,6 +192,8 @@ private fun DiagnosticCockpit(
     val referenceComparator = remember { ReferenceCurveComparator() }
     val factExtractor = remember { FactExtractor() }
     val driveabilityAnalyzer = remember(model) { model?.let(::NeuroSymbolicDriveabilityAnalyzer) }
+    val cloudSettingsStore = remember { CloudAiSettingsStore(context.applicationContext) }
+    val cloudAssistant = remember { OpenAiDiagnosticAssistant(context.applicationContext) }
 
     var connectResult by remember {
         mutableStateOf(
@@ -205,6 +214,12 @@ private fun DiagnosticCockpit(
     var recordingStepIndex by remember { mutableIntStateOf(0) }
     var recordingSince by remember { mutableStateOf<Long?>(null) }
     var testResult by remember { mutableStateOf<EngineTestUiResult?>(null) }
+    var cloudApiKey by remember { mutableStateOf(cloudSettingsStore.apiKey) }
+    var cloudModel by remember { mutableStateOf(cloudSettingsStore.model) }
+    var cloudConsent by remember { mutableStateOf(false) }
+    var cloudBusy by remember { mutableStateOf(false) }
+    var cloudAnswer by remember { mutableStateOf<String?>(null) }
+    var cloudError by remember { mutableStateOf<String?>(null) }
 
     fun closeConnection() {
         scope.launch {
@@ -274,6 +289,7 @@ private fun DiagnosticCockpit(
 
     fun connect() {
         scope.launch {
+            ObdTraceLog.clear()
             connectResult = ObdConnectResult(ObdConnectStatus.Searching, "Ищу Bluetooth, Wi-Fi и USB ELM327...")
             val result = connectionManager.connectFirstReady()
             connectResult = result
@@ -300,6 +316,44 @@ private fun DiagnosticCockpit(
                 scanningHealth = false
                 startSampling(activeConnection)
             }
+        }
+    }
+
+    fun requestCloudAnalysis(mode: CloudDiagnosticMode) {
+        scope.launch {
+            val key = cloudApiKey.trim()
+            if (key.isBlank()) {
+                cloudError = "Введите OpenAI API key. Без ключа приложение не может отправить диагностический пакет в ChatGPT/OpenAI."
+                return@launch
+            }
+            if (!cloudConsent) {
+                cloudError = "Нужно явно разрешить отправку диагностического пакета: raw ELM, DTC, health scan и live-графики."
+                return@launch
+            }
+            cloudBusy = true
+            cloudError = null
+            cloudAnswer = null
+            val selectedModel = cloudModel.trim().ifBlank { CloudAiSettingsStore.DefaultModel }
+            cloudSettingsStore.save(key, selectedModel)
+            val result = testResult
+            cloudAnswer = runCatching {
+                cloudAssistant.analyze(
+                    apiKey = key,
+                    model = selectedModel,
+                    mode = mode,
+                    profile = profile,
+                    connection = connectResult,
+                    healthScan = healthScan,
+                    liveSamples = liveSamples,
+                    recordedSamples = recordedSamples,
+                    localAnalysis = result?.analysis,
+                    power = result?.power,
+                )
+            }.getOrElse { error ->
+                cloudError = error.message ?: error::class.java.simpleName
+                null
+            }
+            cloudBusy = false
         }
     }
 
@@ -342,6 +396,20 @@ private fun DiagnosticCockpit(
                 onDisconnect = ::closeConnection,
             )
             HealthScanCard(healthScan, scanningHealth)
+            CloudAiAssistCard(
+                apiKey = cloudApiKey,
+                onApiKeyChange = { cloudApiKey = it },
+                model = cloudModel,
+                onModelChange = { cloudModel = it },
+                consent = cloudConsent,
+                onConsentChange = { cloudConsent = it },
+                busy = cloudBusy,
+                answer = cloudAnswer,
+                error = cloudError,
+                connected = connection != null,
+                onConnectionHelp = { requestCloudAnalysis(CloudDiagnosticMode.ConnectionTroubleshooting) },
+                onDriveabilityHelp = { requestCloudAnalysis(CloudDiagnosticMode.DriveabilityAnalysis) },
+            )
             LiveGaugeGrid(liveSamples, connected = connection != null)
             EngineTestWizard(
                 connected = connection != null,
@@ -525,6 +593,96 @@ private fun HealthScanCard(scan: ObdHealthScan?, scanning: Boolean) {
             )
             scan.warnings.take(2).forEach { warning ->
                 Text(warning, color = Color(0xFFFFD166), lineHeight = 17.sp, fontSize = 12.sp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun CloudAiAssistCard(
+    apiKey: String,
+    onApiKeyChange: (String) -> Unit,
+    model: String,
+    onModelChange: (String) -> Unit,
+    consent: Boolean,
+    onConsentChange: (Boolean) -> Unit,
+    busy: Boolean,
+    answer: String?,
+    error: String?,
+    connected: Boolean,
+    onConnectionHelp: () -> Unit,
+    onDriveabilityHelp: () -> Unit,
+) {
+    val canSend = apiKey.isNotBlank() && consent && !busy
+    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE111C2D))) {
+        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.weight(1f)) {
+                    Text("AI Assist", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    Text(
+                        text = if (connected) "Можно отправить raw ELM, DTC, Mode 06 и live-графики в OpenAI для разбора." else "Можно отправить лог подключения и ошибки ELM в OpenAI для разбора.",
+                        color = Color(0xFF9FB3C8),
+                        lineHeight = 18.sp,
+                        fontSize = 12.sp,
+                    )
+                }
+                if (busy) CircularProgressIndicator(Modifier.size(24.dp), color = Color(0xFFFFD166), strokeWidth = 3.dp)
+            }
+            OutlinedTextField(
+                value = apiKey,
+                onValueChange = onApiKeyChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("OpenAI API key") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+            )
+            OutlinedTextField(
+                value = model,
+                onValueChange = onModelChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Model") },
+                singleLine = true,
+                placeholder = { Text(CloudAiSettingsStore.DefaultModel) },
+            )
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Checkbox(checked = consent, onCheckedChange = onConsentChange)
+                Text(
+                    text = "Разрешаю отправить диагностический пакет. Запрос идёт с store=false; ключ сохраняется только на этом устройстве.",
+                    color = Color(0xFFD7E3F1),
+                    lineHeight = 17.sp,
+                    fontSize = 12.sp,
+                )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = onConnectionHelp,
+                    enabled = canSend,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2F80FF)),
+                ) {
+                    Text("Разобрать подключение", fontSize = 12.sp, maxLines = 1)
+                }
+                OutlinedButton(
+                    onClick = onDriveabilityHelp,
+                    enabled = canSend,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text("Анализ графиков", fontSize = 12.sp, maxLines = 1)
+                }
+            }
+            error?.let {
+                Text(it, color = Color(0xFFFF6B6B), lineHeight = 18.sp, fontSize = 12.sp)
+            }
+            answer?.let {
+                Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF172235))) {
+                    Text(
+                        text = it,
+                        color = Color(0xFFD7E3F1),
+                        lineHeight = 18.sp,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(14.dp),
+                    )
+                }
             }
         }
     }
