@@ -1,0 +1,82 @@
+[
+  {
+    "id": "four_stroke_airflow_maf_ve",
+    "title": "Expected four-stroke airflow from displacement, RPM and VE",
+    "signals": ["MAF", "RPM", "MAP", "IAT", "LOAD", "THROTTLE"],
+    "formula": "expected_maf_gps ~= displacement_l * rpm * volumetric_efficiency / 120",
+    "graphPattern": "During a clean WOT pull, MAF and RPM should rise together and calculated load should approach the profile's normal high-load range.",
+    "diagnosticUse": "Low measured MAF versus expected airflow is a core signal for intake restriction, exhaust restriction, cam timing/compression loss, underboost or MAF under-reporting. It is never used alone; MAP, throttle, trims and ignition timing decide the branch.",
+    "recommendedChecks": ["Compare peak MAF to engine displacement and RPM", "Check MAP/load coherence", "Check WOT throttle opening", "Compare fuel trims at idle, cruise and WOT"],
+    "sources": ["engineering.maf.speed-density.generic", "mit-ocw-ice-2-61", "underhood-ve-diagnostics", "underhood-maf-diagnostics"]
+  },
+  {
+    "id": "idle_vs_load_trim_separation",
+    "title": "Separate idle trims from load trims",
+    "signals": ["STFT_B1", "LTFT_B1", "RPM", "LOAD", "THROTTLE", "SPEED"],
+    "formula": "combined_trim = STFT + LTFT; trim_load_delta = trim_load - trim_idle",
+    "graphPattern": "If positive trim is high at idle but falls toward normal at 1500-2500 RPM or load, the extra air is a larger fraction of total airflow at idle.",
+    "diagnosticUse": "This pattern prioritizes unmetered air, vacuum leaks, PCV and EVAP purge leaks. If positive trims stay high under load, fuel delivery, MAF under-reporting or exhaust oxygen bias becomes more likely.",
+    "recommendedChecks": ["Smoke test intake and PCV/EVAP paths", "Pinch EVAP purge hose only as a short diagnostic test where safe", "Verify fuel pressure and MAF plausibility before replacing O2/A/F sensors"],
+    "sources": ["underhood-fuel-trim-diagnosis", "mvw-fuel-trims", "denso-p0171-vacuum-leak-case", "source.motor.fuel-trim"]
+  },
+  {
+    "id": "post_repair_trim_mirror",
+    "title": "Use mirrored STFT/LTFT behavior to confirm a fuel-trim repair",
+    "signals": ["STFT_B1", "LTFT_B1", "closed_loop_state"],
+    "formula": "post_repair_resultant = STFT + LTFT",
+    "graphPattern": "After fixing a vacuum leak without clearing adaptations, a previously positive LTFT may be offset by negative STFT until LTFT relearns toward zero.",
+    "diagnosticUse": "This prevents false failure calls immediately after repair. The important value is the sum of trims and its direction over time, not one stored LTFT snapshot.",
+    "recommendedChecks": ["Road-test after repair while watching STFT/LTFT together", "Clear adaptations only when appropriate", "Expect LTFT to step down gradually, not instantly on every ECU"],
+    "sources": ["mvw-fuel-trims", "underhood-fuel-trim-diagnosis"]
+  },
+  {
+    "id": "maf_dirty_range_split",
+    "title": "Dirty MAF can over-report at idle and under-report at cruise/load",
+    "signals": ["MAF", "STFT_B1", "LTFT_B1", "RPM", "LOAD", "MAP"],
+    "formula": "sensor_implausibility_index = max(0, abs(peak_maf_ratio_to_expected - 0.95) - 0.28)",
+    "graphPattern": "Negative fuel trim at idle with positive trim at cruise/load points toward a MAF that is biased differently across the airflow range.",
+    "diagnosticUse": "This keeps the app from treating every positive trim as a fuel pump or every negative trim as a leaking injector. Range split plus VE mismatch raises MAF plausibility priority.",
+    "recommendedChecks": ["Repair downstream air leaks first", "Verify O2/lambda response", "Compare MAF curve to RPM and calculated VE", "Check power, ground and signal voltage before replacement"],
+    "sources": ["motor-maf-diagnosis", "motor-fuel-trimming-time", "underhood-maf-diagnostics"]
+  },
+  {
+    "id": "fuel_delivery_load_only",
+    "title": "Fuel delivery faults appear under load before idle",
+    "signals": ["STFT_B1", "LTFT_B1", "O2", "LAMBDA", "FUEL_PRESSURE", "MAF", "LOAD"],
+    "formula": "load_lean_priority rises when trim_load is high, trim_idle is near normal, and power/airflow are low under WOT.",
+    "graphPattern": "Idle trims can be acceptable while hard acceleration shows lean O2/lambda, high positive trim, low power and sometimes falling load.",
+    "diagnosticUse": "Separates weak pump, restricted filter, low volume, regulator and injector delivery from small vacuum leaks.",
+    "recommendedChecks": ["Measure pressure and volume under load", "Check pump voltage drop and ground", "Compare commanded lambda to measured lambda", "Do injector balance if one cylinder/bank pattern exists"],
+    "sources": ["motor-maf-diagnosis", "motor-fuel-trimming-time", "underhood-fuel-trim-diagnosis"]
+  },
+  {
+    "id": "exhaust_restriction_breathing",
+    "title": "Exhaust restriction is low airflow with high pumping loss",
+    "signals": ["MAF", "MAP", "LOAD", "TIMING_ADVANCE", "RPM", "THROTTLE"],
+    "formula": "exhaust_restriction_index = airflow_deficit * high_map_factor * max(0.35, spark_torque_loss_index)",
+    "graphPattern": "Throttle is high but MAF/VE and load are low, MAP stays high, RPM climb is slow and timing can be pulled back by heat/knock response.",
+    "diagnosticUse": "Prioritizes catalytic converter, muffler, DPF on diesel, collapsed exhaust pipe or severe exhaust backpressure over a simple air-filter restriction.",
+    "recommendedChecks": ["Measure exhaust backpressure", "Compare temperature before/after catalyst where applicable", "Check MAP waveform on snap throttle", "Do not condemn catalyst from P0420 alone"],
+    "sources": ["mit-ocw-ice-2-61", "underhood-ve-diagnostics", "source.motor.generic-obd"]
+  },
+  {
+    "id": "thermal_density_and_knock_derate",
+    "title": "Heat reduces air density and can force ignition retard",
+    "signals": ["IAT", "COOLANT_TEMP", "TIMING_ADVANCE", "KNOCK_RETARD", "LOAD"],
+    "formula": "thermal_air_density_loss_index ~= max(0, (IAT_C - 35) * 0.0032)",
+    "graphPattern": "High intake/coolant temperatures with late timing and reduced torque suggest thermal derate or knock-protection behavior.",
+    "diagnosticUse": "Prevents mislabeling a hot-air or overheating power loss as a fuel fault when trims and airflow do not support that.",
+    "recommendedChecks": ["Verify ECT/IAT plausibility cold and hot", "Check fans, thermostat, radiator and air pockets", "Check fuel octane and knock sensor only after thermal conditions are understood"],
+    "sources": ["mit-ocw-ice-2-61", "mit-ocw-physics-energy-ice", "nptel-ic-engines"]
+  },
+  {
+    "id": "mechanical_breathing_low_ve",
+    "title": "Low VE without trim direction suggests mechanical breathing",
+    "signals": ["MAF", "MAP", "LOAD", "STFT_B1", "LTFT_B1", "RPM", "MISFIRE"],
+    "formula": "mechanical_breathing_priority rises when VE and power are low but trims are not strongly lean/rich and intake/exhaust indices are weak.",
+    "graphPattern": "The engine accepts throttle but never produces expected airflow or torque, while fuel control is not screaming in one direction.",
+    "diagnosticUse": "Raises cam timing, VVT/VCT, compression, valve sealing, valve clearance, timing chain/belt and cylinder leakage checks.",
+    "recommendedChecks": ["Compression and leak-down test", "Cam/crank correlation and VVT actual vs target", "Idle vacuum/MAP waveform", "Cylinder balance and misfire counters"],
+    "sources": ["mvw-fuel-trims", "mit-ocw-ice-2-61", "motor-fuel-trimming-time"]
+  }
+]

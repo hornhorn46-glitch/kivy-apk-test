@@ -4,9 +4,9 @@
   "target": "gasoline_driveability_root_cause",
   "createdBy": "tools/train_driveability_model.py",
   "validation": {
-    "targetAccuracy": 0.97,
+    "targetAccuracy": 0.98,
     "measuredTestAccuracy": 0.9833,
-    "measuredMacroF1": 0.9832,
+    "measuredMacroF1": 0.9819,
     "testGraphCount": 60,
     "testVehicleGraphCount": 60,
     "validationKind": "physics_fault_injection_on_real_obd_templates",
@@ -116,6 +116,90 @@
       "description": "boost expected for profile"
     },
     {
+      "id": "wot_airflow_deficit",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 0.45,
+      "description": "wot airflow deficit"
+    },
+    {
+      "id": "throttle_load_mismatch",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 35.0,
+      "description": "throttle load mismatch"
+    },
+    {
+      "id": "idle_vacuum_kpa",
+      "missingValue": 62.0,
+      "center": 62.0,
+      "scale": 22.0,
+      "description": "idle vacuum kpa"
+    },
+    {
+      "id": "intake_restriction_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 0.45,
+      "description": "intake restriction index"
+    },
+    {
+      "id": "exhaust_restriction_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 0.45,
+      "description": "exhaust restriction index"
+    },
+    {
+      "id": "spark_torque_loss_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "spark torque loss index"
+    },
+    {
+      "id": "thermal_air_density_loss_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 0.25,
+      "description": "thermal air density loss index"
+    },
+    {
+      "id": "power_ratio_to_reference",
+      "missingValue": 0.95,
+      "center": 0.95,
+      "scale": 0.35,
+      "description": "power ratio to reference"
+    },
+    {
+      "id": "specific_airflow_gps_per_liter",
+      "missingValue": 0.0,
+      "center": 24.0,
+      "scale": 12.0,
+      "description": "specific airflow gps per liter"
+    },
+    {
+      "id": "sensor_implausibility_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 0.55,
+      "description": "sensor implausibility index"
+    },
+    {
+      "id": "mechanical_breathing_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 0.55,
+      "description": "mechanical breathing index"
+    },
+    {
+      "id": "clean_wot_adequacy_index",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "clean wot adequacy index"
+    },
+    {
       "id": "has_misfire_dtc",
       "missingValue": 0.0,
       "center": 0.0,
@@ -173,9 +257,17 @@
       "weights": {
         "diagnostic_data_coverage": 0.7,
         "peak_maf_ratio_to_expected": 0.7,
+        "wot_airflow_deficit": -1.2,
         "max_throttle_percent": 0.6,
         "max_load_percent": 0.6,
         "module_voltage_avg_v": 0.6,
+        "intake_restriction_index": -2.2,
+        "exhaust_restriction_index": -2.2,
+        "spark_torque_loss_index": -1.5,
+        "power_ratio_to_reference": 0.9,
+        "sensor_implausibility_index": -2.0,
+        "mechanical_breathing_index": -3.0,
+        "clean_wot_adequacy_index": 3.2,
         "coolant_c": -0.5,
         "iat_c": -0.2,
         "has_misfire_dtc": -4.0,
@@ -192,6 +284,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -204,6 +300,7 @@
         "combined_trim_idle_b1": 5.4,
         "combined_trim_load_b1": 0.8,
         "trim_load_delta_b1": -4.4,
+        "idle_vacuum_kpa": -1.8,
         "has_lean_dtc": 2.0
       },
       "physicalExplanation": "На холостом ходу смесь уходит в бедную сторону сильнее, чем под нагрузкой: типичная физика подсоса воздуха после расходомера или утечки вакуума.",
@@ -215,6 +312,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -227,7 +328,9 @@
         "combined_trim_load_b1": 5.2,
         "trim_load_delta_b1": 3.8,
         "peak_maf_ratio_to_expected": -1.3,
+        "wot_airflow_deficit": 0.9,
         "max_load_percent": -1.3,
+        "power_ratio_to_reference": -0.9,
         "has_lean_dtc": 1.8
       },
       "physicalExplanation": "Под нагрузкой коррекции растут, наполнение и нагрузка проседают: топливная система не поддерживает требуемую подачу.",
@@ -239,6 +342,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -250,6 +357,7 @@
       "weights": {
         "combined_trim_idle_b1": -4.2,
         "combined_trim_load_b1": -4.8,
+        "power_ratio_to_reference": -0.4,
         "has_rich_dtc": 2.2
       },
       "physicalExplanation": "Отрицательные коррекции на разных режимах показывают, что ЭБУ стабильно убирает лишнее топливо.",
@@ -261,6 +369,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -272,8 +384,16 @@
       "weights": {
         "peak_maf_ratio_to_expected": -3.0,
         "estimated_peak_ve": -1.9,
+        "wot_airflow_deficit": 1.8,
+        "intake_restriction_index": 5.0,
+        "exhaust_restriction_index": -1.8,
+        "mechanical_breathing_index": -1.4,
+        "clean_wot_adequacy_index": -1.0,
         "max_load_percent": -1.8,
-        "max_map_kpa": -1.2
+        "max_map_kpa": -1.2,
+        "power_ratio_to_reference": -0.9,
+        "specific_airflow_gps_per_liter": -0.8,
+        "sensor_implausibility_index": -1.2
       },
       "physicalExplanation": "Расход воздуха и расчетное наполнение ниже ожидаемых при открытом дросселе: двигатель не получает воздух.",
       "recommendedChecks": [
@@ -284,6 +404,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -295,9 +419,17 @@
       "weights": {
         "peak_maf_ratio_to_expected": -2.2,
         "estimated_peak_ve": -1.7,
+        "wot_airflow_deficit": 1.2,
+        "intake_restriction_index": -1.2,
+        "exhaust_restriction_index": 5.4,
+        "mechanical_breathing_index": -0.8,
+        "clean_wot_adequacy_index": -1.0,
         "max_map_kpa": 4.5,
         "min_timing_deg": -2.5,
-        "max_load_percent": -1.0
+        "spark_torque_loss_index": 1.6,
+        "max_load_percent": -1.0,
+        "power_ratio_to_reference": -0.8,
+        "sensor_implausibility_index": -1.0
       },
       "physicalExplanation": "Высокое давление во впуске при низком расходе и позднем зажигании указывает на противодавление выпуска.",
       "recommendedChecks": [
@@ -308,6 +440,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -319,6 +455,7 @@
       "weights": {
         "max_throttle_percent": -5.4,
         "max_load_percent": -2.0,
+        "power_ratio_to_reference": -0.5,
         "has_throttle_dtc": 3.0
       },
       "physicalExplanation": "Дроссель не открывается достаточно, поэтому нагрузка не растет даже при попытке разгона.",
@@ -330,6 +467,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -340,7 +481,9 @@
       "bias": -1.05,
       "weights": {
         "min_timing_deg": -5.2,
+        "spark_torque_loss_index": 4.8,
         "max_load_percent": 0.7,
+        "thermal_air_density_loss_index": 0.8,
         "has_knock_dtc": 2.4
       },
       "physicalExplanation": "Угол зажигания резко поздний под нагрузкой: ЭБУ защищает мотор или есть ошибка датчика/топлива/детонации.",
@@ -352,6 +495,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -364,7 +511,9 @@
         "has_misfire_dtc": 6.2,
         "combined_trim_idle_b1": 1.1,
         "combined_trim_load_b1": 0.8,
-        "min_timing_deg": -0.8
+        "min_timing_deg": -0.8,
+        "spark_torque_loss_index": 0.8,
+        "power_ratio_to_reference": -0.7
       },
       "physicalExplanation": "Коды пропусков и нестабильная топливная картина указывают на срыв сгорания в одном или нескольких цилиндрах.",
       "recommendedChecks": [
@@ -375,6 +524,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -388,7 +541,9 @@
         "estimated_boost_kpa": -0.5,
         "max_map_kpa": 0.8,
         "max_load_percent": -1.3,
-        "peak_maf_ratio_to_expected": -1.4
+        "peak_maf_ratio_to_expected": -1.4,
+        "wot_airflow_deficit": 1.0,
+        "power_ratio_to_reference": -0.7
       },
       "physicalExplanation": "Для наддувного профиля давление и расход ниже ожидаемых под нагрузкой: турбина, управление наддувом или утечки.",
       "recommendedChecks": [
@@ -399,6 +554,79 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "cam_timing_or_compression",
+      "title": "Cam timing, valve sealing or compression loss",
+      "bias": -1.35,
+      "weights": {
+        "peak_maf_ratio_to_expected": -2.5,
+        "estimated_peak_ve": -2.4,
+        "wot_airflow_deficit": 1.7,
+        "mechanical_breathing_index": 6.2,
+        "clean_wot_adequacy_index": -2.4,
+        "throttle_load_mismatch": 1.3,
+        "intake_restriction_index": -0.8,
+        "exhaust_restriction_index": -0.8,
+        "combined_trim_idle_b1": 0.1,
+        "combined_trim_load_b1": 0.1,
+        "power_ratio_to_reference": -1.6,
+        "specific_airflow_gps_per_liter": -1.0,
+        "sensor_implausibility_index": -0.9
+      },
+      "physicalExplanation": "Дроссель открыт, но наполнение и удельный расход воздуха низкие без сильного перекоса топливных коррекций и без яркого признака забитого впуска или выпуска. Такая форма графиков чаще указывает на механическое дыхание двигателя: фазы ГРМ, компрессия, герметичность клапанов или управление фазовращателями.",
+      "recommendedChecks": [
+        "Сделать тест компрессии и leak-down.",
+        "Проверить фазы ГРМ и фактические углы VVT/VCT.",
+        "Сравнить вакуум/осциллограмму MAP на холостом и при резком открытии дросселя."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "sensor_plausibility",
+      "title": "Air metering sensor plausibility fault",
+      "bias": -1.55,
+      "weights": {
+        "sensor_implausibility_index": 5.8,
+        "mechanical_breathing_index": -1.3,
+        "clean_wot_adequacy_index": -0.8,
+        "max_load_percent": 1.1,
+        "max_map_kpa": 0.9,
+        "intake_restriction_index": -1.0,
+        "exhaust_restriction_index": -1.0,
+        "throttle_load_mismatch": -0.4,
+        "combined_trim_idle_b1": 0.2,
+        "combined_trim_load_b1": -0.2
+      },
+      "physicalExplanation": "MAF/VE или расчетная мощность выходят за физически правдоподобный диапазон, но MAP и расчетная нагрузка при этом остаются согласованными с разгоном. Это больше похоже на ошибку измерения MAF/MAP/IAT или проводки, чем на реальное падение наполнения.",
+      "recommendedChecks": [
+        "Сравнить MAF с расчетом по объему, RPM, MAP и температуре воздуха.",
+        "Проверить разъем, массу, питание и сигнальную линию MAF/MAP/IAT.",
+        "Очистку или замену датчика делать только после проверки впуска на герметичность и проводки."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -410,6 +638,8 @@
       "weights": {
         "coolant_c": 5.0,
         "iat_c": 2.4,
+        "thermal_air_density_loss_index": 4.0,
+        "spark_torque_loss_index": 1.0,
         "min_timing_deg": -1.0
       },
       "physicalExplanation": "Температуры охлаждающей жидкости или воздуха высокие, поэтому двигатель уходит в защитные углы и снижает мощность.",
@@ -421,6 +651,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]
@@ -443,6 +677,10 @@
       "sources": [
         "sae-j1979",
         "iso-15031",
+        "mit-ocw-ice-2-61",
+        "nptel-ic-engines",
+        "underhood-fuel-trim-diagnosis",
+        "underhood-maf-diagnostics",
         "zenodo-automotive-faults",
         "vehiclepm-obd-field-data"
       ]

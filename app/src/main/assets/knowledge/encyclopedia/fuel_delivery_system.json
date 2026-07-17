@@ -1,0 +1,11 @@
+{
+  "id": "fuel_delivery_system",
+  "title": "Fuel delivery, pressure, volume and injector balance",
+  "parameterIds": ["FUEL_PRESSURE", "STFT_B1", "LTFT_B1", "LAMBDA", "LOAD", "RPM"],
+  "whatItIs": "The fuel system must deliver the commanded fuel mass at the exact load and RPM where torque is requested. Pressure at idle alone is not enough; volume and voltage under load matter.",
+  "normalValues": "Closed-loop trims should stay near zero in normal cruise. Under heavy load, commanded lambda and measured response must stay plausible and the engine should not go lean when airflow rises.",
+  "deviations": ["Positive trims mainly under load suggest fuel volume, pump voltage, filter or injector flow limitation", "Negative trims and fuel smell suggest overfueling, leaking injector, high pressure or purge vapor", "One-cylinder misfire with trim disturbance can be injector imbalance", "Normal idle pressure with lean WOT can still be a weak pump volume fault"],
+  "influence": "Fuel delivery faults can damage the engine under load through lean combustion and knock, so load-only lean patterns are high priority.",
+  "checks": ["Measure pressure and volume under load", "Check pump voltage drop and ground", "Compare lambda/O2 behavior during acceleration", "Run injector balance or cylinder contribution tests when one cylinder/bank is suspicious"],
+  "sources": ["motor-maf-diagnosis", "motor-fuel-trimming-time", "underhood-fuel-trim-diagnosis"]
+}

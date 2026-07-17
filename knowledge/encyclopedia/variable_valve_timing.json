@@ -1,0 +1,11 @@
+{
+  "id": "variable_valve_timing",
+  "title": "Variable valve timing, cam correlation and mechanical breathing",
+  "parameterIds": ["RPM", "LOAD", "MAF", "MAP", "TIMING_ADVANCE", "DTC"],
+  "whatItIs": "Cam timing controls when valves open and close. Incorrect timing or sluggish VVT changes cylinder filling, idle vacuum, misfire behavior and high-RPM power.",
+  "normalValues": "When VVT is healthy, actual cam position follows command and airflow/load change predictably with RPM. Fuel trims do not usually scream in only one direction from pure cam timing error.",
+  "deviations": ["Low VE with normal-ish trims suggests mechanical breathing", "Bank split trims can suggest cam timing difference between banks", "P0011/P0012/P0016-style faults need oil, actuator, chain/belt and sensor checks", "Sluggish VVT can appear hot or after dirty oil"],
+  "influence": "VVT faults are often misdiagnosed as MAF, fuel or catalyst problems because the engine simply cannot breathe correctly.",
+  "checks": ["Check oil level, viscosity and contamination", "Compare commanded and actual cam angle if enhanced PID exists", "Scope cam/crank correlation", "Run compression/leak-down if graph suggests mechanical loss"],
+  "sources": ["mit-ocw-ice-2-61", "mvw-fuel-trims", "drive2-practical-search"]
+}

@@ -1,7 +1,7 @@
 {
   "id": "root-cause-benchmark-v1",
   "target": "gasoline_driveability_root_cause",
-  "targetAccuracy": 0.97,
+  "targetAccuracy": 0.98,
   "sourceSummary": {
     "real_obd_templates": 13,
     "real_obd_template_vehicles": [
@@ -32,20 +32,31 @@
       "Fuel System": 5,
       "Liquid Systems": 5
     },
+    "diagnostic_case_pattern_corpus": {
+      "total": 12764,
+      "counts": {
+        "standard": 11256,
+        "uncommon": 1000,
+        "vehicle_specific": 500,
+        "repair_confirmed_seed": 8
+      }
+    },
     "generated_cases": 780,
     "label_distribution": {
-      "no_fault": 65,
-      "unmetered_air": 65,
-      "fuel_delivery": 65,
-      "rich_condition": 65,
-      "air_restriction": 65,
-      "exhaust_restriction": 65,
-      "throttle_limited": 65,
-      "ignition_retard": 65,
-      "misfire": 65,
-      "underboost": 65,
-      "thermal": 65,
-      "electrical": 65
+      "no_fault": 56,
+      "unmetered_air": 56,
+      "fuel_delivery": 56,
+      "rich_condition": 57,
+      "air_restriction": 57,
+      "exhaust_restriction": 56,
+      "throttle_limited": 55,
+      "ignition_retard": 55,
+      "misfire": 56,
+      "underboost": 55,
+      "cam_timing_or_compression": 55,
+      "sensor_plausibility": 55,
+      "thermal": 55,
+      "electrical": 56
     }
   },
   "validationPolicy": {
@@ -62,135 +73,176 @@
     "split": "validation",
     "graph_count": 120,
     "vehicle_graph_count": 13,
-    "accuracy": 0.9833,
-    "macro_f1": 0.9832,
+    "accuracy": 0.9583,
+    "macro_f1": 0.9587,
     "per_class": {
       "no_fault": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1": 1.0,
-        "support": 10
+        "precision": 0.875,
+        "recall": 0.7778,
+        "f1": 0.8235,
+        "support": 9
       },
       "unmetered_air": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 9
       },
       "fuel_delivery": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 9
       },
       "rich_condition": {
         "precision": 1.0,
-        "recall": 1.0,
-        "f1": 1.0,
-        "support": 10
+        "recall": 0.8889,
+        "f1": 0.9412,
+        "support": 9
       },
       "air_restriction": {
-        "precision": 0.8333,
+        "precision": 1.0,
         "recall": 1.0,
-        "f1": 0.9091,
-        "support": 10
+        "f1": 1.0,
+        "support": 9
       },
       "exhaust_restriction": {
         "precision": 1.0,
-        "recall": 0.8,
-        "f1": 0.8889,
-        "support": 10
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 9
       },
       "throttle_limited": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 8
       },
       "ignition_retard": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 8
       },
       "misfire": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 8
       },
       "underboost": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 8
+      },
+      "cam_timing_or_compression": {
+        "precision": 0.6667,
+        "recall": 1.0,
+        "f1": 0.8,
+        "support": 8
+      },
+      "sensor_plausibility": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 8
       },
       "thermal": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 9
       },
       "electrical": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 10
+        "support": 9
       }
     },
     "errors": [
       {
-        "case_id": "train-0665",
-        "vehicle": "nissan versa 2016",
-        "actual": "exhaust_restriction",
-        "predicted": "air_restriction",
-        "probability": 0.6187
+        "case_id": "train-0602",
+        "vehicle": "volkswagen voyage 2013",
+        "actual": "no_fault",
+        "predicted": "cam_timing_or_compression",
+        "probability": 0.5344
       },
       {
-        "case_id": "train-0689",
-        "vehicle": "chevrolet agile 2011",
-        "actual": "exhaust_restriction",
-        "predicted": "air_restriction",
-        "probability": 0.5314
+        "case_id": "train-0630",
+        "vehicle": "honda fit 2005",
+        "actual": "no_fault",
+        "predicted": "cam_timing_or_compression",
+        "probability": 0.4936
+      },
+      {
+        "case_id": "train-0675",
+        "vehicle": "peugeot 208_allure 2015",
+        "actual": "rich_condition",
+        "predicted": "no_fault",
+        "probability": 0.564
+      },
+      {
+        "case_id": "train-0683",
+        "vehicle": "renault duster 2012",
+        "actual": "sensor_plausibility",
+        "predicted": "cam_timing_or_compression",
+        "probability": 0.9521
+      },
+      {
+        "case_id": "train-0697",
+        "vehicle": "generic car5 2016",
+        "actual": "sensor_plausibility",
+        "predicted": "cam_timing_or_compression",
+        "probability": 0.8976
       }
     ],
     "confusion": {
       "no_fault": {
-        "no_fault": 10
+        "cam_timing_or_compression": 2,
+        "no_fault": 7
       },
       "unmetered_air": {
-        "unmetered_air": 10
+        "unmetered_air": 9
       },
       "fuel_delivery": {
-        "fuel_delivery": 10
+        "fuel_delivery": 9
       },
       "rich_condition": {
-        "rich_condition": 10
+        "rich_condition": 8,
+        "no_fault": 1
       },
       "air_restriction": {
-        "air_restriction": 10
+        "air_restriction": 9
       },
       "exhaust_restriction": {
-        "exhaust_restriction": 8,
-        "air_restriction": 2
+        "exhaust_restriction": 9
       },
       "throttle_limited": {
-        "throttle_limited": 10
+        "throttle_limited": 8
       },
       "ignition_retard": {
-        "ignition_retard": 10
+        "ignition_retard": 8
       },
       "misfire": {
-        "misfire": 10
+        "misfire": 8
       },
       "underboost": {
-        "underboost": 10
+        "underboost": 8
+      },
+      "cam_timing_or_compression": {
+        "cam_timing_or_compression": 8
+      },
+      "sensor_plausibility": {
+        "sensor_plausibility": 6,
+        "cam_timing_or_compression": 2
       },
       "thermal": {
-        "thermal": 10
+        "thermal": 9
       },
       "electrical": {
-        "electrical": 10
+        "electrical": 9
       }
     }
   },
@@ -199,25 +251,25 @@
     "graph_count": 60,
     "vehicle_graph_count": 60,
     "accuracy": 0.9833,
-    "macro_f1": 0.9832,
+    "macro_f1": 0.9819,
     "per_class": {
       "no_fault": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 5
+        "support": 4
       },
       "unmetered_air": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 5
+        "support": 4
       },
       "fuel_delivery": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 5
+        "support": 4
       },
       "rich_condition": {
         "precision": 1.0,
@@ -226,28 +278,28 @@
         "support": 5
       },
       "air_restriction": {
-        "precision": 0.8333,
+        "precision": 1.0,
         "recall": 1.0,
-        "f1": 0.9091,
+        "f1": 1.0,
         "support": 5
       },
       "exhaust_restriction": {
         "precision": 1.0,
-        "recall": 0.8,
-        "f1": 0.8889,
-        "support": 5
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 4
       },
       "throttle_limited": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 5
+        "support": 4
       },
       "ignition_retard": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 5
+        "support": 4
       },
       "misfire": {
         "precision": 1.0,
@@ -259,13 +311,25 @@
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 5
+        "support": 4
+      },
+      "cam_timing_or_compression": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.8889,
+        "support": 4
+      },
+      "sensor_plausibility": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 4
       },
       "thermal": {
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "support": 5
+        "support": 4
       },
       "electrical": {
         "precision": 1.0,
@@ -276,22 +340,22 @@
     },
     "errors": [
       {
-        "case_id": "test-graph-23",
-        "vehicle": "benchmark-profile-23 volkswagen polo",
-        "actual": "exhaust_restriction",
-        "predicted": "air_restriction",
-        "probability": 0.64
+        "case_id": "test-graph-25",
+        "vehicle": "benchmark-profile-25 fiat palio",
+        "actual": "sensor_plausibility",
+        "predicted": "cam_timing_or_compression",
+        "probability": 0.9445
       }
     ],
     "confusion": {
       "no_fault": {
-        "no_fault": 5
+        "no_fault": 4
       },
       "unmetered_air": {
-        "unmetered_air": 5
+        "unmetered_air": 4
       },
       "fuel_delivery": {
-        "fuel_delivery": 5
+        "fuel_delivery": 4
       },
       "rich_condition": {
         "rich_condition": 5
@@ -300,23 +364,29 @@
         "air_restriction": 5
       },
       "exhaust_restriction": {
-        "exhaust_restriction": 4,
-        "air_restriction": 1
+        "exhaust_restriction": 4
       },
       "throttle_limited": {
-        "throttle_limited": 5
+        "throttle_limited": 4
       },
       "ignition_retard": {
-        "ignition_retard": 5
+        "ignition_retard": 4
       },
       "misfire": {
         "misfire": 5
       },
       "underboost": {
-        "underboost": 5
+        "underboost": 4
+      },
+      "cam_timing_or_compression": {
+        "cam_timing_or_compression": 4
+      },
+      "sensor_plausibility": {
+        "sensor_plausibility": 3,
+        "cam_timing_or_compression": 1
       },
       "thermal": {
-        "thermal": 5
+        "thermal": 4
       },
       "electrical": {
         "electrical": 5

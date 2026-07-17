@@ -1,0 +1,11 @@
+{
+  "id": "sensor_plausibility",
+  "title": "Sensor plausibility and when the graph is physically impossible",
+  "parameterIds": ["MAF", "MAP", "IAT", "COOLANT_TEMP", "CONTROL_MODULE_VOLTAGE", "STFT_B1", "LTFT_B1"],
+  "whatItIs": "A sensor can be wrong without setting a sensor-specific DTC. Plausibility means checking whether all sensors can be true at the same time under engine physics.",
+  "normalValues": "Cold ECT/IAT should be near ambient, MAP key-on should be near barometric pressure, MAF should scale with RPM/load, and voltage/reference lines should stay stable.",
+  "deviations": ["MAF far above physical airflow with normal MAP/load is implausible", "MAF far below expected with normal fuel and MAP can be under-reporting", "ECT/IAT impossible at startup corrupts fueling", "Low module voltage can create multiple unrelated sensor errors"],
+  "influence": "Plausibility prevents parts-cannon repairs. It also lets the app say 'insufficient data' when the graph cannot support a conclusion.",
+  "checks": ["Compare sensor values key-on engine-off", "Check power, ground and 5V reference", "Compare MAF/MAP/IAT against speed-density calculation", "Repair wiring and leaks before replacing expensive modules"],
+  "sources": ["underhood-maf-diagnostics", "motor-maf-diagnosis", "dtcdb-mit-generic"]
+}

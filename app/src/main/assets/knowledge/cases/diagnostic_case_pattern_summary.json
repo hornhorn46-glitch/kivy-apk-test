@@ -1,0 +1,47 @@
+{
+  "id": "diagnostic-case-pattern-summary-v1",
+  "totalCases": 12764,
+  "counts": {
+    "standard": 11256,
+    "uncommon": 1000,
+    "vehicle_specific": 500,
+    "repair_confirmed_seed": 8
+  },
+  "systems": {
+    "air_leak": 60,
+    "air_metering": 4908,
+    "air_restriction": 40,
+    "catalyst": 280,
+    "cooling": 168,
+    "egr": 280,
+    "electrical": 1164,
+    "evap": 564,
+    "exhaust_restriction": 40,
+    "field_pattern": 8,
+    "fuel": 100,
+    "fuel_trim": 160,
+    "ignition": 60,
+    "ignition_knock": 648,
+    "lambda": 20,
+    "mechanical": 120,
+    "misfire": 1440,
+    "platform_pattern": 500,
+    "sync": 40,
+    "thermal": 80,
+    "throttle": 424,
+    "transmission": 1560,
+    "turbo": 80,
+    "vacuum": 20
+  },
+  "generationPolicy": [
+    "standard cases are generated from the MIT-licensed dtcdb DTC seed list plus project-authored OBD signal logic",
+    "uncommon cases are project-authored diagnostic traps grounded in cited engineering and repair case sources",
+    "vehicle-specific cases are prioritization patterns for common platforms and must be confirmed by generic graph physics",
+    "repair-confirmed seed cases store concise source-attributed patterns, not copied forum text or images"
+  ],
+  "minimumRequestedCounts": {
+    "standard": 10000,
+    "uncommon": 1000,
+    "vehicle_specific": 500
+  }
+}

@@ -39,10 +39,12 @@ class EnginePhysics {
         val maxMap = map.maxOfOrNull { it.value }
         val minTiming = timing.minOfOrNull { it.value }
         val minVoltage = voltage.minOfOrNull { it.value }
+        val maxIat = samples.byPid("INTAKE_TEMP").maxOfOrNull { it.value }
         val displacement = profile.displacementLiters
 
         if (maxThrottle != null && maxLoad != null) {
             facts["load_response_ratio"] = (maxLoad / max(maxThrottle, 1.0)).round3()
+            facts["throttle_load_mismatch"] = (maxThrottle - maxLoad).round2()
         }
         if (maxThrottle != null && maxRpm != null) {
             facts["has_wot_pull"] = maxThrottle >= 75.0 && maxRpm >= 2500.0
@@ -56,18 +58,37 @@ class EnginePhysics {
         }
         if (maxMaf != null && maxRpm != null && displacement != null && maxRpm > 0.0) {
             val expectedPeakMaf = expectedMaf(displacement, maxRpm, if (profile.induction == InductionType.Turbocharged) 1.15 else 0.85)
+            val peakMafRatio = maxMaf / max(expectedPeakMaf, 1.0)
             facts["peak_maf_expected_gps"] = expectedPeakMaf.round1()
-            facts["peak_maf_ratio_to_expected"] = (maxMaf / max(expectedPeakMaf, 1.0)).round3()
+            facts["peak_maf_ratio_to_expected"] = peakMafRatio.round3()
             facts["estimated_peak_ve"] = (maxMaf * 120.0 / max(displacement * maxRpm, 1.0)).round3()
+            facts["wot_airflow_deficit"] = max(0.0, 1.0 - peakMafRatio).round3()
+            facts["sensor_implausibility_index"] = max(0.0, abs(peakMafRatio - 0.95) - 0.28).round3()
+            facts["specific_airflow_gps_per_liter"] = (maxMaf / max(displacement, 0.1)).round2()
+            if (maxLoad != null && maxThrottle != null) {
+                facts["clean_wot_adequacy_index"] =
+                    if (peakMafRatio >= 0.80 && maxLoad >= 78.0 && maxThrottle >= 78.0) 1.0 else 0.0
+            }
+            profile.powerKw?.takeIf { it > 0.0 }?.let { ratedPower ->
+                facts["power_ratio_to_reference"] = ((maxMaf * AIR_MASS_TO_KW) / ratedPower).round3()
+            }
         }
         if (maxLoad != null && maxMap != null) {
             facts["map_load_coherence"] = (maxMap / max(maxLoad, 1.0)).round3()
         }
+        idleMap(map, rpm, speed)?.let { idleMapKpa ->
+            facts["idle_map_kpa"] = idleMapKpa.round2()
+            facts["idle_vacuum_kpa"] = max(0.0, ATMOSPHERIC_KPA - idleMapKpa).round2()
+        }
         if (minTiming != null && maxLoad != null && maxLoad > 60.0) {
             facts["timing_retard_under_load"] = minTiming < 6.0
+            facts["spark_torque_loss_index"] = max(0.0, (12.0 - minTiming) / 12.0).round3()
         }
         if (minVoltage != null) {
             facts["low_voltage_seen"] = minVoltage < 12.6
+        }
+        maxIat?.let {
+            facts["thermal_air_density_loss_index"] = max(0.0, (it - 35.0) * 0.0032).round3()
         }
 
         trimByMode(stft, ltft, rpm, speed, throttle, load, idle = true)?.let {
@@ -86,6 +107,19 @@ class EnginePhysics {
                 idleTrim < -10.0 && loadTrim < -10.0 -> "global_rich_bias"
                 else -> "mixed_or_normal"
             }
+        }
+
+        val airflowDeficit = facts["wot_airflow_deficit"] as? Double
+        if (airflowDeficit != null && maxMap != null && maxThrottle != null && maxThrottle > 70.0) {
+            val lowMapFactor = max(0.0, (86.0 - maxMap) / 28.0)
+            val highMapFactor = max(0.0, (maxMap - 86.0) / 28.0)
+            val timingLoss = facts["spark_torque_loss_index"] as? Double ?: 0.0
+            facts["intake_restriction_index"] = (airflowDeficit * lowMapFactor).round3()
+            facts["exhaust_restriction_index"] = (airflowDeficit * highMapFactor * max(0.35, timingLoss)).round3()
+            val intakeRestriction = facts["intake_restriction_index"] as? Double ?: 0.0
+            val exhaustRestriction = facts["exhaust_restriction_index"] as? Double ?: 0.0
+            facts["mechanical_breathing_index"] =
+                max(0.0, airflowDeficit - max(intakeRestriction, exhaustRestriction) - 0.18).round3()
         }
 
         val coverage = listOfNotNull(
@@ -129,6 +163,22 @@ class EnginePhysics {
                 (throttleValue != null && throttleValue > 55.0) || (loadValue != null && loadValue > 55.0)
             }
             if (matches) values += shortTrim.value + longTrim
+        }
+        return values.takeIf { it.size >= 3 }?.average()
+    }
+
+    private fun idleMap(
+        map: List<PidSample>,
+        rpm: List<PidSample>,
+        speed: List<PidSample>,
+    ): Double? {
+        val values = mutableListOf<Double>()
+        for (mapSample in map) {
+            val rpmValue = rpm.nearest(mapSample.timestampMillis, 800L)?.value ?: continue
+            val speedValue = speed.nearest(mapSample.timestampMillis, 800L)?.value ?: 0.0
+            if (rpmValue in 550.0..1_150.0 && speedValue < 5.0) {
+                values += mapSample.value
+            }
         }
         return values.takeIf { it.size >= 3 }?.average()
     }

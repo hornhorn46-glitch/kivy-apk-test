@@ -68,6 +68,40 @@ class KnowledgeRepository(
             ?: emptyList()
     }
 
+    fun loadEncyclopediaArticles(): List<EncyclopediaArticle> {
+        return context.assets.list("knowledge/encyclopedia")
+            ?.filter { it.endsWith(".json") }
+            ?.map { file ->
+                context.assets.open("knowledge/encyclopedia/$file").bufferedReader().use { reader ->
+                    json.decodeFromString<EncyclopediaArticle>(reader.readText())
+                }
+            }
+            ?: emptyList()
+    }
+
+    fun loadEnginePhysicsPrinciples(): List<EnginePhysicsPrinciple> {
+        return context.assets.list("knowledge/physics")
+            ?.filter { it.endsWith(".json") }
+            ?.flatMap { file ->
+                context.assets.open("knowledge/physics/$file").bufferedReader().use { reader ->
+                    json.decodeFromString<List<EnginePhysicsPrinciple>>(reader.readText())
+                }
+            }
+            ?: emptyList()
+    }
+
+    fun loadDiagnosticCasePatterns(): List<DiagnosticCasePattern> {
+        return context.assets.open("knowledge/cases/diagnostic_case_patterns.json")
+            .bufferedReader()
+            .use { reader -> json.decodeFromString<List<DiagnosticCasePattern>>(reader.readText()) }
+    }
+
+    fun loadDiagnosticCasePatternSummary(): DiagnosticCasePatternSummary {
+        return context.assets.open("knowledge/cases/diagnostic_case_pattern_summary.json")
+            .bufferedReader()
+            .use { reader -> json.decodeFromString<DiagnosticCasePatternSummary>(reader.readText()) }
+    }
+
     fun loadDriveabilityModel(): DriveabilityModel {
         return context.assets.open("knowledge/ai/driveability_neurosymbolic_model.json")
             .bufferedReader()

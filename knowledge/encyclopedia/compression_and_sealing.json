@@ -1,0 +1,11 @@
+{
+  "id": "compression_and_sealing",
+  "title": "Compression, sealing and mechanical health",
+  "parameterIds": ["RPM", "MAP", "MAF", "LOAD", "MISFIRE_COUNTER", "STFT_B1"],
+  "whatItIs": "Compression and sealing determine whether the trapped mixture can turn into useful pressure. OBD cannot directly measure compression, but graph contradictions can tell the app when a mechanical test is required.",
+  "normalValues": "A mechanically healthy engine has stable idle, plausible MAP/vacuum, smooth RPM, expected airflow for displacement and no persistent cylinder-specific misfire.",
+  "deviations": ["Low idle vacuum/MAP instability with no clear mixture fault can indicate sealing", "Low VE at WOT with weak intake/exhaust indices suggests cam/compression issue", "One-cylinder misfire after ignition/fuel swap points to compression or valve leakage", "Tight valves can be worse hot"],
+  "influence": "Mechanical faults cannot be fixed by sensors. The app should recommend compression/leak-down instead of guessing parts when the graph demands it.",
+  "checks": ["Compression test", "Leak-down test", "Relative compression current test", "MAP waveform or vacuum gauge", "Cylinder balance and bore inspection when needed"],
+  "sources": ["mvw-fuel-trims", "motor-fuel-trimming-time", "mit-ocw-ice-2-61"]
+}

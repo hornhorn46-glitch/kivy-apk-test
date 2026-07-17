@@ -1,0 +1,11 @@
+{
+  "id": "ignition_and_knock",
+  "title": "Ignition timing, coils, plugs and knock control",
+  "parameterIds": ["TIMING_ADVANCE", "KNOCK_RETARD", "RPM", "LOAD", "MISFIRE_COUNTER"],
+  "whatItIs": "Ignition must start combustion at the right crank angle. The ECU can remove timing to protect the engine from knock, heat or bad fuel; the ignition system can also fail under cylinder pressure.",
+  "normalValues": "Timing depends heavily on load, RPM, temperature and fuel. A healthy graph does not show timing collapsing repeatedly under normal load without a reason.",
+  "deviations": ["Late timing under load reduces torque even when airflow and fuel are normal", "Misfires under boost or WOT often expose weak coils or excessive plug gap", "High IAT/coolant or low octane can create knock retard", "Electrical noise or voltage drop can imitate ignition faults"],
+  "influence": "The driver experiences ignition faults as hesitation, surging, low power, pinging or flashing MIL. The app must separate ignition energy loss from mixture and mechanical loss.",
+  "checks": ["Compare timing at equal load/RPM before and after symptom", "Check misfire counters per cylinder", "Inspect plugs, gap, coils, boots and grounds", "Verify fuel octane and thermal conditions before blaming knock sensors"],
+  "sources": ["mit-ocw-ice-2-61", "motor-maf-diagnosis", "zenodo-automotive-faults"]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "turbocharging_boost",
+  "title": "Turbocharging, boost leaks and torque control",
+  "parameterIds": ["MAP", "MAF", "LOAD", "THROTTLE", "BOOST", "STFT_B1", "LTFT_B1"],
+  "whatItIs": "A turbo engine changes the pressure relationship in the intake. A leak after the MAF can behave differently at idle vacuum and boost pressure, so naturally aspirated rules must be adapted.",
+  "normalValues": "Under boost request, MAP/boost and MAF should rise with load and RPM. Throttle may close for torque control even while the pedal is down.",
+  "deviations": ["Underboost with low MAF/load points to leak, wastegate/VGT control, diverter valve or turbo efficiency", "Post-MAF boost leak can create rich trims in boost while idle is lean", "High throttle with low boost is not the same as throttle limitation", "Heat soak and knock can reduce boost or timing"],
+  "influence": "Turbo faults are high-impact because small leaks produce large torque errors under load.",
+  "checks": ["Smoke/pressure test charge tract", "Compare requested and actual boost if available", "Check wastegate/VGT actuator and vacuum/solenoid control", "Separate boost leak from fuel delivery by lambda and trims under load"],
+  "sources": ["mit-ocw-ice-2-61", "underhood-fuel-trim-diagnosis", "source.motor.fuel-trim"]
+}

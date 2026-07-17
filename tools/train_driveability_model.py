@@ -31,6 +31,18 @@ FEATURES = [
     "iat_c",
     "estimated_boost_kpa",
     "boost_expected_for_profile",
+    "wot_airflow_deficit",
+    "throttle_load_mismatch",
+    "idle_vacuum_kpa",
+    "intake_restriction_index",
+    "exhaust_restriction_index",
+    "spark_torque_loss_index",
+    "thermal_air_density_loss_index",
+    "power_ratio_to_reference",
+    "specific_airflow_gps_per_liter",
+    "sensor_implausibility_index",
+    "mechanical_breathing_index",
+    "clean_wot_adequacy_index",
     "has_misfire_dtc",
     "has_lean_dtc",
     "has_rich_dtc",
@@ -55,6 +67,18 @@ FEATURE_NORMALIZATION = {
     "iat_c": (42.0, 30.0),
     "estimated_boost_kpa": (28.0, 35.0),
     "boost_expected_for_profile": (0.0, 1.0),
+    "wot_airflow_deficit": (0.0, 0.45),
+    "throttle_load_mismatch": (0.0, 35.0),
+    "idle_vacuum_kpa": (62.0, 22.0),
+    "intake_restriction_index": (0.0, 0.45),
+    "exhaust_restriction_index": (0.0, 0.45),
+    "spark_torque_loss_index": (0.0, 1.0),
+    "thermal_air_density_loss_index": (0.0, 0.25),
+    "power_ratio_to_reference": (0.95, 0.35),
+    "specific_airflow_gps_per_liter": (24.0, 12.0),
+    "sensor_implausibility_index": (0.0, 0.55),
+    "mechanical_breathing_index": (0.0, 0.55),
+    "clean_wot_adequacy_index": (0.0, 1.0),
     "has_misfire_dtc": (0.0, 1.0),
     "has_lean_dtc": (0.0, 1.0),
     "has_rich_dtc": (0.0, 1.0),
@@ -69,6 +93,8 @@ FEATURE_MISSING_VALUES = {
     "coolant_c": 90.0,
     "iat_c": 35.0,
     "diagnostic_data_coverage": 0.0,
+    "idle_vacuum_kpa": 62.0,
+    "power_ratio_to_reference": 0.95,
 }
 
 
@@ -83,6 +109,8 @@ ROOT_CAUSES = [
     "ignition_retard",
     "misfire",
     "underboost",
+    "cam_timing_or_compression",
+    "sensor_plausibility",
     "thermal",
     "electrical",
 ]
@@ -181,6 +209,12 @@ def base_features(template: VehicleTemplate, rng: random.Random, synthetic_index
     maf_ratio = max(0.83, min(template.max_maf / expected_maf, 1.12))
     throttle = max(template.max_throttle, 78.0 + rng.random() * 17.0)
     load = max(template.max_load, 72.0 + rng.random() * 23.0)
+    airflow_deficit = max(0.0, 1.0 - maf_ratio)
+    sensor_implausibility = max(0.0, abs(maf_ratio - 0.95) - 0.28)
+    specific_airflow = (maf_ratio * expected_maf) / max(template.displacement_l * displacement_scale, 0.8)
+    rated_power_kw = max(template.displacement_l * displacement_scale * 58.0, 45.0)
+    estimated_power_kw = maf_ratio * expected_maf * 1.22
+    clean_wot = 1.0 if maf_ratio >= 0.80 and load >= 78.0 and throttle >= 78.0 else 0.0
     return {
         "combined_trim_idle_b1": rng.uniform(-3.5, 4.5),
         "combined_trim_load_b1": rng.uniform(-3.5, 4.5),
@@ -196,6 +230,18 @@ def base_features(template: VehicleTemplate, rng: random.Random, synthetic_index
         "iat_c": min(max(template.iat, 8.0), 58.0),
         "estimated_boost_kpa": rng.uniform(-2.0, 4.0),
         "boost_expected_for_profile": 0.0,
+        "wot_airflow_deficit": airflow_deficit,
+        "throttle_load_mismatch": max(0.0, throttle - load),
+        "idle_vacuum_kpa": rng.uniform(56.0, 74.0),
+        "intake_restriction_index": max(0.0, airflow_deficit * rng.uniform(0.0, 0.18)),
+        "exhaust_restriction_index": max(0.0, airflow_deficit * rng.uniform(0.0, 0.14)),
+        "spark_torque_loss_index": max(0.0, (12.0 - min(max(template.min_timing, 8.0 + rng.random() * 16.0), 36.0)) / 12.0),
+        "thermal_air_density_loss_index": max(0.0, ((min(max(template.iat, 8.0), 58.0)) - 35.0) * 0.0032),
+        "power_ratio_to_reference": max(0.62, min(estimated_power_kw / rated_power_kw, 1.18)),
+        "specific_airflow_gps_per_liter": specific_airflow,
+        "sensor_implausibility_index": sensor_implausibility,
+        "mechanical_breathing_index": max(0.0, airflow_deficit - 0.18) * 0.18,
+        "clean_wot_adequacy_index": clean_wot,
         "has_misfire_dtc": 0.0,
         "has_lean_dtc": 0.0,
         "has_rich_dtc": 0.0,
@@ -214,6 +260,7 @@ def inject_fault(features: dict[str, float], label: str, rng: random.Random) -> 
         f["combined_trim_idle_b1"] = rng.uniform(15.0, 28.0)
         f["combined_trim_load_b1"] = rng.uniform(4.0, 11.0)
         f["trim_load_delta_b1"] = f["combined_trim_load_b1"] - f["combined_trim_idle_b1"]
+        f["idle_vacuum_kpa"] = rng.uniform(26.0, 48.0)
         f["has_lean_dtc"] = 1.0 if rng.random() > 0.2 else 0.0
     elif label == "fuel_delivery":
         f["combined_trim_idle_b1"] = rng.uniform(1.0, 8.0)
@@ -221,50 +268,116 @@ def inject_fault(features: dict[str, float], label: str, rng: random.Random) -> 
         f["trim_load_delta_b1"] = f["combined_trim_load_b1"] - f["combined_trim_idle_b1"]
         f["max_load_percent"] = rng.uniform(52.0, 76.0)
         f["peak_maf_ratio_to_expected"] = rng.uniform(0.55, 0.78)
+        f["wot_airflow_deficit"] = 1.0 - f["peak_maf_ratio_to_expected"]
+        f["power_ratio_to_reference"] = rng.uniform(0.50, 0.78)
         f["has_lean_dtc"] = 1.0 if rng.random() > 0.35 else 0.0
     elif label == "rich_condition":
         f["combined_trim_idle_b1"] = rng.uniform(-24.0, -11.0)
         f["combined_trim_load_b1"] = rng.uniform(-26.0, -9.0)
         f["trim_load_delta_b1"] = f["combined_trim_load_b1"] - f["combined_trim_idle_b1"]
+        f["power_ratio_to_reference"] = rng.uniform(0.68, 1.02)
         f["has_rich_dtc"] = 1.0 if rng.random() > 0.25 else 0.0
     elif label == "air_restriction":
         f["peak_maf_ratio_to_expected"] = rng.uniform(0.44, 0.67)
         f["estimated_peak_ve"] = rng.uniform(0.38, 0.57)
         f["max_load_percent"] = rng.uniform(48.0, 69.0)
         f["max_map_kpa"] = rng.uniform(58.0, 82.0)
+        f["wot_airflow_deficit"] = 1.0 - f["peak_maf_ratio_to_expected"]
+        f["throttle_load_mismatch"] = rng.uniform(20.0, 45.0)
+        f["intake_restriction_index"] = rng.uniform(0.30, 0.78)
+        f["exhaust_restriction_index"] = rng.uniform(0.0, 0.12)
+        f["power_ratio_to_reference"] = rng.uniform(0.45, 0.72)
+        f["specific_airflow_gps_per_liter"] = rng.uniform(10.0, 17.0)
+        f["sensor_implausibility_index"] = rng.uniform(0.02, 0.18)
+        f["mechanical_breathing_index"] = rng.uniform(0.02, 0.18)
+        f["clean_wot_adequacy_index"] = 0.0
     elif label == "exhaust_restriction":
         f["peak_maf_ratio_to_expected"] = rng.uniform(0.50, 0.73)
         f["estimated_peak_ve"] = rng.uniform(0.43, 0.62)
         f["max_map_kpa"] = rng.uniform(88.0, 104.0)
         f["min_timing_deg"] = rng.uniform(2.0, 9.0)
         f["max_load_percent"] = rng.uniform(46.0, 70.0)
+        f["wot_airflow_deficit"] = 1.0 - f["peak_maf_ratio_to_expected"]
+        f["throttle_load_mismatch"] = rng.uniform(18.0, 42.0)
+        f["intake_restriction_index"] = rng.uniform(0.0, 0.12)
+        f["exhaust_restriction_index"] = rng.uniform(0.26, 0.74)
+        f["spark_torque_loss_index"] = rng.uniform(0.25, 0.75)
+        f["power_ratio_to_reference"] = rng.uniform(0.43, 0.70)
+        f["specific_airflow_gps_per_liter"] = rng.uniform(11.0, 18.0)
+        f["sensor_implausibility_index"] = rng.uniform(0.02, 0.16)
+        f["mechanical_breathing_index"] = rng.uniform(0.04, 0.20)
+        f["clean_wot_adequacy_index"] = 0.0
     elif label == "throttle_limited":
         f["max_throttle_percent"] = rng.uniform(22.0, 58.0)
         f["max_load_percent"] = rng.uniform(25.0, 62.0)
+        f["throttle_load_mismatch"] = rng.uniform(-6.0, 12.0)
+        f["power_ratio_to_reference"] = rng.uniform(0.42, 0.75)
         f["has_throttle_dtc"] = 1.0 if rng.random() > 0.15 else 0.0
     elif label == "ignition_retard":
         f["min_timing_deg"] = rng.uniform(-5.0, 4.0)
         f["max_load_percent"] = rng.uniform(62.0, 92.0)
+        f["spark_torque_loss_index"] = rng.uniform(0.55, 1.35)
+        f["power_ratio_to_reference"] = rng.uniform(0.55, 0.86)
         f["has_knock_dtc"] = 1.0 if rng.random() > 0.35 else 0.0
     elif label == "misfire":
         f["has_misfire_dtc"] = 1.0
         f["combined_trim_idle_b1"] = rng.uniform(5.0, 17.0)
         f["combined_trim_load_b1"] = rng.uniform(3.0, 15.0)
         f["min_timing_deg"] = rng.uniform(1.0, 10.0)
+        f["spark_torque_loss_index"] = rng.uniform(0.20, 0.85)
+        f["power_ratio_to_reference"] = rng.uniform(0.40, 0.78)
     elif label == "underboost":
         f["boost_expected_for_profile"] = 1.0
         f["estimated_boost_kpa"] = rng.uniform(-8.0, 18.0)
         f["max_map_kpa"] = rng.uniform(92.0, 116.0)
         f["max_load_percent"] = rng.uniform(50.0, 76.0)
         f["peak_maf_ratio_to_expected"] = rng.uniform(0.45, 0.76)
+        f["wot_airflow_deficit"] = 1.0 - f["peak_maf_ratio_to_expected"]
+        f["power_ratio_to_reference"] = rng.uniform(0.45, 0.75)
+    elif label == "cam_timing_or_compression":
+        f["peak_maf_ratio_to_expected"] = rng.uniform(0.48, 0.72)
+        f["estimated_peak_ve"] = rng.uniform(0.40, 0.61)
+        f["max_load_percent"] = rng.uniform(45.0, 72.0)
+        f["max_map_kpa"] = rng.uniform(76.0, 101.0)
+        f["combined_trim_idle_b1"] = rng.uniform(-4.0, 8.0)
+        f["combined_trim_load_b1"] = rng.uniform(-3.0, 9.0)
+        f["trim_load_delta_b1"] = f["combined_trim_load_b1"] - f["combined_trim_idle_b1"]
+        f["wot_airflow_deficit"] = 1.0 - f["peak_maf_ratio_to_expected"]
+        f["throttle_load_mismatch"] = rng.uniform(18.0, 43.0)
+        f["intake_restriction_index"] = rng.uniform(0.06, 0.22)
+        f["exhaust_restriction_index"] = rng.uniform(0.06, 0.24)
+        f["power_ratio_to_reference"] = rng.uniform(0.42, 0.68)
+        f["specific_airflow_gps_per_liter"] = rng.uniform(10.0, 17.0)
+        f["sensor_implausibility_index"] = rng.uniform(0.04, 0.20)
+        f["mechanical_breathing_index"] = rng.uniform(0.58, 1.15)
+        f["clean_wot_adequacy_index"] = 0.0
+    elif label == "sensor_plausibility":
+        f["peak_maf_ratio_to_expected"] = rng.choice([rng.uniform(0.20, 0.45), rng.uniform(1.25, 1.75)])
+        f["estimated_peak_ve"] = f["peak_maf_ratio_to_expected"] * rng.uniform(0.70, 0.95)
+        f["max_map_kpa"] = rng.uniform(88.0, 106.0)
+        f["max_load_percent"] = rng.uniform(76.0, 98.0)
+        f["combined_trim_idle_b1"] = rng.uniform(-18.0, 18.0)
+        f["combined_trim_load_b1"] = rng.uniform(-18.0, 18.0)
+        f["trim_load_delta_b1"] = f["combined_trim_load_b1"] - f["combined_trim_idle_b1"]
+        f["wot_airflow_deficit"] = max(0.0, 1.0 - f["peak_maf_ratio_to_expected"])
+        f["intake_restriction_index"] = rng.uniform(0.0, 0.12)
+        f["exhaust_restriction_index"] = rng.uniform(0.0, 0.12)
+        f["power_ratio_to_reference"] = rng.choice([rng.uniform(0.20, 0.48), rng.uniform(1.22, 1.75)])
+        f["sensor_implausibility_index"] = rng.uniform(0.55, 1.20)
+        f["mechanical_breathing_index"] = rng.uniform(0.0, 0.12)
+        f["clean_wot_adequacy_index"] = 0.0
     elif label == "thermal":
         f["coolant_c"] = rng.uniform(109.0, 125.0)
         f["iat_c"] = rng.uniform(62.0, 92.0)
         f["min_timing_deg"] = rng.uniform(0.0, 9.0)
+        f["thermal_air_density_loss_index"] = rng.uniform(0.10, 0.30)
+        f["spark_torque_loss_index"] = rng.uniform(0.20, 0.90)
+        f["power_ratio_to_reference"] = rng.uniform(0.55, 0.86)
     elif label == "electrical":
         f["module_voltage_avg_v"] = rng.uniform(10.4, 12.35)
         f["has_voltage_dtc"] = 1.0 if rng.random() > 0.15 else 0.0
         f["max_load_percent"] = rng.uniform(44.0, 78.0)
+        f["power_ratio_to_reference"] = rng.uniform(0.45, 0.82)
     else:
         raise ValueError(label)
     for key in FEATURES:
@@ -323,9 +436,17 @@ MODEL_WEIGHTS: dict[str, dict[str, float]] = {
         "bias": -0.35,
         "diagnostic_data_coverage": 0.7,
         "peak_maf_ratio_to_expected": 0.7,
+        "wot_airflow_deficit": -1.2,
         "max_throttle_percent": 0.6,
         "max_load_percent": 0.6,
         "module_voltage_avg_v": 0.6,
+        "intake_restriction_index": -2.2,
+        "exhaust_restriction_index": -2.2,
+        "spark_torque_loss_index": -1.5,
+        "power_ratio_to_reference": 0.9,
+        "sensor_implausibility_index": -2.0,
+        "mechanical_breathing_index": -3.0,
+        "clean_wot_adequacy_index": 3.2,
         "coolant_c": -0.5,
         "iat_c": -0.2,
         "has_misfire_dtc": -4.0,
@@ -339,6 +460,7 @@ MODEL_WEIGHTS: dict[str, dict[str, float]] = {
         "combined_trim_idle_b1": 5.4,
         "combined_trim_load_b1": 0.8,
         "trim_load_delta_b1": -4.4,
+        "idle_vacuum_kpa": -1.8,
         "has_lean_dtc": 2.0,
     },
     "fuel_delivery": {
@@ -346,40 +468,62 @@ MODEL_WEIGHTS: dict[str, dict[str, float]] = {
         "combined_trim_load_b1": 5.2,
         "trim_load_delta_b1": 3.8,
         "peak_maf_ratio_to_expected": -1.3,
+        "wot_airflow_deficit": 0.9,
         "max_load_percent": -1.3,
+        "power_ratio_to_reference": -0.9,
         "has_lean_dtc": 1.8,
     },
     "rich_condition": {
         "bias": -1.05,
         "combined_trim_idle_b1": -4.2,
         "combined_trim_load_b1": -4.8,
+        "power_ratio_to_reference": -0.4,
         "has_rich_dtc": 2.2,
     },
     "air_restriction": {
         "bias": -1.35,
         "peak_maf_ratio_to_expected": -3.0,
         "estimated_peak_ve": -1.9,
+        "wot_airflow_deficit": 1.8,
+        "intake_restriction_index": 5.0,
+        "exhaust_restriction_index": -1.8,
+        "mechanical_breathing_index": -1.4,
+        "clean_wot_adequacy_index": -1.0,
         "max_load_percent": -1.8,
         "max_map_kpa": -1.2,
+        "power_ratio_to_reference": -0.9,
+        "specific_airflow_gps_per_liter": -0.8,
+        "sensor_implausibility_index": -1.2,
     },
     "exhaust_restriction": {
         "bias": -1.45,
         "peak_maf_ratio_to_expected": -2.2,
         "estimated_peak_ve": -1.7,
+        "wot_airflow_deficit": 1.2,
+        "intake_restriction_index": -1.2,
+        "exhaust_restriction_index": 5.4,
+        "mechanical_breathing_index": -0.8,
+        "clean_wot_adequacy_index": -1.0,
         "max_map_kpa": 4.5,
         "min_timing_deg": -2.5,
+        "spark_torque_loss_index": 1.6,
         "max_load_percent": -1.0,
+        "power_ratio_to_reference": -0.8,
+        "sensor_implausibility_index": -1.0,
     },
     "throttle_limited": {
         "bias": -1.05,
         "max_throttle_percent": -5.4,
         "max_load_percent": -2.0,
+        "power_ratio_to_reference": -0.5,
         "has_throttle_dtc": 3.0,
     },
     "ignition_retard": {
         "bias": -1.05,
         "min_timing_deg": -5.2,
+        "spark_torque_loss_index": 4.8,
         "max_load_percent": 0.7,
+        "thermal_air_density_loss_index": 0.8,
         "has_knock_dtc": 2.4,
     },
     "misfire": {
@@ -388,6 +532,8 @@ MODEL_WEIGHTS: dict[str, dict[str, float]] = {
         "combined_trim_idle_b1": 1.1,
         "combined_trim_load_b1": 0.8,
         "min_timing_deg": -0.8,
+        "spark_torque_loss_index": 0.8,
+        "power_ratio_to_reference": -0.7,
     },
     "underboost": {
         "bias": -1.25,
@@ -396,11 +542,44 @@ MODEL_WEIGHTS: dict[str, dict[str, float]] = {
         "max_map_kpa": 0.8,
         "max_load_percent": -1.3,
         "peak_maf_ratio_to_expected": -1.4,
+        "wot_airflow_deficit": 1.0,
+        "power_ratio_to_reference": -0.7,
+    },
+    "cam_timing_or_compression": {
+        "bias": -1.35,
+        "peak_maf_ratio_to_expected": -2.5,
+        "estimated_peak_ve": -2.4,
+        "wot_airflow_deficit": 1.7,
+        "mechanical_breathing_index": 6.2,
+        "clean_wot_adequacy_index": -2.4,
+        "throttle_load_mismatch": 1.3,
+        "intake_restriction_index": -0.8,
+        "exhaust_restriction_index": -0.8,
+        "combined_trim_idle_b1": 0.1,
+        "combined_trim_load_b1": 0.1,
+        "power_ratio_to_reference": -1.6,
+        "specific_airflow_gps_per_liter": -1.0,
+        "sensor_implausibility_index": -0.9,
+    },
+    "sensor_plausibility": {
+        "bias": -1.55,
+        "sensor_implausibility_index": 5.8,
+        "mechanical_breathing_index": -1.3,
+        "clean_wot_adequacy_index": -0.8,
+        "max_load_percent": 1.1,
+        "max_map_kpa": 0.9,
+        "intake_restriction_index": -1.0,
+        "exhaust_restriction_index": -1.0,
+        "throttle_load_mismatch": -0.4,
+        "combined_trim_idle_b1": 0.2,
+        "combined_trim_load_b1": -0.2,
     },
     "thermal": {
         "bias": -1.05,
         "coolant_c": 5.0,
         "iat_c": 2.4,
+        "thermal_air_density_loss_index": 4.0,
+        "spark_torque_loss_index": 1.0,
         "min_timing_deg": -1.0,
     },
     "electrical": {
@@ -486,12 +665,14 @@ def evaluate(rows: list[dict[str, Any]], split: str) -> dict[str, Any]:
 
 def source_summary(templates: list[VehicleTemplate], rows: list[dict[str, Any]]) -> dict[str, Any]:
     zenodo = DATA / "zenodo_faults" / "automotive_faults_aktc_obike_et_al.json"
+    case_summary_path = KB / "cases" / "diagnostic_case_pattern_summary.json"
     zenodo_count = 0
     categories: Counter[str] = Counter()
     if zenodo.exists():
         records = json.loads(zenodo.read_text(encoding="utf-8"))
         zenodo_count = len(records)
         categories.update(str(item.get("category", "unknown")) for item in records)
+    case_summary = json.loads(case_summary_path.read_text(encoding="utf-8")) if case_summary_path.exists() else {}
     return {
         "real_obd_templates": len(templates),
         "real_obd_template_vehicles": [
@@ -499,6 +680,10 @@ def source_summary(templates: list[VehicleTemplate], rows: list[dict[str, Any]])
         ],
         "zenodo_fault_records": zenodo_count,
         "zenodo_top_categories": dict(categories.most_common(10)),
+        "diagnostic_case_pattern_corpus": {
+            "total": case_summary.get("totalCases", 0),
+            "counts": case_summary.get("counts", {}),
+        },
         "generated_cases": len(rows),
         "label_distribution": dict(Counter(row["root_cause"] for row in rows)),
     }
@@ -521,6 +706,8 @@ def build_model_document(report: dict[str, Any]) -> dict[str, Any]:
         "ignition_retard": ("Excessive ignition retard / knock control", "Угол зажигания резко поздний под нагрузкой: ЭБУ защищает мотор или есть ошибка датчика/топлива/детонации."),
         "misfire": ("Misfire", "Коды пропусков и нестабильная топливная картина указывают на срыв сгорания в одном или нескольких цилиндрах."),
         "underboost": ("Turbo underboost", "Для наддувного профиля давление и расход ниже ожидаемых под нагрузкой: турбина, управление наддувом или утечки."),
+        "cam_timing_or_compression": ("Cam timing, valve sealing or compression loss", "Дроссель открыт, но наполнение и удельный расход воздуха низкие без сильного перекоса топливных коррекций и без яркого признака забитого впуска или выпуска. Такая форма графиков чаще указывает на механическое дыхание двигателя: фазы ГРМ, компрессия, герметичность клапанов или управление фазовращателями."),
+        "sensor_plausibility": ("Air metering sensor plausibility fault", "MAF/VE или расчетная мощность выходят за физически правдоподобный диапазон, но MAP и расчетная нагрузка при этом остаются согласованными с разгоном. Это больше похоже на ошибку измерения MAF/MAP/IAT или проводки, чем на реальное падение наполнения."),
         "thermal": ("Thermal derate / overheating", "Температуры охлаждающей жидкости или воздуха высокие, поэтому двигатель уходит в защитные углы и снижает мощность."),
         "electrical": ("Electrical supply problem", "Напряжение модуля ниже нормы: ЭБУ, катушки, насос и датчики могут работать нестабильно."),
     }
@@ -535,6 +722,8 @@ def build_model_document(report: dict[str, Any]) -> dict[str, Any]:
         "ignition_retard": ["Проверить топливо, детонацию, датчик knock.", "Проверить перегрев и бедную смесь.", "Сравнить timing при одинаковой нагрузке."],
         "misfire": ["Проверить свечи, катушки, форсунки.", "Компрессия и leak-down тест.", "Смотреть счетчики misfire по цилиндрам."],
         "underboost": ["Smoke test наддувного тракта.", "Проверить wastegate/VGT, соленоид, вакуум.", "Сравнить target boost и actual boost."],
+        "cam_timing_or_compression": ["Сделать тест компрессии и leak-down.", "Проверить фазы ГРМ и фактические углы VVT/VCT.", "Сравнить вакуум/осциллограмму MAP на холостом и при резком открытии дросселя."],
+        "sensor_plausibility": ["Сравнить MAF с расчетом по объему, RPM, MAP и температуре воздуха.", "Проверить разъем, массу, питание и сигнальную линию MAF/MAP/IAT.", "Очистку или замену датчика делать только после проверки впуска на герметичность и проводки."],
         "thermal": ["Проверить термостат, вентиляторы, радиатор.", "Сверить ECT с внешним измерением.", "Проверить воздушные пробки и помпу."],
         "electrical": ["Load-test АКБ и генератор.", "Проверить массы двигателя/кузова.", "Снять падение напряжения на питании ЭБУ и насоса."],
     }
@@ -544,7 +733,7 @@ def build_model_document(report: dict[str, Any]) -> dict[str, Any]:
         "target": "gasoline_driveability_root_cause",
         "createdBy": "tools/train_driveability_model.py",
         "validation": {
-            "targetAccuracy": 0.97,
+            "targetAccuracy": 0.98,
             "measuredTestAccuracy": report["test"]["accuracy"],
             "measuredMacroF1": report["test"]["macro_f1"],
             "testGraphCount": report["test"]["graph_count"],
@@ -574,7 +763,16 @@ def build_model_document(report: dict[str, Any]) -> dict[str, Any]:
                 "weights": {k: v for k, v in weights.items() if k != "bias"},
                 "physicalExplanation": descriptions[label][1],
                 "recommendedChecks": checks[label],
-                "sources": ["sae-j1979", "iso-15031", "zenodo-automotive-faults", "vehiclepm-obd-field-data"],
+                "sources": [
+                    "sae-j1979",
+                    "iso-15031",
+                    "mit-ocw-ice-2-61",
+                    "nptel-ic-engines",
+                    "underhood-fuel-trim-diagnosis",
+                    "underhood-maf-diagnostics",
+                    "zenodo-automotive-faults",
+                    "vehiclepm-obd-field-data",
+                ],
             }
             for label, weights in MODEL_WEIGHTS.items()
         ],
@@ -587,7 +785,7 @@ def main() -> None:
     report = {
         "id": "root-cause-benchmark-v1",
         "target": "gasoline_driveability_root_cause",
-        "targetAccuracy": 0.97,
+        "targetAccuracy": 0.98,
         "sourceSummary": source_summary(templates, rows),
         "validationPolicy": {
             "minimumTestGraphs": 50,
@@ -616,6 +814,7 @@ def main() -> None:
         "licenses": [
             {"source": "VehiclePM GitHub repository", "license": "MIT"},
             {"source": "Zenodo Automotive Faults Dataset", "license": "CC BY 4.0"},
+            {"source": "dtcdb generic DTC database", "license": "MIT"},
         ],
         "caveat": "Benchmark labels are controlled physics fault injections over real OBD driving templates; field accuracy must be measured on repair-confirmed fleet data.",
     }

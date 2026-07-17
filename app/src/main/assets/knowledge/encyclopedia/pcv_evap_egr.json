@@ -1,0 +1,11 @@
+{
+  "id": "pcv_evap_egr",
+  "title": "PCV, EVAP and EGR as hidden mixture faults",
+  "parameterIds": ["STFT_B1", "LTFT_B1", "MAP", "EVAP_PURGE", "EGR_COMMAND"],
+  "whatItIs": "PCV, EVAP and EGR are not just emissions hardware. Leaks or stuck valves can change mixture, idle stability, MAP and combustion quality while pointing misleadingly at oxygen sensors.",
+  "normalValues": "At warm idle, commanded purge/EGR should not create uncontrolled mixture or dilution. Fuel trims should return when the flow path is isolated or commanded closed.",
+  "deviations": ["Purge stuck open can look lean or rich depending on vapor content", "PCV diaphragm tears create idle-biased air leaks", "EGR stuck open dilutes idle charge and can cause rough idle or rich/lean confusion", "EVAP symptoms often appear after refueling or heat soak"],
+  "influence": "Many real P0171/P0172 cases are fixed in these systems, not by replacing A/F or O2 sensors.",
+  "checks": ["Compare trims at idle and 2500 RPM", "Command or isolate purge/EGR where safe", "Smoke test PCV and intake paths", "Verify repair by watching trim response return toward zero"],
+  "sources": ["denso-p0171-vacuum-leak-case", "source.motor.fuel-trim", "drive2-practical-search", "mvw-fuel-trims"]
+}

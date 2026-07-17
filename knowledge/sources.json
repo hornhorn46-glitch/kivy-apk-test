@@ -105,6 +105,13 @@
     "notes": "Used as a standards reference for OBD diagnostic service framing and timing concepts."
   },
   {
+    "id": "sae-j2012",
+    "title": "SAE J2012 Diagnostic Trouble Code Definitions",
+    "url": "https://saemobilus.sae.org/standards/j2012_201612-diagnostic-trouble-code-definitions",
+    "license": "SAE standard metadata referenced; standard text not redistributed",
+    "notes": "Used as a standards reference for DTC format and diagnostic trouble code framing."
+  },
+  {
     "id": "iso-15031",
     "title": "ISO 15031 Road vehicles diagnostic communication",
     "url": "https://www.iso.org/standard/51828.html",
@@ -124,5 +131,96 @@
     "url": "https://github.com/Kushalk0677/AI-Driven-Predictive-Maintenance-with-Real-Time-Contextual-Data-Fusion-for-Connected-Vehicles",
     "license": "MIT",
     "notes": "Used for real OBD-II driving templates in the root-cause benchmark; raw logs are not embedded in the APK."
+  },
+  {
+    "id": "mit-ocw-ice-2-61",
+    "title": "MIT OpenCourseWare 2.61 Internal Combustion Engines",
+    "url": "https://ocw.mit.edu/courses/2-61-internal-combustion-engines-spring-2017/resources/lecture-notes/",
+    "license": "Creative Commons BY-NC-SA via MIT OpenCourseWare",
+    "notes": "Used as an open engineering reference for engine operating characteristics, mixture preparation, intake and exhaust processes, combustion, knock, heat transfer, turbocharging, diesel characteristics, and emissions."
+  },
+  {
+    "id": "mit-ocw-physics-energy-ice",
+    "title": "MIT OpenCourseWare 8.21 The Physics of Energy: Internal Combustion Engines",
+    "url": "https://ocw.mit.edu/courses/8-21-the-physics-of-energy-fall-2009/resources/mit8_21s09_lec11/",
+    "license": "Creative Commons BY-NC-SA via MIT OpenCourseWare",
+    "notes": "Used for thermodynamic cycle framing: Otto, Atkinson, diesel cycle and spark-ignition engine overview."
+  },
+  {
+    "id": "mit-ocw-otto-cycle",
+    "title": "MIT Unified Engineering Thermodynamics: Otto cycle",
+    "url": "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_5.htm",
+    "license": "Creative Commons terms via MIT OpenCourseWare",
+    "notes": "Used for first-principles thermodynamic cycle framing."
+  },
+  {
+    "id": "nptel-ic-engines",
+    "title": "NPTEL IC Engines and Gas Turbines",
+    "url": "https://nptel.ac.in/courses/112103262",
+    "license": "Open NPTEL course reference; course text is not redistributed",
+    "notes": "Used as a public syllabus/source map for engine operating characteristics, SI/CI combustion, cooling, injection, emissions and heat transfer topics."
+  },
+  {
+    "id": "underhood-fuel-trim-diagnosis",
+    "title": "Underhood Service: Fuel Trim Diagnosis And O2 Sensor Performance",
+    "url": "https://www.underhoodservice.com/fuel-trim-diagnosis-and-o2-sensor-performance/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for operating-range fuel-trim interpretation and follow-up diagnostic checks."
+  },
+  {
+    "id": "underhood-maf-diagnostics",
+    "title": "Underhood Service: Troubleshooting Mass Air Flow Sensors",
+    "url": "https://www.underhoodservice.com/troubleshooting-mass-air-flow-maf-sensors/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for MAF, calculated load, volumetric-efficiency and sensor plausibility diagnostic reasoning."
+  },
+  {
+    "id": "underhood-ve-diagnostics",
+    "title": "Underhood Service: Volumetric Efficiency Diagnostics",
+    "url": "https://www.underhoodservice.com/volumetric-efficiency-diagnostics/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for volumetric-efficiency graph interpretation and air-pump reasoning."
+  },
+  {
+    "id": "mvw-fuel-trims",
+    "title": "MVW Automotive: Fuel trims",
+    "url": "https://www.mvwautomotive.com/fuel-trims/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for STFT/LTFT learning, post-repair trim behavior and common rich/lean causes."
+  },
+  {
+    "id": "denso-p0171-vacuum-leak-case",
+    "title": "DENSO: DTC P0171 Returns After A/F Sensor Replacement",
+    "url": "https://www.densoautoparts.com/reference-dtc-p0171-returns-after-af-sensor-replacement/",
+    "license": "Open manufacturer technical article; attribution URL stored",
+    "notes": "Used as a repair-confirmed case pattern for P0171/P0174 caused by an intake leak behind the air mass meter."
+  },
+  {
+    "id": "motor-maf-diagnosis",
+    "title": "MOTOR: Successful MAF Sensor Diagnosis",
+    "url": "https://www.motor.com/magazine-summary/successful-maf-sensor-diagnosis/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for graph-based MAF, fuel-delivery and O2/lambda diagnostic separation."
+  },
+  {
+    "id": "motor-fuel-trimming-time",
+    "title": "MOTOR: Fuel Trim(ming) Diagnostic Time",
+    "url": "https://www.motor.com/magazine-summary/fuel-trimming-diagnostic-time/",
+    "license": "Open web article; attribution URL stored",
+    "notes": "Used for repair-confirmed injector, dirty MAF and range-separated fuel-trim case patterns."
+  },
+  {
+    "id": "drive2-practical-search",
+    "title": "DRIVE2 public owner repair reports discovered through web search",
+    "url": "https://www.drive2.ru/",
+    "license": "External public forum references only; no forum text, images or raw graphs redistributed",
+    "notes": "Used only as attribution pointers for practical symptom-to-repair patterns such as P0171 EVAP purge leaks, P0172/EGR reports, phase-sensor misfire reports and ELM adapter stability notes."
+  },
+  {
+    "id": "dtcdb-mit-generic",
+    "title": "dtcdb generic OBD-II diagnostic trouble code database",
+    "url": "https://github.com/todrobbins/dtcdb",
+    "license": "MIT",
+    "notes": "Used as an open DTC seed list for generating standard diagnostic case patterns. Generated patterns add project-authored signal logic and recommendations."
   }
 ]

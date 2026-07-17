@@ -1,0 +1,11 @@
+{
+  "id": "diesel_engine_basics",
+  "title": "Diesel engine basics for future diagnostic expansion",
+  "parameterIds": ["RPM", "LOAD", "MAP", "MAF", "FUEL_PRESSURE", "BOOST"],
+  "whatItIs": "Diesel engines control torque mainly by fuel quantity and air management rather than a stoichiometric throttle strategy. Boost, rail pressure, EGR and aftertreatment dominate many diesel faults.",
+  "normalValues": "Normal diesel values vary strongly by engine and enhanced PIDs. Generic OBD-II gives only a partial picture, so the app treats diesel conclusions more conservatively unless profile and PIDs are rich.",
+  "deviations": ["Low boost with smoke or low torque suggests air management", "Rail pressure tracking error suggests fuel supply or high-pressure system", "EGR/DPF faults can change airflow and backpressure", "Glow and compression issues dominate cold start"],
+  "influence": "This app's current root-cause benchmark is gasoline-focused, but the architecture keeps diesel knowledge separate so future diesel support can be added without corrupting gasoline rules.",
+  "checks": ["Use diesel-specific enhanced PIDs when available", "Compare requested and actual rail pressure/boost/EGR", "Check DPF differential pressure and regeneration state", "Do not apply gasoline fuel-trim logic to diesel"],
+  "sources": ["mit-ocw-ice-2-61", "nptel-ic-engines", "iso-15031"]
+}

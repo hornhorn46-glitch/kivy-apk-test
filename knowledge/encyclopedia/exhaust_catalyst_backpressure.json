@@ -1,0 +1,11 @@
+{
+  "id": "exhaust_catalyst_backpressure",
+  "title": "Exhaust flow, catalyst efficiency and backpressure",
+  "parameterIds": ["O2_B1S1", "O2_B1S2", "CAT_TEMP", "MAP", "MAF", "LOAD"],
+  "whatItIs": "The exhaust system must remove burned gases and the catalyst must store oxygen correctly. A catalyst code is not the same thing as a blocked exhaust, but both affect OBD graphs.",
+  "normalValues": "A healthy catalyst has downstream O2 behavior damped relative to upstream after mixture control is stable. A healthy exhaust does not prevent MAF/load from rising during WOT.",
+  "deviations": ["P0420/P0430 should be judged only after misfire and mixture faults are addressed", "High MAP with low MAF/load under WOT can indicate backpressure", "Hot catalyst after misfire or rich running is a consequence, not always root cause", "Exhaust leak before O2 can create false lean signals"],
+  "influence": "Blocked exhaust makes the engine feel choked. Catalyst efficiency faults are emissions faults and can be secondary to mixture, misfire or oil consumption.",
+  "checks": ["Measure exhaust backpressure when WOT airflow is low and MAP is high", "Compare upstream/downstream O2 only in stable closed loop", "Fix misfire and fuel trim faults before condemning catalyst", "Inspect for exhaust leaks before the front sensor"],
+  "sources": ["source.motor.generic-obd", "underhood-ve-diagnostics", "mit-ocw-ice-2-61"]
+}

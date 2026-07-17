@@ -1,0 +1,11 @@
+{
+  "id": "hybrid_engine_control",
+  "title": "Hybrid engine control and diagnostic caveats",
+  "parameterIds": ["RPM", "LOAD", "COOLANT_TEMP", "SPEED", "CONTROL_MODULE_VOLTAGE"],
+  "whatItIs": "Hybrid vehicles can start, stop and load the engine differently from conventional vehicles. Short run windows and electric assist can hide weak engine torque in ordinary driving.",
+  "normalValues": "Engine-off periods, fast restarts and unusual load points are normal on hybrids. Diagnostics need controlled engine-on windows and profile-specific reference curves.",
+  "deviations": ["Weak engine torque may appear only when battery assist is limited", "Cold starts can be shortened or repeated", "12V voltage faults can create hybrid control symptoms", "Catalyst warmup strategy can distort early trim data"],
+  "influence": "The app must avoid overcalling faults from short hybrid sessions. It needs enough engine-on data before issuing a high-confidence diagnosis.",
+  "checks": ["Record a forced engine-on maintenance or acceleration window where safe", "Separate engine torque from electric assist", "Check 12V health", "Use hybrid-specific profile references when available"],
+  "sources": ["mit-ocw-ice-2-61", "vehiclepm-obd-field-data"]
+}

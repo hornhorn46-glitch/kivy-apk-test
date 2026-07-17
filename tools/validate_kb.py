@@ -28,6 +28,23 @@ CONDITION_OPERATORS = {"GreaterThan", "LessThan", "Between", "Outside", "Exists"
 SEVERITIES = {"Info", "Warning", "Serious", "Critical"}
 ENCYCLOPEDIA_FIELDS = {"id", "title", "parameterIds", "whatItIs", "normalValues", "deviations", "influence", "checks", "sources"}
 MODEL_FIELDS = {"id", "version", "target", "createdBy", "validation", "features", "outputs"}
+PHYSICS_FIELDS = {"id", "title", "signals", "formula", "graphPattern", "diagnosticUse", "recommendedChecks", "sources"}
+CASE_FIELDS = {
+    "id",
+    "caseClass",
+    "code",
+    "title",
+    "system",
+    "vehicleScope",
+    "symptoms",
+    "signalPattern",
+    "graphFeatures",
+    "likelyRootCauses",
+    "recommendedChecks",
+    "postRepairVerification",
+    "confidence",
+    "sources",
+}
 
 
 def load_json(path: Path):
@@ -179,6 +196,69 @@ def validate_reference_curves(source_ids: set[str]) -> None:
                     fail(f"curve {curve['metric']} in {path.name} has empty sample bin")
 
 
+def validate_physics(source_ids: set[str]) -> None:
+    physics_dir = KB / "physics"
+    if not physics_dir.exists():
+        fail("physics directory missing")
+    count = 0
+    for path in sorted(physics_dir.glob("*.json")):
+        data = load_json(path)
+        if not isinstance(data, list):
+            fail(f"physics {path.name} must contain a list")
+        for item in data:
+            count += 1
+            missing = PHYSICS_FIELDS - set(item)
+            if missing:
+                fail(f"physics principle {item.get('id', path.name)} missing {sorted(missing)}")
+            if len(item["signals"]) < 2:
+                fail(f"physics principle {item['id']} must use multiple signals")
+            for source in item["sources"]:
+                if source not in source_ids:
+                    fail(f"physics principle {item['id']} references unknown source {source}")
+    if count < 8:
+        fail(f"too few physics graph principles: {count}")
+
+
+def validate_case_patterns(source_ids: set[str]) -> None:
+    cases_path = KB / "cases" / "diagnostic_case_patterns.json"
+    summary_path = KB / "cases" / "diagnostic_case_pattern_summary.json"
+    if not cases_path.exists() or not summary_path.exists():
+        fail("diagnostic case pattern corpus missing")
+    cases = load_json(cases_path)
+    summary = load_json(summary_path)
+    if not isinstance(cases, list):
+        fail("diagnostic case patterns must be a list")
+    ids = set()
+    counts: dict[str, int] = {}
+    for case in cases:
+        missing = CASE_FIELDS - set(case)
+        if missing:
+            fail(f"case pattern {case.get('id', '<unknown>')} missing {sorted(missing)}")
+        if case["id"] in ids:
+            fail(f"duplicate case pattern id {case['id']}")
+        ids.add(case["id"])
+        counts[case["caseClass"]] = counts.get(case["caseClass"], 0) + 1
+        if not 0.0 <= float(case["confidence"]) <= 1.0:
+            fail(f"case pattern {case['id']} confidence outside 0..1")
+        if len(case["graphFeatures"]) < 2:
+            fail(f"case pattern {case['id']} must reference multiple graph features")
+        if len(case["recommendedChecks"]) < 2 and case["caseClass"] != "repair_confirmed_seed":
+            fail(f"case pattern {case['id']} has too few checks")
+        for source in case["sources"]:
+            if source not in source_ids:
+                fail(f"case pattern {case['id']} references unknown source {source}")
+    if len(cases) != int(summary.get("totalCases", -1)):
+        fail("case pattern summary total differs from case list")
+    if counts.get("standard", 0) < 10_000:
+        fail("standard case pattern target not met")
+    if counts.get("uncommon", 0) < 1_000:
+        fail("uncommon case pattern target not met")
+    if counts.get("vehicle_specific", 0) < 500:
+        fail("vehicle-specific case pattern target not met")
+    if counts.get("repair_confirmed_seed", 0) < 5:
+        fail("too few repair-confirmed seed case patterns")
+
+
 def validate_driveability_model(source_ids: set[str]) -> None:
     model_path = KB / "ai" / "driveability_neurosymbolic_model.json"
     report_path = KB / "evaluation" / "root_cause_eval_report.json"
@@ -194,7 +274,7 @@ def validate_driveability_model(source_ids: set[str]) -> None:
     validation = model["validation"]
     if int(validation.get("testGraphCount", 0)) < 50:
         fail("driveability model must be validated on at least 50 test graphs")
-    if float(validation.get("measuredTestAccuracy", 0.0)) < float(validation.get("targetAccuracy", 0.97)):
+    if float(validation.get("measuredTestAccuracy", 0.0)) < float(validation.get("targetAccuracy", 0.98)):
         fail("driveability model did not meet target benchmark accuracy")
     feature_ids = {feature["id"] for feature in model["features"]}
     if len(feature_ids) < 12:
@@ -217,8 +297,8 @@ def validate_driveability_model(source_ids: set[str]) -> None:
         fail("root-cause evaluation report did not pass target")
     if int(report["test"].get("graph_count", 0)) < 50:
         fail("root-cause evaluation has too few test graphs")
-    if float(report["test"].get("accuracy", 0.0)) < 0.97:
-        fail("root-cause evaluation accuracy is below 97% target")
+    if float(report["test"].get("accuracy", 0.0)) < 0.98:
+        fail("root-cause evaluation accuracy is below 98% target")
 
     manifest = load_json(manifest_path)
     if int(manifest.get("trainingCases", 0)) < 100:
@@ -235,6 +315,8 @@ def main() -> None:
     validate_pids()
     validate_encyclopedia(source_ids)
     validate_reference_curves(source_ids)
+    validate_physics(source_ids)
+    validate_case_patterns(source_ids)
     validate_driveability_model(source_ids)
     print(f"knowledge base valid: {len(rules)} rules, {len(source_ids)} sources")
 

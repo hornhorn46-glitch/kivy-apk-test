@@ -1,0 +1,11 @@
+{
+  "id": "combustion_cycle",
+  "title": "Combustion cycle, torque and why an engine loses power",
+  "parameterIds": ["RPM", "LOAD", "TIMING_ADVANCE", "LAMBDA", "MAF", "MAP"],
+  "whatItIs": "A piston engine makes torque only when the cylinder is filled with the right air mass, fuel mass, compression and ignition timing. OBD graphs are useful because every power-loss complaint must disturb at least one of those physical requirements.",
+  "normalValues": "Normal values are profile-dependent. During a healthy gasoline WOT pull, throttle opens, load rises, MAF/MAP increase coherently, lambda follows command, timing remains plausible and RPM climbs smoothly.",
+  "deviations": ["High throttle with low load means torque request is not becoming cylinder filling", "Late timing with high load means torque is being removed by knock/thermal/control strategy", "Lean lambda or high positive trims under load means combustion is short of fuel or measured air is wrong", "Misfire counters mean chemical energy is not being converted in one or more cylinders"],
+  "influence": "This article is the root of driveability diagnosis: every diagnosis must explain which part of the air, fuel, compression, spark or exhaust chain failed.",
+  "checks": ["Record a controlled acceleration graph", "Separate idle, cruise and WOT behavior", "Check trims, airflow, MAP, load, timing and voltage together", "If data conflicts physically, suspect sensor plausibility before mechanical repair"],
+  "sources": ["mit-ocw-ice-2-61", "mit-ocw-physics-energy-ice", "nptel-ic-engines"]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "cooling_and_thermal_derate",
+  "title": "Cooling system, temperature plausibility and thermal derate",
+  "parameterIds": ["COOLANT_TEMP", "IAT", "TIMING_ADVANCE", "CONTROL_MODULE_VOLTAGE"],
+  "whatItIs": "Coolant and intake temperatures change fuel strategy, spark timing, fan load, air density and knock margin. A thermal fault can look like fuel or ignition loss unless temperature is included.",
+  "normalValues": "A warmed gasoline engine usually stabilizes near its thermostat/fan control range. IAT should be plausible relative to ambient and underhood heat soak.",
+  "deviations": ["Stuck-open thermostat can keep warmup enrichment active too long", "Overheating can trigger timing retard and torque reduction", "False-high IAT can reduce calculated air density and timing", "Fan or alternator load can reveal electrical weakness"],
+  "influence": "Thermal state changes every other diagnosis. Cold-start and hot-idle graphs must not be interpreted with the same thresholds.",
+  "checks": ["Compare ECT/IAT cold with ambient", "Record warmup slope", "Check fan command and actual temperature response", "Inspect thermostat, radiator, cap, pump and air pockets"],
+  "sources": ["mit-ocw-ice-2-61", "nptel-ic-engines"]
+}

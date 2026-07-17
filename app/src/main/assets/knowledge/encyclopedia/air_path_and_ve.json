@@ -1,0 +1,11 @@
+{
+  "id": "air_path_and_ve",
+  "title": "Air path, volumetric efficiency and cylinder filling",
+  "parameterIds": ["MAF", "MAP", "RPM", "LOAD", "THROTTLE", "IAT"],
+  "whatItIs": "The intake system, throttle, valves and exhaust determine how much air actually enters the cylinders. Volumetric efficiency is the ratio between real cylinder filling and ideal displacement-based filling.",
+  "normalValues": "At high load, MAF should scale with displacement and RPM. MAP approaches atmospheric pressure on naturally aspirated gasoline engines and rises above it on turbo engines. Calculated load should rise with throttle.",
+  "deviations": ["Low MAF and low MAP at WOT point toward intake restriction or throttle limitation", "Low MAF with high MAP points toward exhaust restriction or mechanical breathing loss", "Low VE with normal trims can point to cam timing, compression or valve sealing", "High IAT reduces density and can reduce power without a hard fault code"],
+  "influence": "Airflow is the first limiter of torque. Many cars that feel weak are not fuel-limited first; they are not filling cylinders correctly.",
+  "checks": ["Calculate expected MAF from displacement and RPM", "Compare throttle request, load, MAP and MAF", "Inspect intake filter/ducts and check exhaust backpressure when MAP/MAF disagree", "Use compression and cam/crank correlation when airflow is low but trims are not directional"],
+  "sources": ["engineering.maf.speed-density.generic", "underhood-ve-diagnostics", "underhood-maf-diagnostics", "mit-ocw-ice-2-61"]
+}
