@@ -1,0 +1,451 @@
+{
+  "id": "driveability-neurosymbolic-v1",
+  "version": "1.0.0",
+  "target": "gasoline_driveability_root_cause",
+  "createdBy": "tools/train_driveability_model.py",
+  "validation": {
+    "targetAccuracy": 0.97,
+    "measuredTestAccuracy": 0.9833,
+    "measuredMacroF1": 0.9832,
+    "testGraphCount": 60,
+    "testVehicleGraphCount": 60,
+    "validationKind": "physics_fault_injection_on_real_obd_templates",
+    "limitations": [
+      "Это не является доказанной 97% полевой точностью на подтвержденных ремонтом неисправностях.",
+      "Открытые реальные OBD-графики использованы как шаблоны режимов, а root-cause метки получены контролируемой инъекцией неисправностей.",
+      "Для заявления 97% в эксплуатации нужен закрытый или собранный fleet-набор: OBD-графики, DTC, freeze-frame, фактический ремонт и независимый holdout."
+    ]
+  },
+  "features": [
+    {
+      "id": "combined_trim_idle_b1",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 30.0,
+      "description": "combined trim idle b1"
+    },
+    {
+      "id": "combined_trim_load_b1",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 30.0,
+      "description": "combined trim load b1"
+    },
+    {
+      "id": "trim_load_delta_b1",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 30.0,
+      "description": "trim load delta b1"
+    },
+    {
+      "id": "peak_maf_ratio_to_expected",
+      "missingValue": 0.0,
+      "center": 0.85,
+      "scale": 0.3,
+      "description": "peak maf ratio to expected"
+    },
+    {
+      "id": "estimated_peak_ve",
+      "missingValue": 0.0,
+      "center": 0.72,
+      "scale": 0.26,
+      "description": "estimated peak ve"
+    },
+    {
+      "id": "max_throttle_percent",
+      "missingValue": 0.0,
+      "center": 80.0,
+      "scale": 25.0,
+      "description": "max throttle percent"
+    },
+    {
+      "id": "max_load_percent",
+      "missingValue": 0.0,
+      "center": 75.0,
+      "scale": 25.0,
+      "description": "max load percent"
+    },
+    {
+      "id": "max_map_kpa",
+      "missingValue": 0.0,
+      "center": 90.0,
+      "scale": 25.0,
+      "description": "max map kpa"
+    },
+    {
+      "id": "min_timing_deg",
+      "missingValue": 0.0,
+      "center": 12.0,
+      "scale": 15.0,
+      "description": "min timing deg"
+    },
+    {
+      "id": "module_voltage_avg_v",
+      "missingValue": 13.6,
+      "center": 13.4,
+      "scale": 1.5,
+      "description": "module voltage avg v"
+    },
+    {
+      "id": "coolant_c",
+      "missingValue": 90.0,
+      "center": 96.0,
+      "scale": 18.0,
+      "description": "coolant c"
+    },
+    {
+      "id": "iat_c",
+      "missingValue": 35.0,
+      "center": 42.0,
+      "scale": 30.0,
+      "description": "iat c"
+    },
+    {
+      "id": "estimated_boost_kpa",
+      "missingValue": 0.0,
+      "center": 28.0,
+      "scale": 35.0,
+      "description": "estimated boost kpa"
+    },
+    {
+      "id": "boost_expected_for_profile",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "boost expected for profile"
+    },
+    {
+      "id": "has_misfire_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has misfire dtc"
+    },
+    {
+      "id": "has_lean_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has lean dtc"
+    },
+    {
+      "id": "has_rich_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has rich dtc"
+    },
+    {
+      "id": "has_throttle_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has throttle dtc"
+    },
+    {
+      "id": "has_knock_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has knock dtc"
+    },
+    {
+      "id": "has_voltage_dtc",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "has voltage dtc"
+    },
+    {
+      "id": "diagnostic_data_coverage",
+      "missingValue": 0.0,
+      "center": 0.0,
+      "scale": 1.0,
+      "description": "diagnostic data coverage"
+    }
+  ],
+  "outputs": [
+    {
+      "rootCause": "no_fault",
+      "title": "No statistically significant fault pattern",
+      "bias": -0.35,
+      "weights": {
+        "diagnostic_data_coverage": 0.7,
+        "peak_maf_ratio_to_expected": 0.7,
+        "max_throttle_percent": 0.6,
+        "max_load_percent": 0.6,
+        "module_voltage_avg_v": 0.6,
+        "coolant_c": -0.5,
+        "iat_c": -0.2,
+        "has_misfire_dtc": -4.0,
+        "has_lean_dtc": -2.2,
+        "has_rich_dtc": -2.2,
+        "has_throttle_dtc": -3.0,
+        "has_voltage_dtc": -3.0
+      },
+      "physicalExplanation": "Параметры согласованы между собой: коррекции, воздух, нагрузка, зажигание и питание не дают устойчивой неисправности.",
+      "recommendedChecks": [
+        "Повторить тест при полном прогреве и WOT, если жалоба остается.",
+        "Сравнить графики с эталоном выбранного профиля."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "unmetered_air",
+      "title": "Unmetered air / vacuum leak",
+      "bias": -1.1,
+      "weights": {
+        "combined_trim_idle_b1": 5.4,
+        "combined_trim_load_b1": 0.8,
+        "trim_load_delta_b1": -4.4,
+        "has_lean_dtc": 2.0
+      },
+      "physicalExplanation": "На холостом ходу смесь уходит в бедную сторону сильнее, чем под нагрузкой: типичная физика подсоса воздуха после расходомера или утечки вакуума.",
+      "recommendedChecks": [
+        "Дымогенератор впуска.",
+        "Проверить PCV, вакуумные шланги, прокладки коллектора.",
+        "Сравнить STFT на холостом и 2500 RPM."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "fuel_delivery",
+      "title": "Fuel delivery loss under load",
+      "bias": -1.15,
+      "weights": {
+        "combined_trim_load_b1": 5.2,
+        "trim_load_delta_b1": 3.8,
+        "peak_maf_ratio_to_expected": -1.3,
+        "max_load_percent": -1.3,
+        "has_lean_dtc": 1.8
+      },
+      "physicalExplanation": "Под нагрузкой коррекции растут, наполнение и нагрузка проседают: топливная система не поддерживает требуемую подачу.",
+      "recommendedChecks": [
+        "Измерить давление топлива под нагрузкой.",
+        "Проверить насос, фильтр, регулятор, питание насоса.",
+        "Сравнить lambda/STFT при WOT."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "rich_condition",
+      "title": "Rich mixture / overfueling",
+      "bias": -1.05,
+      "weights": {
+        "combined_trim_idle_b1": -4.2,
+        "combined_trim_load_b1": -4.8,
+        "has_rich_dtc": 2.2
+      },
+      "physicalExplanation": "Отрицательные коррекции на разных режимах показывают, что ЭБУ стабильно убирает лишнее топливо.",
+      "recommendedChecks": [
+        "Проверить давление топлива и форсунки на подтекание.",
+        "Сверить MAF/MAP и датчики O2/lambda.",
+        "Проверить EVAP purge valve."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "air_restriction",
+      "title": "Air intake restriction",
+      "bias": -1.35,
+      "weights": {
+        "peak_maf_ratio_to_expected": -3.0,
+        "estimated_peak_ve": -1.9,
+        "max_load_percent": -1.8,
+        "max_map_kpa": -1.2
+      },
+      "physicalExplanation": "Расход воздуха и расчетное наполнение ниже ожидаемых при открытом дросселе: двигатель не получает воздух.",
+      "recommendedChecks": [
+        "Проверить воздушный фильтр, патрубки, дроссель.",
+        "Сравнить расчетный MAF с объемом двигателя.",
+        "Осмотреть впуск на схлопывание патрубков."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "exhaust_restriction",
+      "title": "Exhaust restriction",
+      "bias": -1.45,
+      "weights": {
+        "peak_maf_ratio_to_expected": -2.2,
+        "estimated_peak_ve": -1.7,
+        "max_map_kpa": 4.5,
+        "min_timing_deg": -2.5,
+        "max_load_percent": -1.0
+      },
+      "physicalExplanation": "Высокое давление во впуске при низком расходе и позднем зажигании указывает на противодавление выпуска.",
+      "recommendedChecks": [
+        "Измерить противодавление выпуска.",
+        "Проверить катализатор/DPF и температуру до/после.",
+        "Снять осциллограмму MAP при резком газе."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "throttle_limited",
+      "title": "Throttle or pedal limitation",
+      "bias": -1.05,
+      "weights": {
+        "max_throttle_percent": -5.4,
+        "max_load_percent": -2.0,
+        "has_throttle_dtc": 3.0
+      },
+      "physicalExplanation": "Дроссель не открывается достаточно, поэтому нагрузка не растет даже при попытке разгона.",
+      "recommendedChecks": [
+        "Проверить APP/TPS, адаптацию дросселя.",
+        "Проверить ошибки P012x/P022x/P21xx.",
+        "Сверить команду и фактическое положение дросселя."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "ignition_retard",
+      "title": "Excessive ignition retard / knock control",
+      "bias": -1.05,
+      "weights": {
+        "min_timing_deg": -5.2,
+        "max_load_percent": 0.7,
+        "has_knock_dtc": 2.4
+      },
+      "physicalExplanation": "Угол зажигания резко поздний под нагрузкой: ЭБУ защищает мотор или есть ошибка датчика/топлива/детонации.",
+      "recommendedChecks": [
+        "Проверить топливо, детонацию, датчик knock.",
+        "Проверить перегрев и бедную смесь.",
+        "Сравнить timing при одинаковой нагрузке."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "misfire",
+      "title": "Misfire",
+      "bias": -1.1,
+      "weights": {
+        "has_misfire_dtc": 6.2,
+        "combined_trim_idle_b1": 1.1,
+        "combined_trim_load_b1": 0.8,
+        "min_timing_deg": -0.8
+      },
+      "physicalExplanation": "Коды пропусков и нестабильная топливная картина указывают на срыв сгорания в одном или нескольких цилиндрах.",
+      "recommendedChecks": [
+        "Проверить свечи, катушки, форсунки.",
+        "Компрессия и leak-down тест.",
+        "Смотреть счетчики misfire по цилиндрам."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "underboost",
+      "title": "Turbo underboost",
+      "bias": -1.25,
+      "weights": {
+        "boost_expected_for_profile": 5.8,
+        "estimated_boost_kpa": -0.5,
+        "max_map_kpa": 0.8,
+        "max_load_percent": -1.3,
+        "peak_maf_ratio_to_expected": -1.4
+      },
+      "physicalExplanation": "Для наддувного профиля давление и расход ниже ожидаемых под нагрузкой: турбина, управление наддувом или утечки.",
+      "recommendedChecks": [
+        "Smoke test наддувного тракта.",
+        "Проверить wastegate/VGT, соленоид, вакуум.",
+        "Сравнить target boost и actual boost."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "thermal",
+      "title": "Thermal derate / overheating",
+      "bias": -1.05,
+      "weights": {
+        "coolant_c": 5.0,
+        "iat_c": 2.4,
+        "min_timing_deg": -1.0
+      },
+      "physicalExplanation": "Температуры охлаждающей жидкости или воздуха высокие, поэтому двигатель уходит в защитные углы и снижает мощность.",
+      "recommendedChecks": [
+        "Проверить термостат, вентиляторы, радиатор.",
+        "Сверить ECT с внешним измерением.",
+        "Проверить воздушные пробки и помпу."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    },
+    {
+      "rootCause": "electrical",
+      "title": "Electrical supply problem",
+      "bias": -1.0,
+      "weights": {
+        "module_voltage_avg_v": -6.4,
+        "has_voltage_dtc": 3.2,
+        "max_load_percent": -0.5
+      },
+      "physicalExplanation": "Напряжение модуля ниже нормы: ЭБУ, катушки, насос и датчики могут работать нестабильно.",
+      "recommendedChecks": [
+        "Load-test АКБ и генератор.",
+        "Проверить массы двигателя/кузова.",
+        "Снять падение напряжения на питании ЭБУ и насоса."
+      ],
+      "sources": [
+        "sae-j1979",
+        "iso-15031",
+        "zenodo-automotive-faults",
+        "vehiclepm-obd-field-data"
+      ]
+    }
+  ]
+}

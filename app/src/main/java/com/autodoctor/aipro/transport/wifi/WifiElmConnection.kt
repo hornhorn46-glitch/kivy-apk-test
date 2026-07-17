@@ -8,8 +8,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+import java.io.InputStream
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketTimeoutException
 
 class WifiElmConnection(
     private val host: String,
@@ -22,7 +24,11 @@ class WifiElmConnection(
 
     override suspend fun open() = withContext(Dispatchers.IO) {
         mutableState.value = ElmConnectionState.Connecting
-        socket = Socket().also { it.connect(InetSocketAddress(host, port), timeoutMillis) }
+        socket = Socket().also {
+            it.connect(InetSocketAddress(host, port), timeoutMillis)
+            it.soTimeout = timeoutMillis
+            it.tcpNoDelay = true
+        }
         mutableState.value = ElmConnectionState.Ready
     }
 
@@ -38,9 +44,18 @@ class WifiElmConnection(
         val input = activeSocket.getInputStream()
         output.write((command.request.trim() + "\r").toByteArray(Charsets.US_ASCII))
         output.flush()
-        val raw = buildString {
+        val raw = readUntilPrompt(input)
+        ElmResponse(raw = raw, lines = raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
+    }
+
+    private fun readUntilPrompt(input: InputStream): String {
+        val deadline = System.currentTimeMillis() + timeoutMillis
+        return buildString {
             val buffer = ByteArray(1)
             while (true) {
+                if (System.currentTimeMillis() > deadline) {
+                    throw SocketTimeoutException("Wi-Fi ELM327 read timed out")
+                }
                 val read = input.read(buffer)
                 if (read <= 0) break
                 val char = buffer[0].toInt().toChar()
@@ -48,6 +63,5 @@ class WifiElmConnection(
                 append(char)
             }
         }
-        ElmResponse(raw = raw, lines = raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
     }
 }

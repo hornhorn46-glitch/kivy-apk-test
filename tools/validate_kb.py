@@ -27,6 +27,7 @@ RULE_FIELDS = {
 CONDITION_OPERATORS = {"GreaterThan", "LessThan", "Between", "Outside", "Exists", "ContainsAny"}
 SEVERITIES = {"Info", "Warning", "Serious", "Critical"}
 ENCYCLOPEDIA_FIELDS = {"id", "title", "parameterIds", "whatItIs", "normalValues", "deviations", "influence", "checks", "sources"}
+MODEL_FIELDS = {"id", "version", "target", "createdBy", "validation", "features", "outputs"}
 
 
 def load_json(path: Path):
@@ -178,6 +179,54 @@ def validate_reference_curves(source_ids: set[str]) -> None:
                     fail(f"curve {curve['metric']} in {path.name} has empty sample bin")
 
 
+def validate_driveability_model(source_ids: set[str]) -> None:
+    model_path = KB / "ai" / "driveability_neurosymbolic_model.json"
+    report_path = KB / "evaluation" / "root_cause_eval_report.json"
+    manifest_path = KB / "training" / "root_cause_training_manifest.json"
+    for path in (model_path, report_path, manifest_path):
+        if not path.exists():
+            fail(f"missing root-cause model artifact: {path.relative_to(KB)}")
+
+    model = load_json(model_path)
+    missing = MODEL_FIELDS - set(model)
+    if missing:
+        fail(f"driveability model missing {sorted(missing)}")
+    validation = model["validation"]
+    if int(validation.get("testGraphCount", 0)) < 50:
+        fail("driveability model must be validated on at least 50 test graphs")
+    if float(validation.get("measuredTestAccuracy", 0.0)) < float(validation.get("targetAccuracy", 0.97)):
+        fail("driveability model did not meet target benchmark accuracy")
+    feature_ids = {feature["id"] for feature in model["features"]}
+    if len(feature_ids) < 12:
+        fail("driveability model has too few features")
+    root_causes = {output["rootCause"] for output in model["outputs"]}
+    if len(root_causes) < 10:
+        fail("driveability model has too few root-cause outputs")
+    for output in model["outputs"]:
+        if not output.get("weights"):
+            fail(f"driveability output {output.get('rootCause')} has no weights")
+        unknown_weights = set(output["weights"]) - feature_ids
+        if unknown_weights:
+            fail(f"driveability output {output['rootCause']} references unknown features {sorted(unknown_weights)}")
+        for source in output.get("sources", []):
+            if source not in source_ids:
+                fail(f"driveability output {output['rootCause']} references unknown source {source}")
+
+    report = load_json(report_path)
+    if not report.get("passedTarget"):
+        fail("root-cause evaluation report did not pass target")
+    if int(report["test"].get("graph_count", 0)) < 50:
+        fail("root-cause evaluation has too few test graphs")
+    if float(report["test"].get("accuracy", 0.0)) < 0.97:
+        fail("root-cause evaluation accuracy is below 97% target")
+
+    manifest = load_json(manifest_path)
+    if int(manifest.get("trainingCases", 0)) < 100:
+        fail("root-cause training manifest has too few training cases")
+    if set(manifest.get("featureSet", [])) != feature_ids:
+        fail("root-cause training manifest feature set differs from model")
+
+
 def main() -> None:
     source_ids = validate_sources()
     rules = validate_rules(source_ids)
@@ -186,6 +235,7 @@ def main() -> None:
     validate_pids()
     validate_encyclopedia(source_ids)
     validate_reference_curves(source_ids)
+    validate_driveability_model(source_ids)
     print(f"knowledge base valid: {len(rules)} rules, {len(source_ids)} sources")
 
 

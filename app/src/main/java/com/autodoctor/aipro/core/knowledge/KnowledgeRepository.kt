@@ -1,6 +1,7 @@
 package com.autodoctor.aipro.core.knowledge
 
 import android.content.Context
+import com.autodoctor.aipro.core.ai.DriveabilityModel
 import com.autodoctor.aipro.core.diagnostics.DiagnosticRule
 import com.autodoctor.aipro.core.model.BrandProfileMapping
 import com.autodoctor.aipro.core.model.PidDefinition
@@ -65,5 +66,11 @@ class KnowledgeRepository(
                 }
             }
             ?: emptyList()
+    }
+
+    fun loadDriveabilityModel(): DriveabilityModel {
+        return context.assets.open("knowledge/ai/driveability_neurosymbolic_model.json")
+            .bufferedReader()
+            .use { reader -> json.decodeFromString<DriveabilityModel>(reader.readText()) }
     }
 }

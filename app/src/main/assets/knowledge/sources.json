@@ -96,5 +96,33 @@
     "url": "https://obd2.com/dtc/p2192-system-too-rich-at-higher-load/",
     "license": "Open web DTC reference; attribution URL stored",
     "notes": "Used for public generic DTC description of rich mixture under high load."
+  },
+  {
+    "id": "sae-j1979",
+    "title": "SAE J1979 E/E Diagnostic Test Modes",
+    "url": "https://saemobilus.sae.org/standards/j1979_201009-e-e-diagnostic-test-modes",
+    "license": "SAE standard metadata referenced; standard text not redistributed",
+    "notes": "Used as a standards reference for OBD diagnostic service framing and timing concepts."
+  },
+  {
+    "id": "iso-15031",
+    "title": "ISO 15031 Road vehicles diagnostic communication",
+    "url": "https://www.iso.org/standard/51828.html",
+    "license": "ISO standard metadata referenced; standard text not redistributed",
+    "notes": "Used as a standards reference for emissions-related diagnostic communication terminology."
+  },
+  {
+    "id": "zenodo-automotive-faults",
+    "title": "Automotive Faults Dataset for Diagnostic and Maintenance Systems",
+    "url": "https://zenodo.org/records/15626055",
+    "license": "CC BY 4.0",
+    "notes": "Used for open structured fault categories, symptoms, diagnostic steps, and maintenance knowledge."
+  },
+  {
+    "id": "vehiclepm-obd-field-data",
+    "title": "VehiclePM real OBD-II driving data and predictive-maintenance code",
+    "url": "https://github.com/Kushalk0677/AI-Driven-Predictive-Maintenance-with-Real-Time-Contextual-Data-Fusion-for-Connected-Vehicles",
+    "license": "MIT",
+    "notes": "Used for real OBD-II driving templates in the root-cause benchmark; raw logs are not embedded in the APK."
   }
 ]

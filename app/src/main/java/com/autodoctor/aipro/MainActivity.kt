@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.autodoctor.aipro.core.ai.DriveabilityModel
 import com.autodoctor.aipro.core.narration.GarageChiefNarrator
 import com.autodoctor.aipro.core.narration.GarageChiefVerdict
 import com.autodoctor.aipro.core.reference.ReferenceCurve
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
         val brandCount = runCatching {
             repository.loadBrandProfileMappings().sumOf { it.brands.size }
         }.getOrDefault(0)
+        val model = runCatching { repository.loadDriveabilityModel() }.getOrNull()
         val garageVerdict = GarageChiefNarrator().preview()
 
         setContent {
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity() {
                     profileCount = profileCount,
                     ruleCount = ruleCount,
                     brandCount = brandCount,
+                    model = model,
                     garageVerdict = garageVerdict,
                 )
             }
@@ -69,6 +72,7 @@ private fun DashboardScreen(
     profileCount: Int,
     ruleCount: Int,
     brandCount: Int,
+    model: DriveabilityModel?,
     garageVerdict: GarageChiefVerdict,
 ) {
     Box(
@@ -100,6 +104,7 @@ private fun DashboardScreen(
                 HealthCard("Profiles", "$profileCount gasoline baselines", 0.86, Modifier.weight(1f))
                 HealthCard("Rules", "$ruleCount expert checks", 0.78, Modifier.weight(1f))
             }
+            ModelCard(model)
             CoverageCard(profileCount, brandCount)
             GarageChiefCard(garageVerdict)
             DiagnosisCard()
@@ -111,15 +116,40 @@ private fun DashboardScreen(
 }
 
 @Composable
+private fun ModelCard(model: DriveabilityModel?) {
+    val accuracy = model?.validation?.measuredTestAccuracy ?: 0.0
+    val graphCount = model?.validation?.testGraphCount ?: 0
+    val macroF1 = model?.validation?.measuredMacroF1 ?: 0.0
+    Card(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xEE101827)),
+    ) {
+        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Root-cause model", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text(
+                text = "Benchmark: ${(accuracy * 100).toInt()}% accuracy, ${(macroF1 * 100).toInt()}% macro F1, $graphCount holdout graphs.",
+                color = Color(0xFF42D392),
+                fontSize = 14.sp,
+            )
+            Text(
+                text = "Это измерение на контролируемом benchmark поверх реальных OBD-шаблонов. Полевую точность приложение повышает по мере накопления подтвержденных ремонтом сессий.",
+                color = Color(0xFFD7E3F1),
+                lineHeight = 20.sp,
+            )
+        }
+    }
+}
+
+@Composable
 private fun CoverageCard(profileCount: Int, brandCount: Int) {
     Card(
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xEE101827)),
     ) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("Generic gasoline diagnosis", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
             Text(
-                text = "Сейчас в базе $profileCount профилей: универсальные бензиновые PFI/MAF, PFI/MAP, GDI, turbo и hybrid по разным объемам. Mapping покрывает $brandCount марок; точный профиль повышает уверенность, но диагностика работает и через общий OBD-II fallback.",
+                text = "В базе $profileCount профилей: универсальные бензиновые PFI/MAF, PFI/MAP, GDI, turbo и hybrid по разным объемам. Mapping покрывает $brandCount марок; точный профиль повышает уверенность, но диагностика работает и через общий OBD-II fallback.",
                 color = Color(0xFFD7E3F1),
                 lineHeight = 20.sp,
             )
@@ -130,7 +160,7 @@ private fun CoverageCard(profileCount: Int, brandCount: Int) {
 @Composable
 private fun GarageChiefCard(verdict: GarageChiefVerdict) {
     Card(
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xF0141C2C)),
     ) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -147,7 +177,7 @@ private fun GarageChiefCard(verdict: GarageChiefVerdict) {
 private fun HealthCard(title: String, subtitle: String, value: Double, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(26.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xCC142033)),
     ) {
         Column(Modifier.padding(18.dp)) {
@@ -177,7 +207,7 @@ private fun HealthCard(title: String, subtitle: String, value: Double, modifier:
 @Composable
 private fun DiagnosisCard() {
     Card(
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xEE101827)),
     ) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -196,7 +226,7 @@ private fun DiagnosisCard() {
 @Composable
 private fun LiveDataPreview() {
     Card(
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xDD101827)),
     ) {
         Column(Modifier.padding(22.dp)) {
@@ -222,7 +252,7 @@ private fun LiveDataPreview() {
 @Composable
 private fun ReferenceCurvesPreview(curveSet: ReferenceCurveSet?) {
     Card(
-        shape = RoundedCornerShape(30.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xDD101827)),
     ) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {

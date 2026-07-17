@@ -13,12 +13,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+import java.io.InputStream
+import java.net.SocketTimeoutException
 import java.util.UUID
 
 class BluetoothElmConnection(
     private val context: Context,
     private val adapter: BluetoothAdapter,
     private val deviceAddress: String,
+    private val readTimeoutMillis: Long = 2_800L,
 ) : Elm327Connection {
     private val mutableState = MutableStateFlow(ElmConnectionState.Disconnected)
     override val state: StateFlow<ElmConnectionState> = mutableState
@@ -47,9 +50,22 @@ class BluetoothElmConnection(
         val input = activeSocket.inputStream
         output.write((command.request.trim() + "\r").toByteArray(Charsets.US_ASCII))
         output.flush()
-        val raw = buildString {
+        val raw = readUntilPrompt(input)
+        ElmResponse(raw = raw, lines = raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
+    }
+
+    private fun readUntilPrompt(input: InputStream): String {
+        val deadline = System.currentTimeMillis() + readTimeoutMillis
+        return buildString {
             val buffer = ByteArray(1)
             while (true) {
+                if (System.currentTimeMillis() > deadline) {
+                    throw SocketTimeoutException("Bluetooth ELM327 read timed out")
+                }
+                if (input.available() <= 0) {
+                    Thread.sleep(8L)
+                    continue
+                }
                 val read = input.read(buffer)
                 if (read <= 0) break
                 val char = buffer[0].toInt().toChar()
@@ -57,7 +73,6 @@ class BluetoothElmConnection(
                 append(char)
             }
         }
-        ElmResponse(raw = raw, lines = raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
     }
 
     private companion object {

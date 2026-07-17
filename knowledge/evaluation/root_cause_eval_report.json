@@ -1,0 +1,327 @@
+{
+  "id": "root-cause-benchmark-v1",
+  "target": "gasoline_driveability_root_cause",
+  "targetAccuracy": 0.97,
+  "sourceSummary": {
+    "real_obd_templates": 13,
+    "real_obd_template_vehicles": [
+      "car1: chevrolet agile 2011",
+      "car11: toyota corolla 2009",
+      "car12: nissan versa 2016",
+      "car13: citroen c3 2013",
+      "car14: volkswagen voyage 2013",
+      "car2: ford eco_sport 2010",
+      "car3: honda fit 2005",
+      "car4: renault duster 2012",
+      "car5: generic car5 2016",
+      "car6: volkswagen polo 2006",
+      "car7: ford focus 2003",
+      "car8: fiat palio 2012",
+      "car9: peugeot 208_allure 2015"
+    ],
+    "zenodo_fault_records": 99,
+    "zenodo_top_categories": {
+      "Engine Components": 15,
+      "Electrical System": 14,
+      "Drivetrain": 11,
+      "ABS System": 9,
+      "Emissions System": 9,
+      "Air Conditioning System": 8,
+      "Cooling System": 8,
+      "Engine Compartment": 6,
+      "Fuel System": 5,
+      "Liquid Systems": 5
+    },
+    "generated_cases": 780,
+    "label_distribution": {
+      "no_fault": 65,
+      "unmetered_air": 65,
+      "fuel_delivery": 65,
+      "rich_condition": 65,
+      "air_restriction": 65,
+      "exhaust_restriction": 65,
+      "throttle_limited": 65,
+      "ignition_retard": 65,
+      "misfire": 65,
+      "underboost": 65,
+      "thermal": 65,
+      "electrical": 65
+    }
+  },
+  "validationPolicy": {
+    "minimumTestGraphs": 50,
+    "actualTestGraphs": 60,
+    "split": "holdout cases are generated after the training/validation cases with different vehicle-profile/fault pairing order",
+    "leakageControls": [
+      "test case ids are excluded from training",
+      "test labels use a different template/fault pairing cycle",
+      "raw public OBD traces are not embedded in the APK"
+    ]
+  },
+  "validation": {
+    "split": "validation",
+    "graph_count": 120,
+    "vehicle_graph_count": 13,
+    "accuracy": 0.9833,
+    "macro_f1": 0.9832,
+    "per_class": {
+      "no_fault": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "unmetered_air": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "fuel_delivery": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "rich_condition": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "air_restriction": {
+        "precision": 0.8333,
+        "recall": 1.0,
+        "f1": 0.9091,
+        "support": 10
+      },
+      "exhaust_restriction": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1": 0.8889,
+        "support": 10
+      },
+      "throttle_limited": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "ignition_retard": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "misfire": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "underboost": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "thermal": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      },
+      "electrical": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10
+      }
+    },
+    "errors": [
+      {
+        "case_id": "train-0665",
+        "vehicle": "nissan versa 2016",
+        "actual": "exhaust_restriction",
+        "predicted": "air_restriction",
+        "probability": 0.6187
+      },
+      {
+        "case_id": "train-0689",
+        "vehicle": "chevrolet agile 2011",
+        "actual": "exhaust_restriction",
+        "predicted": "air_restriction",
+        "probability": 0.5314
+      }
+    ],
+    "confusion": {
+      "no_fault": {
+        "no_fault": 10
+      },
+      "unmetered_air": {
+        "unmetered_air": 10
+      },
+      "fuel_delivery": {
+        "fuel_delivery": 10
+      },
+      "rich_condition": {
+        "rich_condition": 10
+      },
+      "air_restriction": {
+        "air_restriction": 10
+      },
+      "exhaust_restriction": {
+        "exhaust_restriction": 8,
+        "air_restriction": 2
+      },
+      "throttle_limited": {
+        "throttle_limited": 10
+      },
+      "ignition_retard": {
+        "ignition_retard": 10
+      },
+      "misfire": {
+        "misfire": 10
+      },
+      "underboost": {
+        "underboost": 10
+      },
+      "thermal": {
+        "thermal": 10
+      },
+      "electrical": {
+        "electrical": 10
+      }
+    }
+  },
+  "test": {
+    "split": "test",
+    "graph_count": 60,
+    "vehicle_graph_count": 60,
+    "accuracy": 0.9833,
+    "macro_f1": 0.9832,
+    "per_class": {
+      "no_fault": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "unmetered_air": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "fuel_delivery": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "rich_condition": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "air_restriction": {
+        "precision": 0.8333,
+        "recall": 1.0,
+        "f1": 0.9091,
+        "support": 5
+      },
+      "exhaust_restriction": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1": 0.8889,
+        "support": 5
+      },
+      "throttle_limited": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "ignition_retard": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "misfire": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "underboost": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "thermal": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "electrical": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      }
+    },
+    "errors": [
+      {
+        "case_id": "test-graph-23",
+        "vehicle": "benchmark-profile-23 volkswagen polo",
+        "actual": "exhaust_restriction",
+        "predicted": "air_restriction",
+        "probability": 0.64
+      }
+    ],
+    "confusion": {
+      "no_fault": {
+        "no_fault": 5
+      },
+      "unmetered_air": {
+        "unmetered_air": 5
+      },
+      "fuel_delivery": {
+        "fuel_delivery": 5
+      },
+      "rich_condition": {
+        "rich_condition": 5
+      },
+      "air_restriction": {
+        "air_restriction": 5
+      },
+      "exhaust_restriction": {
+        "exhaust_restriction": 4,
+        "air_restriction": 1
+      },
+      "throttle_limited": {
+        "throttle_limited": 5
+      },
+      "ignition_retard": {
+        "ignition_retard": 5
+      },
+      "misfire": {
+        "misfire": 5
+      },
+      "underboost": {
+        "underboost": 5
+      },
+      "thermal": {
+        "thermal": 5
+      },
+      "electrical": {
+        "electrical": 5
+      }
+    }
+  },
+  "passedTarget": true
+}

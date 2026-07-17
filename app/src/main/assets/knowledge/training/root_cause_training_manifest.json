@@ -1,0 +1,101 @@
+{
+  "id": "root-cause-training-manifest-v1",
+  "featureSet": [
+    "combined_trim_idle_b1",
+    "combined_trim_load_b1",
+    "trim_load_delta_b1",
+    "peak_maf_ratio_to_expected",
+    "estimated_peak_ve",
+    "max_throttle_percent",
+    "max_load_percent",
+    "max_map_kpa",
+    "min_timing_deg",
+    "module_voltage_avg_v",
+    "coolant_c",
+    "iat_c",
+    "estimated_boost_kpa",
+    "boost_expected_for_profile",
+    "has_misfire_dtc",
+    "has_lean_dtc",
+    "has_rich_dtc",
+    "has_throttle_dtc",
+    "has_knock_dtc",
+    "has_voltage_dtc",
+    "diagnostic_data_coverage"
+  ],
+  "rootCauses": [
+    "no_fault",
+    "unmetered_air",
+    "fuel_delivery",
+    "rich_condition",
+    "air_restriction",
+    "exhaust_restriction",
+    "throttle_limited",
+    "ignition_retard",
+    "misfire",
+    "underboost",
+    "thermal",
+    "electrical"
+  ],
+  "trainingCases": 600,
+  "validationCases": 120,
+  "testCases": 60,
+  "testGraphRequirement": "at least 50 graphs; this run uses 60 benchmark graphs",
+  "sourceSummary": {
+    "real_obd_templates": 13,
+    "real_obd_template_vehicles": [
+      "car1: chevrolet agile 2011",
+      "car11: toyota corolla 2009",
+      "car12: nissan versa 2016",
+      "car13: citroen c3 2013",
+      "car14: volkswagen voyage 2013",
+      "car2: ford eco_sport 2010",
+      "car3: honda fit 2005",
+      "car4: renault duster 2012",
+      "car5: generic car5 2016",
+      "car6: volkswagen polo 2006",
+      "car7: ford focus 2003",
+      "car8: fiat palio 2012",
+      "car9: peugeot 208_allure 2015"
+    ],
+    "zenodo_fault_records": 99,
+    "zenodo_top_categories": {
+      "Engine Components": 15,
+      "Electrical System": 14,
+      "Drivetrain": 11,
+      "ABS System": 9,
+      "Emissions System": 9,
+      "Air Conditioning System": 8,
+      "Cooling System": 8,
+      "Engine Compartment": 6,
+      "Fuel System": 5,
+      "Liquid Systems": 5
+    },
+    "generated_cases": 780,
+    "label_distribution": {
+      "no_fault": 65,
+      "unmetered_air": 65,
+      "fuel_delivery": 65,
+      "rich_condition": 65,
+      "air_restriction": 65,
+      "exhaust_restriction": 65,
+      "throttle_limited": 65,
+      "ignition_retard": 65,
+      "misfire": 65,
+      "underboost": 65,
+      "thermal": 65,
+      "electrical": 65
+    }
+  },
+  "licenses": [
+    {
+      "source": "VehiclePM GitHub repository",
+      "license": "MIT"
+    },
+    {
+      "source": "Zenodo Automotive Faults Dataset",
+      "license": "CC BY 4.0"
+    }
+  ],
+  "caveat": "Benchmark labels are controlled physics fault injections over real OBD driving templates; field accuracy must be measured on repair-confirmed fleet data."
+}

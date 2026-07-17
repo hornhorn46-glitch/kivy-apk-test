@@ -6,7 +6,9 @@ import com.autodoctor.aipro.core.model.latest
 import com.autodoctor.aipro.core.model.values
 import kotlin.math.max
 
-class FactExtractor {
+class FactExtractor(
+    private val enginePhysics: EnginePhysics = EnginePhysics(),
+) {
     fun extract(profile: VehicleProfile, session: ObdSession): Map<String, Any> {
         val facts = mutableMapOf<String, Any>()
         fun latest(pid: String): Double? = session.latest(pid)?.value
@@ -60,6 +62,8 @@ class FactExtractor {
             facts["maf_expected_85ve_gps"] = expectedAt85Ve
             facts["maf_ratio_to_expected"] = maf / max(expectedAt85Ve, 1.0)
         }
+
+        facts.putAll(enginePhysics.derive(profile, session))
 
         return facts
     }
