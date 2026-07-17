@@ -131,6 +131,32 @@ private data class EngineTestUiResult(
     val session: ObdSession,
 )
 
+private val coreLivePidIds = listOf(
+    "RPM",
+    "SPEED",
+    "THROTTLE",
+    "LOAD",
+    "MAP",
+    "MAF",
+    "COOLANT_TEMP",
+    "INTAKE_TEMP",
+    "STFT_B1",
+    "LTFT_B1",
+)
+
+private fun selectLiveStreamPids(
+    pids: List<PidDefinition>,
+    healthScan: ObdHealthScan?,
+): List<PidDefinition> {
+    val selected = PidSelection.engineTest(pids).ifEmpty { pids.filter { it.service == "01" } }
+    val supportedIds = healthScan?.coverage?.supportedPidIds?.toSet().orEmpty()
+    if (supportedIds.isNotEmpty()) {
+        return selected.filter { it.id in supportedIds }.ifEmpty { selected.take(8) }
+    }
+    val byId = selected.associateBy { it.id }
+    return coreLivePidIds.mapNotNull { byId[it] }.ifEmpty { selected.take(8) }
+}
+
 @Composable
 private fun DiagnosticCockpit(
     referenceCurves: List<ReferenceCurveSet>,
@@ -173,6 +199,7 @@ private fun DiagnosticCockpit(
     var liveSamples by remember { mutableStateOf<List<PidSample>>(emptyList()) }
     var recordedSamples by remember { mutableStateOf<List<PidSample>>(emptyList()) }
     var streamStartedAt by remember { mutableStateOf<Long?>(null) }
+    var streamPidCount by remember { mutableIntStateOf(0) }
     var healthScan by remember { mutableStateOf<ObdHealthScan?>(null) }
     var scanningHealth by remember { mutableStateOf(false) }
     var recordingStepIndex by remember { mutableIntStateOf(0) }
@@ -187,6 +214,7 @@ private fun DiagnosticCockpit(
             liveSamples = emptyList()
             recordedSamples = emptyList()
             streamStartedAt = null
+            streamPidCount = 0
             healthScan = null
             scanningHealth = false
             recordingSince = null
@@ -224,11 +252,8 @@ private fun DiagnosticCockpit(
         samplingJob?.cancel()
         streamStartedAt = System.currentTimeMillis()
         samplingJob = scope.launch {
-            val selectedPids = PidSelection.engineTest(pids).ifEmpty { pids }
-            val supportedIds = healthScan?.coverage?.supportedPidIds?.toSet()
-            val streamPids = supportedIds
-                ?.let { ids -> selectedPids.filter { it.id in ids }.ifEmpty { selectedPids.take(6) } }
-                ?: selectedPids
+            val streamPids = selectLiveStreamPids(pids, healthScan)
+            streamPidCount = streamPids.size
             LiveDataSampler(activeConnection)
                 .sample(streamPids, intervalMillis = 120L)
                 .catch { error ->
@@ -265,6 +290,13 @@ private fun DiagnosticCockpit(
                         )
                         null
                     }
+                healthScan?.let { scan ->
+                    if (scan.coverage.supportedPidIds.isEmpty()) {
+                        connectResult = result.copy(
+                            message = "${result.message} ECU пока не отдал карту PID; пробую базовые live-датчики. Если значения останутся пустыми, включите зажигание или заведите двигатель.",
+                        )
+                    }
+                }
                 scanningHealth = false
                 startSampling(activeConnection)
             }
@@ -302,8 +334,8 @@ private fun DiagnosticCockpit(
                 result = connectResult,
                 connected = connection != null,
                 sampleRateHz = streamRateHz(liveSamples, streamStartedAt),
-                pidCount = healthScan?.coverage?.supportedPidIds?.size
-                    ?: PidSelection.engineTest(pids).ifEmpty { pids }.size,
+                pidCount = streamPidCount.takeIf { it > 0 }
+                    ?: selectLiveStreamPids(pids, healthScan).size,
                 onConnect = {
                     permissionLauncher.launch(ObdPermissionPolicy.runtimePermissions())
                 },
@@ -413,11 +445,12 @@ private fun ConnectionCard(
                 Button(
                     onClick = onConnect,
                     enabled = result.status != ObdConnectStatus.Searching,
+                    modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2F80FF)),
                 ) {
                     Text(if (connected) "Переподключить" else "Подключиться к OBD")
                 }
-                OutlinedButton(onClick = onDisconnect, enabled = connected) {
+                OutlinedButton(onClick = onDisconnect, enabled = connected, modifier = Modifier.weight(0.72f)) {
                     Text("Отключить")
                 }
                 if (result.status == ObdConnectStatus.Searching) {

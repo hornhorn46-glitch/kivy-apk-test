@@ -1,14 +1,16 @@
 package com.autodoctor.aipro.core.obd
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 import java.io.IOException
 
 class RobustElm327Session(
     private val connection: Elm327Connection,
-    private val timeoutMillis: Long = 2_800L,
+    private val timeoutMillis: Long = 7_500L,
     private val retryCount: Int = 3,
-    private val retryDelayMillis: Long = 120L,
+    private val retryDelayMillis: Long = 180L,
 ) {
     private var initialized = false
     private var initializing = false
@@ -52,9 +54,19 @@ class RobustElm327Session(
                 }
                 if (validateObdPayload) validate(response)
                 return response
+            } catch (timeout: TimeoutCancellationException) {
+                lastError = timeout
+                if (attempt < retryCount - 1) recover(attempt, closeConnection = true)
+            } catch (negative: ObdNegativeResponseException) {
+                lastError = negative
+                if (attempt < retryCount - 1) {
+                    delay(retryDelayMillis * (attempt + 1))
+                }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
             } catch (error: Throwable) {
                 lastError = error
-                recover(attempt)
+                if (attempt < retryCount - 1) recover(attempt, closeConnection = true)
             }
         }
         throw IOException("ELM327 command ${command.request} failed after $retryCount attempts", lastError)
@@ -79,11 +91,13 @@ class RobustElm327Session(
         }
     }
 
-    private suspend fun recover(attempt: Int) {
-        runCatching { connection.close() }
-        initialized = false
-        if (attempt < retryCount - 1) {
-            delay(retryDelayMillis * (attempt + 1))
+    private suspend fun recover(attempt: Int, closeConnection: Boolean) {
+        if (closeConnection) {
+            runCatching { connection.close() }
+            initialized = false
+        }
+        delay(retryDelayMillis * (attempt + 1))
+        if (closeConnection) {
             if (initializing) {
                 runCatching { connection.open() }
             }
@@ -102,7 +116,9 @@ class RobustElm327Session(
             "?",
         )
         if (invalid.any { it in text }) {
-            throw IOException("ELM327 returned invalid payload: ${response.raw.trim()}")
+            throw ObdNegativeResponseException(response.raw.trim())
         }
     }
 }
+
+private class ObdNegativeResponseException(raw: String) : IOException("ELM327 negative response: $raw")

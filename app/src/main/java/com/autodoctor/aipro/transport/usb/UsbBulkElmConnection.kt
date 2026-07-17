@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 class UsbBulkElmConnection(
     private val context: Context,
     private val device: UsbDevice,
-    private val timeoutMillis: Int = 1_500,
+    private val timeoutMillis: Int = 5_000,
 ) : Elm327Connection {
     private val mutableState = MutableStateFlow(ElmConnectionState.Disconnected)
     override val state: StateFlow<ElmConnectionState> = mutableState
@@ -66,6 +66,7 @@ class UsbBulkElmConnection(
         val opened = requireNotNull(connection) { "USB ELM327 connection is not open" }
         val out = requireNotNull(outputEndpoint) { "USB output endpoint is missing" }
         val input = requireNotNull(inputEndpoint) { "USB input endpoint is missing" }
+        drainInput(opened, input)
         val request = (command.request.trim() + "\r").toByteArray(Charsets.US_ASCII)
         val written = opened.bulkTransfer(out, request, request.size, timeoutMillis)
         require(written == request.size) { "USB write failed: $written/${request.size}" }
@@ -84,7 +85,15 @@ class UsbBulkElmConnection(
                 append(chunk)
             }
         }
-        ElmResponse(raw = raw, lines = raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
+        ElmResponse(raw = raw, lines = raw.split('\r', '\n').map { it.trim() }.filter { it.isNotEmpty() })
+    }
+
+    private fun drainInput(opened: UsbDeviceConnection, input: UsbEndpoint) {
+        val buffer = ByteArray(64)
+        repeat(4) {
+            val read = opened.bulkTransfer(input, buffer, buffer.size, 20)
+            if (read <= 0) return
+        }
     }
 
     private fun findBulkInterface(device: UsbDevice): BulkInterface? {

@@ -39,6 +39,9 @@ class ObdHealthScanner(
 
         val supportedPidHex = discoverSupportedPids(session, warnings)
         val selectedPids = PidSelection.engineTest(pids).ifEmpty { pids.filter { it.service == "01" }.take(12) }
+        if (supportedPidHex.isEmpty()) {
+            warnings += "ECU did not return the supported PID map. Live data will still try core PIDs; switch ignition ON or start the engine if gauges stay empty."
+        }
         val coverage = coverage(selectedPids, supportedPidHex)
 
         val confirmed = readDtcs(session, Elm327Commands.service03(), 0x43, DtcStatus.Confirmed, warnings)

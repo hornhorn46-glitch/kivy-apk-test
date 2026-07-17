@@ -20,7 +20,7 @@ class BluetoothElmConnection(
     private val context: Context,
     private val adapter: BluetoothAdapter,
     private val deviceAddress: String,
-    private val readTimeoutMillis: Long = 2_800L,
+    private val readTimeoutMillis: Long = 7_000L,
 ) : Elm327Connection {
     private val mutableState = MutableStateFlow(ElmConnectionState.Disconnected)
     override val state: StateFlow<ElmConnectionState> = mutableState
@@ -51,10 +51,19 @@ class BluetoothElmConnection(
         val activeSocket = requireNotNull(socket) { "Bluetooth ELM327 connection is not open" }
         val output = activeSocket.outputStream
         val input = activeSocket.inputStream
+        drainInput(input)
         output.write((command.request.trim() + "\r").toByteArray(Charsets.US_ASCII))
         output.flush()
         val raw = readUntilPrompt(input)
-        ElmResponse(raw = raw, lines = raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
+        ElmResponse(raw = raw, lines = raw.split('\r', '\n').map { it.trim() }.filter { it.isNotEmpty() })
+    }
+
+    private fun drainInput(input: InputStream) {
+        val buffer = ByteArray(256)
+        while (input.available() > 0) {
+            val read = input.read(buffer, 0, minOf(buffer.size, input.available().coerceAtLeast(1)))
+            if (read <= 0) break
+        }
     }
 
     private fun readUntilPrompt(input: InputStream): String {

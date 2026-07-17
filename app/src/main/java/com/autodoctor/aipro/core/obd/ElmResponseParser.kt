@@ -11,25 +11,32 @@ class ElmResponseParser {
 
     fun parseServiceBytes(responseService: String, pid: String, response: ElmResponse): List<Int> {
         val normalizedPid = pid.uppercase()
-        return response.lines
-            .asSequence()
-            .map { it.replace(" ", "").uppercase() }
-            .filter { it.startsWith("$responseService$normalizedPid") }
-            .map { line ->
-                line.drop(4)
+        val marker = "$responseService$normalizedPid"
+        return response.candidateHexPayloads()
+            .mapNotNull { payload ->
+                val markerIndex = payload.indexOf(marker)
+                if (markerIndex < 0) return@mapNotNull null
+                payload.drop(markerIndex + marker.length)
                     .chunked(2)
                     .mapNotNull { byte -> byte.toIntOrNull(16) }
+                    .takeIf { it.isNotEmpty() }
             }
             .firstOrNull()
             ?: emptyList()
     }
 
     fun parseDtcCodes(response: ElmResponse, responseMode: Int = 0x43): List<String> {
-        val bytes = response.lines
-            .flatMap { it.replace(" ", "").chunked(2) }
-            .mapNotNull { it.toIntOrNull(16) }
-            .dropWhile { it != responseMode }
-            .drop(1)
+        val marker = responseMode.toHexByte()
+        val bytes = response.candidateHexPayloads()
+            .mapNotNull { payload ->
+                val markerIndex = payload.indexOf(marker)
+                if (markerIndex < 0) return@mapNotNull null
+                payload.drop(markerIndex + marker.length)
+                    .chunked(2)
+                    .mapNotNull { it.toIntOrNull(16) }
+            }
+            .firstOrNull()
+            ?: emptyList()
         return bytes.chunked(2)
             .mapNotNull { pair ->
                 if (pair.size < 2 || pair[0] == 0 && pair[1] == 0) return@mapNotNull null
@@ -61,9 +68,12 @@ class ElmResponseParser {
     }
 
     fun parseMode06Monitors(response: ElmResponse): List<Mode06Monitor> {
-        return response.lines
-            .map { it.replace(" ", "").uppercase() }
-            .filter { it.startsWith("46") && it.length >= 10 }
+        return response.candidateHexPayloads()
+            .mapNotNull { payload ->
+                val markerIndex = payload.indexOf("46")
+                if (markerIndex < 0) null else payload.drop(markerIndex)
+            }
+            .filter { it.length >= 10 }
             .mapIndexed { index, line ->
                 val bytes = line.chunked(2).mapNotNull { it.toIntOrNull(16) }
                 Mode06Monitor(
@@ -74,6 +84,13 @@ class ElmResponseParser {
                     values = bytes.drop(1),
                 )
             }
+            .toList()
+    }
+
+    private fun ElmResponse.candidateHexPayloads(): Sequence<String> {
+        return (lines.asSequence() + sequenceOf(raw))
+            .map { it.uppercase().filter { char -> char in '0'..'9' || char in 'A'..'F' } }
+            .filter { it.length >= 2 }
     }
 
     private fun decodeDtc(first: Int, second: Int): String {
