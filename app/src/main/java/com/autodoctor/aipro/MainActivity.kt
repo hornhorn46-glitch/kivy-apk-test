@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,8 +93,11 @@ import com.autodoctor.aipro.ui.design.AutoDoctorTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlin.math.PI
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,6 +147,55 @@ private data class EngineTestUiResult(
     val diagnosticReport: DiagnosticReport?,
     val session: ObdSession,
 )
+
+private val RacingLime = Color(0xFFB7FF2A)
+private val RacingGreen = Color(0xFF39FF14)
+private val RacingCyan = Color(0xFF27F4FF)
+private val RacingRed = Color(0xFFFF2D1F)
+private val RacingOrange = Color(0xFFFF7A1A)
+private val RacingSurface = Color(0xF0141518)
+private val RacingPanel = Color(0xFF202124)
+private val RacingPanelDark = Color(0xFF0A0B0D)
+private val RacingMuted = Color(0xFF9EA4AA)
+
+@Composable
+private fun RacingCardFrame(
+    modifier: Modifier = Modifier,
+    accent: Color = RacingLime,
+    content: @Composable () -> Unit,
+) {
+    val shape = RoundedCornerShape(8.dp)
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                brush = Brush.horizontalGradient(
+                    listOf(
+                        accent.copy(alpha = 0.52f),
+                        RacingCyan.copy(alpha = 0.18f),
+                        RacingRed.copy(alpha = 0.24f),
+                    ),
+                ),
+                shape = shape,
+            ),
+        shape = shape,
+        colors = CardDefaults.cardColors(containerColor = RacingSurface),
+    ) {
+        Box(
+            modifier = Modifier.background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xEE1A1B1F),
+                        Color(0xF00B0C0F),
+                    ),
+                ),
+            ),
+        ) {
+            content()
+        }
+    }
+}
 
 private val coreLivePidIds = listOf(
     "RPM",
@@ -399,9 +452,29 @@ private fun DiagnosticCockpit(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFF06101E), Color(0xFF0E1728), Color(0xFF141A24))))
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFF050506),
+                        Color(0xFF111214),
+                        Color(0xFF050506),
+                    ),
+                ),
+            )
             .padding(18.dp),
     ) {
+        Canvas(Modifier.fillMaxSize()) {
+            drawCircle(
+                color = RacingRed.copy(alpha = 0.18f),
+                radius = size.width * 0.72f,
+                center = Offset(size.width * 1.08f, size.height * 0.12f),
+            )
+            drawCircle(
+                color = RacingCyan.copy(alpha = 0.06f),
+                radius = size.width * 0.62f,
+                center = Offset(-size.width * 0.10f, size.height * 0.42f),
+            )
+        }
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -465,9 +538,9 @@ private fun HeaderCard(
     physicsPrincipleCount: Int,
     caseSummary: DiagnosticCasePatternSummary?,
 ) {
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE101827))) {
+    RacingCardFrame(accent = RacingRed) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("AutoDoctor AI Pro", color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+            Text("AutoDoctor AI Pro", color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Black)
             Text("Инженерная диагностика OBD-II: подключение, тест, графики, причины и проверка ремонта.", color = Color(0xFFD7E3F1), lineHeight = 20.sp)
             activeProfile?.let {
                 Text(
@@ -492,10 +565,16 @@ private fun HeaderCard(
 
 @Composable
 private fun CompactStat(label: String, value: String, modifier: Modifier = Modifier) {
-    Card(modifier = modifier, shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF172235))) {
-        Column(Modifier.padding(12.dp)) {
-            Text(label, color = Color(0xFF9FB3C8), fontSize = 12.sp)
-            Text(value, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+    val shape = RoundedCornerShape(8.dp)
+    Box(
+        modifier = modifier
+            .background(Brush.verticalGradient(listOf(RacingPanel, RacingPanelDark)), shape)
+            .border(1.dp, RacingLime.copy(alpha = 0.18f), shape)
+            .padding(12.dp),
+    ) {
+        Column {
+            Text(label, color = RacingMuted, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+            Text(value, color = RacingLime, fontWeight = FontWeight.Black, fontSize = 19.sp)
         }
     }
 }
@@ -510,13 +589,13 @@ private fun ConnectionCard(
     onDisconnect: () -> Unit,
 ) {
     val statusColor = when (result.status) {
-        ObdConnectStatus.Connected -> Color(0xFF42D392)
+        ObdConnectStatus.Connected -> RacingGreen
         ObdConnectStatus.Searching -> Color(0xFFFFD166)
         ObdConnectStatus.PermissionRequired -> Color(0xFFFFD166)
-        ObdConnectStatus.Failed -> Color(0xFFFF6B6B)
-        ObdConnectStatus.Disconnected -> Color(0xFF9FB3C8)
+        ObdConnectStatus.Failed -> RacingRed
+        ObdConnectStatus.Disconnected -> RacingMuted
     }
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE111C2D))) {
+    RacingCardFrame(accent = statusColor) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Canvas(Modifier.size(18.dp)) { drawCircle(statusColor) }
@@ -542,12 +621,27 @@ private fun ConnectionCard(
                 Button(
                     onClick = onConnect,
                     enabled = result.status != ObdConnectStatus.Searching,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2F80FF)),
+                    modifier = Modifier.weight(1f).height(54.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = RacingLime,
+                        contentColor = Color.Black,
+                        disabledContainerColor = Color(0xFF2A2D31),
+                        disabledContentColor = RacingMuted,
+                    ),
                 ) {
                     Text(if (connected) "Заново" else "Подключить", maxLines = 1)
                 }
-                OutlinedButton(onClick = onDisconnect, enabled = connected, modifier = Modifier.weight(0.72f)) {
+                OutlinedButton(
+                    onClick = onDisconnect,
+                    enabled = connected,
+                    modifier = Modifier.weight(0.72f).height(54.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = RacingLime,
+                        disabledContentColor = RacingMuted,
+                    ),
+                ) {
                     Text("Стоп", maxLines = 1)
                 }
                 if (result.status == ObdConnectStatus.Searching) {
@@ -560,7 +654,7 @@ private fun ConnectionCard(
 
 @Composable
 private fun HealthScanCard(scan: ObdHealthScan?, scanning: Boolean) {
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE101827))) {
+    RacingCardFrame(accent = if (scan?.allDtcs?.isNotEmpty() == true) RacingOrange else RacingLime) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("Health scan", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -643,7 +737,7 @@ private fun CloudAiAssistCard(
     onDriveabilityHelp: () -> Unit,
 ) {
     val canSend = apiKey.isNotBlank() && consent && !busy
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE111C2D))) {
+    RacingCardFrame(accent = RacingCyan) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f)) {
@@ -686,15 +780,26 @@ private fun CloudAiAssistCard(
                 Button(
                     onClick = onConnectionHelp,
                     enabled = canSend,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2F80FF)),
+                    modifier = Modifier.weight(1f).height(52.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = RacingCyan,
+                        contentColor = Color.Black,
+                        disabledContainerColor = Color(0xFF2A2D31),
+                        disabledContentColor = RacingMuted,
+                    ),
                 ) {
                     Text("Разобрать подключение", fontSize = 12.sp, maxLines = 1)
                 }
                 OutlinedButton(
                     onClick = onDriveabilityHelp,
                     enabled = canSend,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).height(52.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = RacingCyan,
+                        disabledContentColor = RacingMuted,
+                    ),
                 ) {
                     Text("Анализ графиков", fontSize = 12.sp, maxLines = 1)
                 }
@@ -703,7 +808,7 @@ private fun CloudAiAssistCard(
                 Text(it, color = Color(0xFFFF6B6B), lineHeight = 18.sp, fontSize = 12.sp)
             }
             answer?.let {
-                Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF172235))) {
+                Card(shape = RoundedCornerShape(8.dp), colors = CardDefaults.cardColors(containerColor = RacingPanelDark)) {
                     Text(
                         text = it,
                         color = Color(0xFFD7E3F1),
@@ -719,76 +824,165 @@ private fun CloudAiAssistCard(
 
 @Composable
 private fun LiveGaugeGrid(samples: List<PidSample>, connected: Boolean) {
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE101827))) {
-        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    val liveReady = connected && samples.isNotEmpty()
+    val shape = RoundedCornerShape(8.dp)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                brush = Brush.horizontalGradient(listOf(RacingLime.copy(alpha = 0.65f), RacingCyan.copy(alpha = 0.30f), RacingRed.copy(alpha = 0.45f))),
+                shape = shape,
+            ),
+        shape = shape,
+        colors = CardDefaults.cardColors(containerColor = RacingSurface),
+    ) {
+        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                val liveReady = connected && samples.isNotEmpty()
-                Text("Live data", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Text(
-                    text = when {
-                        liveReady -> "streaming"
-                        connected -> "no data"
-                        else -> "waiting"
+                Column {
+                    Text("OBD DASH", color = Color.White, fontWeight = FontWeight.Black, fontSize = 20.sp)
+                    Text("Gauge  Digital  Diagnosis", color = RacingMuted, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
+                }
+                StatusPill(
+                    label = when {
+                        liveReady -> "LIVE"
+                        connected -> "NO DATA"
+                        else -> "WAIT"
                     },
                     color = when {
-                        liveReady -> Color(0xFF42D392)
+                        liveReady -> RacingLime
                         connected -> Color(0xFFFFD166)
-                        else -> Color(0xFF9FB3C8)
+                        else -> RacingMuted
                     },
-                    fontSize = 13.sp,
                 )
             }
+            RacingSpeedometer(samples, liveReady)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                Gauge("RPM", samples.latestValue("RPM"), 0.0, 7_000.0, "rpm", Color(0xFF2F80FF), Modifier.weight(1f))
-                Gauge("Speed", samples.latestValue("SPEED"), 0.0, 160.0, "km/h", Color(0xFF42D392), Modifier.weight(1f))
+                TelemetryTile("RPM", samples.latestValue("RPM"), "rpm", RacingLime, Modifier.weight(1f))
+                TelemetryTile("Load", samples.latestValue("LOAD"), "%", RacingOrange, Modifier.weight(1f))
+                TelemetryTile("Gas", samples.latestValue("THROTTLE"), "%", RacingCyan, Modifier.weight(1f))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                Gauge("Gas", samples.latestValue("THROTTLE"), 0.0, 100.0, "%", Color(0xFFFFD166), Modifier.weight(1f))
-                Gauge("Load", samples.latestValue("LOAD"), 0.0, 100.0, "%", Color(0xFFFF6B6B), Modifier.weight(1f))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                Gauge("MAP", samples.latestValue("MAP"), 0.0, 220.0, "kPa", Color(0xFFB58CFF), Modifier.weight(1f))
-                Gauge("MAF", samples.latestValue("MAF"), 0.0, 180.0, "g/s", Color(0xFF55DDE0), Modifier.weight(1f))
+                TelemetryTile("MAP", samples.latestValue("MAP"), "kPa", Color(0xFFB58CFF), Modifier.weight(1f))
+                TelemetryTile("MAF", samples.latestValue("MAF"), "g/s", RacingCyan, Modifier.weight(1f))
+                TelemetryTile("ECT", samples.latestValue("COOLANT_TEMP"), "C", Color(0xFFFFFFFF), Modifier.weight(1f))
             }
         }
     }
 }
 
 @Composable
-private fun Gauge(
-    label: String,
-    value: Double?,
-    min: Double,
-    maxValue: Double,
-    unit: String,
-    color: Color,
-    modifier: Modifier = Modifier,
-) {
-    val normalized = (((value ?: min) - min) / (maxValue - min).coerceAtLeast(1.0)).coerceIn(0.0, 1.0)
-    Card(modifier = modifier, shape = RoundedCornerShape(18.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF172235))) {
-        Column(Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(label, color = Color(0xFF9FB3C8), fontSize = 12.sp)
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(104.dp)) {
-                Canvas(Modifier.fillMaxSize()) {
-                    drawArc(
-                        color = Color(0xFF2B374B),
-                        startAngle = 145f,
-                        sweepAngle = 250f,
-                        useCenter = false,
-                        style = Stroke(10.dp.toPx(), cap = StrokeCap.Round),
-                    )
-                    drawArc(
-                        color = color,
-                        startAngle = 145f,
-                        sweepAngle = (250f * normalized).toFloat(),
-                        useCenter = false,
-                        style = Stroke(10.dp.toPx(), cap = StrokeCap.Round),
-                    )
-                }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(value?.roundDisplay() ?: "--", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Text(unit, color = Color(0xFF9FB3C8), fontSize = 11.sp)
-                }
+private fun StatusPill(label: String, color: Color) {
+    Box(
+        modifier = Modifier
+            .background(color.copy(alpha = 0.14f), RoundedCornerShape(8.dp))
+            .border(1.dp, color.copy(alpha = 0.65f), RoundedCornerShape(8.dp))
+            .padding(horizontal = 12.dp, vertical = 7.dp),
+    ) {
+        Text(label, color = color, fontWeight = FontWeight.Black, fontSize = 12.sp)
+    }
+}
+
+@Composable
+private fun RacingSpeedometer(samples: List<PidSample>, liveReady: Boolean) {
+    val speed = samples.latestValue("SPEED")
+    val rpm = samples.latestValue("RPM")
+    val speedProgress = ((speed ?: 0.0) / 260.0).coerceIn(0.0, 1.0)
+    val rpmProgress = ((rpm ?: 0.0) / 7_000.0).coerceIn(0.0, 1.0)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(318.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Canvas(Modifier.fillMaxSize()) {
+            val radius = minOf(size.width, size.height) * 0.43f
+            val center = Offset(size.width / 2f, size.height * 0.55f)
+            val topLeft = Offset(center.x - radius, center.y - radius)
+            val arcSize = androidx.compose.ui.geometry.Size(radius * 2f, radius * 2f)
+            drawCircle(Color.Black.copy(alpha = 0.78f), radius * 1.16f, center)
+            drawArc(
+                color = Color(0xFF2B2D30),
+                startAngle = 140f,
+                sweepAngle = 260f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(28.dp.toPx(), cap = StrokeCap.Butt),
+            )
+            drawArc(
+                color = RacingRed,
+                startAngle = 140f + 260f * 0.78f,
+                sweepAngle = 260f * 0.22f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(28.dp.toPx(), cap = StrokeCap.Butt),
+            )
+            drawArc(
+                brush = Brush.sweepGradient(listOf(RacingLime, RacingLime, RacingOrange, RacingRed), center),
+                startAngle = 140f,
+                sweepAngle = (260f * speedProgress).toFloat(),
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(22.dp.toPx(), cap = StrokeCap.Round),
+            )
+            drawArc(
+                color = RacingCyan.copy(alpha = 0.80f),
+                startAngle = 140f,
+                sweepAngle = (260f * rpmProgress).toFloat(),
+                useCenter = false,
+                topLeft = Offset(center.x - radius * 0.70f, center.y - radius * 0.70f),
+                size = androidx.compose.ui.geometry.Size(radius * 1.40f, radius * 1.40f),
+                style = Stroke(5.dp.toPx(), cap = StrokeCap.Round),
+            )
+            for (tick in 0..13) {
+                val angle = (140.0 + tick * (260.0 / 13.0)) * PI / 180.0
+                val tickOuter = radius * if (tick % 2 == 0) 1.08f else 1.02f
+                val tickInner = radius * if (tick % 2 == 0) 0.94f else 0.97f
+                drawLine(
+                    color = if (tick >= 10) RacingRed else RacingCyan,
+                    start = Offset(center.x + cos(angle).toFloat() * tickInner, center.y + sin(angle).toFloat() * tickInner),
+                    end = Offset(center.x + cos(angle).toFloat() * tickOuter, center.y + sin(angle).toFloat() * tickOuter),
+                    strokeWidth = if (tick % 2 == 0) 4.dp.toPx() else 2.dp.toPx(),
+                    cap = StrokeCap.Round,
+                )
+            }
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = speed?.roundToInt()?.toString() ?: "--",
+                color = if (liveReady) RacingLime else RacingMuted,
+                fontWeight = FontWeight.Black,
+                fontSize = 76.sp,
+            )
+            Text("km/h", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
+            Text(
+                text = "RPM ${rpm?.roundToInt()?.toString() ?: "--"}",
+                color = RacingCyan,
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun TelemetryTile(label: String, value: Double?, unit: String, color: Color, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(8.dp)
+    Box(
+        modifier = modifier
+            .height(88.dp)
+            .background(Brush.verticalGradient(listOf(RacingPanel, RacingPanelDark)), shape)
+            .border(1.dp, color.copy(alpha = 0.22f), shape)
+            .padding(12.dp),
+    ) {
+        Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
+            Text(label, color = RacingMuted, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
+            Column {
+                Text(value?.roundDisplay() ?: "--", color = color, fontWeight = FontWeight.Black, fontSize = 24.sp, maxLines = 1)
+                Text(unit, color = Color.White, fontSize = 11.sp)
             }
         }
     }
@@ -814,17 +1008,23 @@ private fun EngineTestWizard(
     } else {
         0.0
     }
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE101827))) {
+    RacingCardFrame(accent = RacingLime) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Тестировать двигатель", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                EngineTestPlan.safeSteps.forEachIndexed { index, candidate ->
+                EngineTestPlan.safeSteps.forEachIndexed { index, _ ->
+                    val selected = index == recordingStepIndex
                     OutlinedButton(
                         onClick = { if (!recording) onSelectStep(index) },
                         enabled = !recording,
                         modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = if (selected) RacingLime else RacingMuted,
+                            disabledContentColor = if (selected) RacingLime.copy(alpha = 0.62f) else RacingMuted,
+                        ),
                     ) {
-                        Text("${index + 1}", fontSize = 13.sp)
+                        Text("${index + 1}", fontSize = 13.sp, fontWeight = if (selected) FontWeight.Black else FontWeight.Bold)
                     }
                 }
             }
@@ -836,18 +1036,30 @@ private fun EngineTestWizard(
                 fontSize = 13.sp,
             )
             if (recording) {
-                LinearProgressIndicator(progress = { progress.toFloat() }, modifier = Modifier.fillMaxWidth(), color = Color(0xFF42D392))
+                LinearProgressIndicator(progress = { progress.toFloat() }, modifier = Modifier.fillMaxWidth(), color = RacingLime, trackColor = Color(0xFF2B2D30))
                 Text("Запись идет. Если газ не будет нажат или скорость/RPM не попадут в окно, результат будет помечен как невалидный.", color = Color(0xFFFFD166), lineHeight = 18.sp, fontSize = 13.sp)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(
                     onClick = onStart,
                     enabled = connected && !recording,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF42D392), disabledContainerColor = Color(0xFF334155)),
+                    modifier = Modifier.weight(1f).height(58.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = RacingLime,
+                        contentColor = Color.Black,
+                        disabledContainerColor = Color(0xFF334155),
+                        disabledContentColor = RacingMuted,
+                    ),
                 ) {
-                    Text("Начать тест")
+                    Text("START TEST", fontWeight = FontWeight.Black, fontSize = 16.sp)
                 }
-                OutlinedButton(onClick = onStop, enabled = recording) {
+                OutlinedButton(
+                    onClick = onStop,
+                    enabled = recording,
+                    modifier = Modifier.weight(0.72f).height(58.dp),
+                    shape = RoundedCornerShape(8.dp),
+                ) {
                     Text("Завершить вручную")
                 }
             }
@@ -861,7 +1073,7 @@ private fun TestResultCard(
     reference: ReferenceCurveSet?,
     model: DriveabilityModel?,
 ) {
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE111C2D))) {
+    RacingCardFrame(accent = RacingOrange) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Text("Результат теста", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
             if (result == null) {
@@ -960,7 +1172,7 @@ private fun LocalDiagnosticBlock(report: DiagnosticReport?) {
         Text("Локальная диагностика без интернета", color = Color.White, fontWeight = FontWeight.SemiBold)
         Text(report.message, color = if (report.insufficientData) Color(0xFFFFD166) else Color(0xFF42D392), lineHeight = 18.sp, fontSize = 13.sp)
         report.hypotheses.take(3).forEach { hypothesis ->
-            Card(shape = RoundedCornerShape(14.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF172235))) {
+            Card(shape = RoundedCornerShape(8.dp), colors = CardDefaults.cardColors(containerColor = RacingPanelDark)) {
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(hypothesis.title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Text(
@@ -1024,7 +1236,7 @@ private fun ReferenceVsActualBlock(reference: ReferenceCurveSet?, session: ObdSe
 
 @Composable
 private fun ReferencePreview(reference: ReferenceCurveSet?) {
-    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xDD101827))) {
+    RacingCardFrame(accent = RacingCyan) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Эталонные графики", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
             Text(

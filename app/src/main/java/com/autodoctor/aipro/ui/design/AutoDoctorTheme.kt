@@ -6,11 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkScheme = darkColorScheme(
-    primary = Color(0xFF2F80FF),
-    secondary = Color(0xFF42D392),
-    tertiary = Color(0xFFFFD166),
-    background = Color(0xFF07111F),
-    surface = Color(0xFF101827),
+    primary = Color(0xFFB7FF2A),
+    secondary = Color(0xFF27F4FF),
+    tertiary = Color(0xFFFF2D1F),
+    background = Color(0xFF050506),
+    surface = Color(0xFF141518),
+    onPrimary = Color(0xFF050506),
+    onSecondary = Color(0xFF050506),
+    onSurface = Color.White,
 )
 
 @Composable
