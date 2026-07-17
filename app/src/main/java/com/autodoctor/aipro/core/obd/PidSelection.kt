@@ -12,6 +12,8 @@ object PidSelection {
         "MAF",
         "STFT_B1",
         "LTFT_B1",
+        "STFT_B2",
+        "LTFT_B2",
         "TIMING_ADVANCE",
         "CONTROL_MODULE_VOLTAGE",
         "COOLANT_TEMP",
@@ -19,7 +21,11 @@ object PidSelection {
         "LAMBDA",
         "O2_B1S1",
         "O2_B1S2",
+        "O2_B2S1",
+        "O2_B2S2",
         "FUEL_PRESSURE",
+        "BARO",
+        "FUEL_LEVEL",
     )
 
     fun engineTest(pids: List<PidDefinition>): List<PidDefinition> {

@@ -27,6 +27,10 @@ class BluetoothElmConnection(
     private var socket: BluetoothSocket? = null
 
     override suspend fun open() = withContext(Dispatchers.IO) {
+        if (socket?.isConnected == true) {
+            mutableState.value = ElmConnectionState.Ready
+            return@withContext
+        }
         if (!ObdPermissionPolicy.hasBluetoothConnectPermission(context)) {
             error("BLUETOOTH_CONNECT permission is required")
         }

@@ -1,0 +1,25 @@
+{
+  "id": "hyundai-santa-fe-classic-3-3-v6",
+  "make": "Hyundai",
+  "model": "Santa Fe Classic",
+  "year": null,
+  "engineCode": "G6DB/Lambda",
+  "displacementLiters": 3.3,
+  "powerKw": 178.0,
+  "torqueNm": 306.0,
+  "massKg": 1850.0,
+  "induction": "NaturallyAspirated",
+  "injection": "PortFuelInjection",
+  "airMetering": "MafAndMap",
+  "redlineRpm": 6400,
+  "transmission": "Automatic",
+  "obdType": "Eobd",
+  "supportedPids": ["RPM", "SPEED", "LOAD", "MAP", "MAF", "THROTTLE", "COOLANT_TEMP", "INTAKE_TEMP", "STFT_B1", "LTFT_B1", "STFT_B2", "LTFT_B2", "O2_B1S1", "O2_B1S2", "O2_B2S1", "O2_B2S2", "TIMING_ADVANCE", "CONTROL_MODULE_VOLTAGE", "BARO"],
+  "references": {
+    "coolantNormalCelsius": { "min": 82.0, "max": 105.0 },
+    "intakeAirNormalCelsius": { "min": -20.0, "max": 70.0 },
+    "idleRpm": { "min": 620.0, "max": 850.0 },
+    "fuelTrimNormalPercent": { "min": -8.0, "max": 8.0 },
+    "wotThrottlePercent": { "min": 82.0, "max": 100.0 }
+  }
+}

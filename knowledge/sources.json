@@ -222,5 +222,12 @@
     "url": "https://github.com/todrobbins/dtcdb",
     "license": "MIT",
     "notes": "Used as an open DTC seed list for generating standard diagnostic case patterns. Generated patterns add project-authored signal logic and recommendations."
+  },
+  {
+    "id": "hyundai-santa-fe-public-specs",
+    "title": "Public Hyundai Santa Fe engine specification references",
+    "url": "https://www.edmunds.com/hyundai/santa-fe/2007/suv/features-specs/",
+    "license": "Open web specification reference; attribution URL stored",
+    "notes": "Used for Santa Fe Classic/Santa Fe family displacement, power and torque sanity checks. Regional variants differ, so profiles are stored as practical diagnostic baselines rather than exact VIN-level OEM data."
   }
 ]

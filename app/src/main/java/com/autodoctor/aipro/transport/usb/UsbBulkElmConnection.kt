@@ -29,6 +29,10 @@ class UsbBulkElmConnection(
     private var outputEndpoint: UsbEndpoint? = null
 
     override suspend fun open() = withContext(Dispatchers.IO) {
+        if (connection != null && inputEndpoint != null && outputEndpoint != null) {
+            mutableState.value = ElmConnectionState.Ready
+            return@withContext
+        }
         mutableState.value = ElmConnectionState.Connecting
         val manager = context.getSystemService(UsbManager::class.java) ?: error("USB manager is not available")
         val opened = manager.openDevice(device) ?: error("USB permission is required for ${device.deviceName}")

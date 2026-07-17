@@ -28,6 +28,14 @@
 - Invalid test captures no longer receive a final root-cause verdict; the UI explains what to repeat.
 - Result screen now shows estimated power loss versus profile and top reference-curve deviations.
 
+## Completed In Health Scan Pass
+
+- Pre-test OBD health scan now reads confirmed, pending and permanent DTCs.
+- Freeze-frame trigger and decodable freeze-frame PIDs are collected when the ECU exposes them.
+- Mode 06 raw onboard monitor results are read and surfaced, with manufacturer-specific misfire interpretation kept conservative.
+- Supported PID bitmap discovery now drives sensor coverage and live-stream PID selection.
+- Added Hyundai Santa Fe Classic profile family: 2.4 MPi, 2.7 V6, 3.3 V6 and 2.0 CRDi.
+
 ## Accuracy Policy
 
 The app can report the controlled benchmark score inside development artifacts, but production copy must not claim 98% field accuracy until validated on an independent repair-confirmed fleet holdout.

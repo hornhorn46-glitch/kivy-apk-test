@@ -11,6 +11,14 @@
   { "id": "THROTTLE", "service": "01", "pid": "11", "name": "Throttle position", "unit": "%", "min": 0.0, "max": 100.0 },
   { "id": "STFT_B1", "service": "01", "pid": "06", "name": "Short term fuel trim bank 1", "unit": "%", "min": -100.0, "max": 99.22 },
   { "id": "LTFT_B1", "service": "01", "pid": "07", "name": "Long term fuel trim bank 1", "unit": "%", "min": -100.0, "max": 99.22 },
+  { "id": "STFT_B2", "service": "01", "pid": "08", "name": "Short term fuel trim bank 2", "unit": "%", "min": -100.0, "max": 99.22 },
+  { "id": "LTFT_B2", "service": "01", "pid": "09", "name": "Long term fuel trim bank 2", "unit": "%", "min": -100.0, "max": 99.22 },
+  { "id": "O2_B1S1", "service": "01", "pid": "14", "name": "Oxygen sensor bank 1 sensor 1 voltage", "unit": "V", "min": 0.0, "max": 1.275 },
+  { "id": "O2_B1S2", "service": "01", "pid": "15", "name": "Oxygen sensor bank 1 sensor 2 voltage", "unit": "V", "min": 0.0, "max": 1.275 },
+  { "id": "O2_B2S1", "service": "01", "pid": "16", "name": "Oxygen sensor bank 2 sensor 1 voltage", "unit": "V", "min": 0.0, "max": 1.275 },
+  { "id": "O2_B2S2", "service": "01", "pid": "17", "name": "Oxygen sensor bank 2 sensor 2 voltage", "unit": "V", "min": 0.0, "max": 1.275 },
+  { "id": "FUEL_LEVEL", "service": "01", "pid": "2F", "name": "Fuel tank level input", "unit": "%", "min": 0.0, "max": 100.0 },
+  { "id": "BARO", "service": "01", "pid": "33", "name": "Absolute barometric pressure", "unit": "kPa", "min": 0.0, "max": 255.0 },
   { "id": "LAMBDA", "service": "01", "pid": "44", "name": "Commanded equivalence ratio", "unit": "lambda", "min": 0.0, "max": 2.0 },
   { "id": "CONTROL_MODULE_VOLTAGE", "service": "01", "pid": "42", "name": "Control module voltage", "unit": "V", "min": 0.0, "max": 65.535 }
 ]

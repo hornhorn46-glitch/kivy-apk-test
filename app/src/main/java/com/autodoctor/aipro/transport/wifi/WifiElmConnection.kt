@@ -23,6 +23,10 @@ class WifiElmConnection(
     private var socket: Socket? = null
 
     override suspend fun open() = withContext(Dispatchers.IO) {
+        if (socket?.isConnected == true && socket?.isClosed == false) {
+            mutableState.value = ElmConnectionState.Ready
+            return@withContext
+        }
         mutableState.value = ElmConnectionState.Connecting
         socket = Socket().also {
             it.connect(InetSocketAddress(host, port), timeoutMillis)

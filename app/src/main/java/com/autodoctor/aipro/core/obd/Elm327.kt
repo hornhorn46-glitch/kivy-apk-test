@@ -40,8 +40,20 @@ object Elm327Commands {
     fun service01(pidHex: String): ElmCommand =
         ElmCommand("01$pidHex", "Read current data PID $pidHex")
 
+    fun service02(pidHex: String): ElmCommand =
+        ElmCommand("02$pidHex", "Read freeze-frame PID $pidHex")
+
     fun service03(): ElmCommand =
         ElmCommand("03", "Read stored diagnostic trouble codes")
+
+    fun service06(): ElmCommand =
+        ElmCommand("06", "Read onboard monitoring test results")
+
+    fun service07(): ElmCommand =
+        ElmCommand("07", "Read pending diagnostic trouble codes")
+
+    fun service0A(): ElmCommand =
+        ElmCommand("0A", "Read permanent diagnostic trouble codes")
 }
 
 class Elm327Initializer {

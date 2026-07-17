@@ -7,7 +7,11 @@
     "universal-gasoline-pfi-map-na",
     "universal-gasoline-gdi-maf-na",
     "universal-gasoline-turbo-maf-map",
-    "universal-gasoline-hybrid"
+    "universal-gasoline-hybrid",
+    "hyundai-santa-fe-classic-2-4-mpi",
+    "hyundai-santa-fe-classic-2-7-v6",
+    "hyundai-santa-fe-classic-3-3-v6",
+    "hyundai-santa-fe-classic-2-0-crdi"
   ],
   "brands": [
     "Abarth", "Acura", "Alfa Romeo", "Alpina", "Aston Martin", "Audi", "BAIC", "BMW", "BYD", "Bentley",

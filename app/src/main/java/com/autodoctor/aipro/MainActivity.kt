@@ -63,6 +63,8 @@ import com.autodoctor.aipro.core.obd.LiveDataSampler
 import com.autodoctor.aipro.core.obd.ObdConnectResult
 import com.autodoctor.aipro.core.obd.ObdConnectStatus
 import com.autodoctor.aipro.core.obd.ObdConnectionManager
+import com.autodoctor.aipro.core.obd.ObdHealthScan
+import com.autodoctor.aipro.core.obd.ObdHealthScanner
 import com.autodoctor.aipro.core.obd.ObdPermissionPolicy
 import com.autodoctor.aipro.core.obd.PidSelection
 import com.autodoctor.aipro.core.performance.AccelerationAnalyzer
@@ -146,7 +148,9 @@ private fun DiagnosticCockpit(
     val scope = rememberCoroutineScope()
     val connectionManager = remember { ObdConnectionManager(context.applicationContext) }
     val profile = remember(profiles) {
-        profiles.firstOrNull { it.id == "universal-gasoline-pfi-maf-na" }
+        profiles.firstOrNull { it.id == "hyundai-santa-fe-classic-2-4-mpi" }
+            ?: profiles.firstOrNull { it.id.startsWith("hyundai-santa-fe-classic") }
+            ?: profiles.firstOrNull { it.id == "universal-gasoline-pfi-maf-na" }
             ?: profiles.firstOrNull()
     }
     val reference = referenceCurves.firstOrNull()
@@ -169,6 +173,8 @@ private fun DiagnosticCockpit(
     var liveSamples by remember { mutableStateOf<List<PidSample>>(emptyList()) }
     var recordedSamples by remember { mutableStateOf<List<PidSample>>(emptyList()) }
     var streamStartedAt by remember { mutableStateOf<Long?>(null) }
+    var healthScan by remember { mutableStateOf<ObdHealthScan?>(null) }
+    var scanningHealth by remember { mutableStateOf(false) }
     var recordingStepIndex by remember { mutableIntStateOf(0) }
     var recordingSince by remember { mutableStateOf<Long?>(null) }
     var testResult by remember { mutableStateOf<EngineTestUiResult?>(null) }
@@ -181,6 +187,8 @@ private fun DiagnosticCockpit(
             liveSamples = emptyList()
             recordedSamples = emptyList()
             streamStartedAt = null
+            healthScan = null
+            scanningHealth = false
             recordingSince = null
             connectResult = ObdConnectResult(ObdConnectStatus.Disconnected, "OBD-II адаптер отключен.")
         }
@@ -192,8 +200,8 @@ private fun DiagnosticCockpit(
         val session = ObdSession(
             startedAtMillis = recordingSince ?: System.currentTimeMillis(),
             samples = recordedSamples,
-            dtcs = emptyList<DiagnosticTroubleCode>(),
-            freezeFrames = emptyList<FreezeFrame>(),
+            dtcs = healthScan?.allDtcs.orEmpty(),
+            freezeFrames = healthScan?.freezeFrames.orEmpty(),
         )
         val validation = validator.validate(session, step)
         val power = powerAnalyzer.estimatePower(
@@ -217,8 +225,12 @@ private fun DiagnosticCockpit(
         streamStartedAt = System.currentTimeMillis()
         samplingJob = scope.launch {
             val selectedPids = PidSelection.engineTest(pids).ifEmpty { pids }
+            val supportedIds = healthScan?.coverage?.supportedPidIds?.toSet()
+            val streamPids = supportedIds
+                ?.let { ids -> selectedPids.filter { it.id in ids }.ifEmpty { selectedPids.take(6) } }
+                ?: selectedPids
             LiveDataSampler(activeConnection)
-                .sample(selectedPids, intervalMillis = 120L)
+                .sample(streamPids, intervalMillis = 120L)
                 .catch { error ->
                     connectResult = ObdConnectResult(
                         status = ObdConnectStatus.Failed,
@@ -241,7 +253,21 @@ private fun DiagnosticCockpit(
             val result = connectionManager.connectFirstReady()
             connectResult = result
             connection = result.connection
-            result.connection?.let(::startSampling)
+            result.connection?.let { activeConnection ->
+                scanningHealth = true
+                healthScan = runCatching { ObdHealthScanner().scan(activeConnection, pids) }
+                    .getOrElse { error ->
+                        connectResult = ObdConnectResult(
+                            status = ObdConnectStatus.Failed,
+                            message = "Подключено, но health scan не прошел: ${error.message ?: error::class.java.simpleName}",
+                            adapter = result.adapter,
+                            connection = activeConnection,
+                        )
+                        null
+                    }
+                scanningHealth = false
+                startSampling(activeConnection)
+            }
         }
     }
 
@@ -271,17 +297,19 @@ private fun DiagnosticCockpit(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            HeaderCard(profileCount, ruleCount, brandCount, encyclopediaCount, physicsPrincipleCount, caseSummary)
+            HeaderCard(profile, profileCount, ruleCount, brandCount, encyclopediaCount, physicsPrincipleCount, caseSummary)
             ConnectionCard(
                 result = connectResult,
                 connected = connection != null,
                 sampleRateHz = streamRateHz(liveSamples, streamStartedAt),
-                pidCount = PidSelection.engineTest(pids).ifEmpty { pids }.size,
+                pidCount = healthScan?.coverage?.supportedPidIds?.size
+                    ?: PidSelection.engineTest(pids).ifEmpty { pids }.size,
                 onConnect = {
                     permissionLauncher.launch(ObdPermissionPolicy.runtimePermissions())
                 },
                 onDisconnect = ::closeConnection,
             )
+            HealthScanCard(healthScan, scanningHealth)
             LiveGaugeGrid(liveSamples, connected = connection != null)
             EngineTestWizard(
                 connected = connection != null,
@@ -306,6 +334,7 @@ private fun DiagnosticCockpit(
 
 @Composable
 private fun HeaderCard(
+    activeProfile: VehicleProfile?,
     profileCount: Int,
     ruleCount: Int,
     brandCount: Int,
@@ -317,6 +346,13 @@ private fun HeaderCard(
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text("AutoDoctor AI Pro", color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Bold)
             Text("Инженерная диагностика OBD-II: подключение, тест, графики, причины и проверка ремонта.", color = Color(0xFFD7E3F1), lineHeight = 20.sp)
+            activeProfile?.let {
+                Text(
+                    text = "Активный профиль: ${it.make} ${it.model} ${it.engineCode.orEmpty()} ${it.displacementLiters?.let { value -> "${value.roundDisplay()}L" }.orEmpty()}.",
+                    color = Color(0xFFFFD166),
+                    fontSize = 13.sp,
+                )
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
                 CompactStat("Profiles", profileCount.toString(), Modifier.weight(1f))
                 CompactStat("Rules", ruleCount.toString(), Modifier.weight(1f))
@@ -387,6 +423,75 @@ private fun ConnectionCard(
                 if (result.status == ObdConnectStatus.Searching) {
                     CircularProgressIndicator(Modifier.size(28.dp), color = Color(0xFFFFD166), strokeWidth = 3.dp)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HealthScanCard(scan: ObdHealthScan?, scanning: Boolean) {
+    Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Color(0xEE101827))) {
+        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text("Health scan", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                if (scanning) CircularProgressIndicator(Modifier.size(22.dp), color = Color(0xFFFFD166), strokeWidth = 3.dp)
+            }
+            if (scan == null) {
+                Text(
+                    text = if (scanning) "Читаю DTC, freeze-frame, Mode 06 и карту поддерживаемых PID..." else "Скан появится сразу после подключения к ELM327.",
+                    color = Color(0xFF9FB3C8),
+                    lineHeight = 19.sp,
+                )
+                return@Column
+            }
+            val dtcCount = scan.allDtcs.size
+            val dtcColor = if (dtcCount == 0) Color(0xFF42D392) else Color(0xFFFFD166)
+            Text(
+                text = "DTC: confirmed ${scan.confirmedDtcs.size}, pending ${scan.pendingDtcs.size}, permanent ${scan.permanentDtcs.size}.",
+                color = dtcColor,
+                fontWeight = FontWeight.SemiBold,
+            )
+            if (scan.allDtcs.isNotEmpty()) {
+                Text(
+                    text = scan.allDtcs.take(6).joinToString("; ") { "${it.code} ${it.description}" },
+                    color = Color(0xFFD7E3F1),
+                    lineHeight = 18.sp,
+                    fontSize = 13.sp,
+                )
+            }
+            Text(
+                text = "Sensor coverage: ${(scan.coverage.coverage * 100).roundToInt()}% (${scan.coverage.supportedPidIds.size}/${scan.coverage.requiredPidIds.size})",
+                color = if (scan.coverage.coverage >= 0.75) Color(0xFF42D392) else Color(0xFFFFD166),
+                fontSize = 13.sp,
+            )
+            if (scan.coverage.missingPidIds.isNotEmpty()) {
+                Text(
+                    text = "Не отдаются: ${scan.coverage.missingPidIds.take(8).joinToString(", ")}.",
+                    color = Color(0xFF9FB3C8),
+                    lineHeight = 18.sp,
+                    fontSize = 12.sp,
+                )
+            }
+            Text(
+                text = "Freeze-frame: ${scan.freezeFrames.size}; Mode 06 monitors: ${scan.mode06Monitors.size}.",
+                color = Color(0xFFD7E3F1),
+                fontSize = 13.sp,
+            )
+            val misfireCodes = scan.allDtcs.filter { it.code == "P0300" || Regex("P030[1-8]").matches(it.code) }
+            Text(
+                text = if (misfireCodes.isNotEmpty()) {
+                    "Пропуски зажигания подтверждены DTC: ${misfireCodes.joinToString(", ") { it.code }}."
+                } else if (scan.mode06Monitors.isNotEmpty()) {
+                    "Mode 06 прочитан; raw monitors сохранены, но cylinder misfire TID/CID зависят от производителя."
+                } else {
+                    "Данных Mode 06 по пропускам нет; вывод по misfire будет только по DTC/live-графику."
+                },
+                color = if (misfireCodes.isNotEmpty()) Color(0xFFFF6B6B) else Color(0xFF9FB3C8),
+                lineHeight = 18.sp,
+                fontSize = 13.sp,
+            )
+            scan.warnings.take(2).forEach { warning ->
+                Text(warning, color = Color(0xFFFFD166), lineHeight = 17.sp, fontSize = 12.sp)
             }
         }
     }
