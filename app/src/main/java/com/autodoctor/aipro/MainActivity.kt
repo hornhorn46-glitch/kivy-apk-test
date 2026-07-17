@@ -1,6 +1,5 @@
 package com.autodoctor.aipro
 
-import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -64,6 +63,8 @@ import com.autodoctor.aipro.core.obd.LiveDataSampler
 import com.autodoctor.aipro.core.obd.ObdConnectResult
 import com.autodoctor.aipro.core.obd.ObdConnectStatus
 import com.autodoctor.aipro.core.obd.ObdConnectionManager
+import com.autodoctor.aipro.core.obd.ObdPermissionPolicy
+import com.autodoctor.aipro.core.obd.PidSelection
 import com.autodoctor.aipro.core.performance.AccelerationAnalyzer
 import com.autodoctor.aipro.core.performance.AccelerationTestConfig
 import com.autodoctor.aipro.core.performance.CombinedPowerEstimate
@@ -120,6 +121,7 @@ class MainActivity : ComponentActivity() {
 
 private data class EngineTestUiResult(
     val step: EngineTestStep,
+    val profile: VehicleProfile,
     val validation: EngineTestValidation,
     val power: CombinedPowerEstimate,
     val comparison: ReferenceComparisonReport?,
@@ -166,6 +168,7 @@ private fun DiagnosticCockpit(
     var samplingJob by remember { mutableStateOf<Job?>(null) }
     var liveSamples by remember { mutableStateOf<List<PidSample>>(emptyList()) }
     var recordedSamples by remember { mutableStateOf<List<PidSample>>(emptyList()) }
+    var streamStartedAt by remember { mutableStateOf<Long?>(null) }
     var recordingStepIndex by remember { mutableIntStateOf(0) }
     var recordingSince by remember { mutableStateOf<Long?>(null) }
     var testResult by remember { mutableStateOf<EngineTestUiResult?>(null) }
@@ -177,6 +180,7 @@ private fun DiagnosticCockpit(
             connection = null
             liveSamples = emptyList()
             recordedSamples = emptyList()
+            streamStartedAt = null
             recordingSince = null
             connectResult = ObdConnectResult(ObdConnectStatus.Disconnected, "OBD-II адаптер отключен.")
         }
@@ -204,15 +208,17 @@ private fun DiagnosticCockpit(
         )
         val comparison = reference?.let { referenceComparator.compare(session, it) }
         val analysis = driveabilityAnalyzer?.analyze(factExtractor.extract(selectedProfile, session))
-        testResult = EngineTestUiResult(step, validation, power, comparison, analysis, session)
+        testResult = EngineTestUiResult(step, selectedProfile, validation, power, comparison, analysis, session)
         recordingSince = null
     }
 
     fun startSampling(activeConnection: Elm327Connection) {
         samplingJob?.cancel()
+        streamStartedAt = System.currentTimeMillis()
         samplingJob = scope.launch {
+            val selectedPids = PidSelection.engineTest(pids).ifEmpty { pids }
             LiveDataSampler(activeConnection)
-                .sample(pids, intervalMillis = 140L)
+                .sample(selectedPids, intervalMillis = 120L)
                 .catch { error ->
                     connectResult = ObdConnectResult(
                         status = ObdConnectStatus.Failed,
@@ -269,14 +275,10 @@ private fun DiagnosticCockpit(
             ConnectionCard(
                 result = connectResult,
                 connected = connection != null,
+                sampleRateHz = streamRateHz(liveSamples, streamStartedAt),
+                pidCount = PidSelection.engineTest(pids).ifEmpty { pids }.size,
                 onConnect = {
-                    permissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.BLUETOOTH_CONNECT,
-                            Manifest.permission.BLUETOOTH_SCAN,
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                        ),
-                    )
+                    permissionLauncher.launch(ObdPermissionPolicy.runtimePermissions())
                 },
                 onDisconnect = ::closeConnection,
             )
@@ -343,6 +345,8 @@ private fun CompactStat(label: String, value: String, modifier: Modifier = Modif
 private fun ConnectionCard(
     result: ObdConnectResult,
     connected: Boolean,
+    sampleRateHz: Double,
+    pidCount: Int,
     onConnect: () -> Unit,
     onDisconnect: () -> Unit,
 ) {
@@ -360,6 +364,13 @@ private fun ConnectionCard(
                 Column(Modifier.weight(1f)) {
                     Text(if (connected) "OBD подключен" else "OBD не подключен", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                     Text(result.message, color = Color(0xFFD7E3F1), lineHeight = 19.sp, fontSize = 13.sp)
+                    if (connected) {
+                        Text(
+                            text = "Поток: ${sampleRateHz.roundDisplay()} samples/s, быстрый профиль $pidCount PID.",
+                            color = if (sampleRateHz >= 4.0) Color(0xFF42D392) else Color(0xFFFFD166),
+                            fontSize = 12.sp,
+                        )
+                    }
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -531,6 +542,17 @@ private fun TestResultCard(
                 Text("Что исправить: ${failures.joinToString("; ")}.", color = Color(0xFFFFD166), lineHeight = 19.sp)
             }
             PowerBlock(result.power)
+            PowerLossBlock(result)
+            DeviationSummaryBlock(result.comparison)
+            if (!result.validation.valid) {
+                Text(
+                    text = "Диагноз не фиксирую: график не прошел контроль качества. Повторите этот же тест, иначе приложение будет угадывать вместо диагностики.",
+                    color = Color(0xFFFFD166),
+                    lineHeight = 20.sp,
+                )
+                ReferenceVsActualBlock(reference, result.session)
+                return@Column
+            }
             result.analysis?.predictions?.firstOrNull()?.let { prediction ->
                 Text(prediction.title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 19.sp)
                 Text(
@@ -544,6 +566,47 @@ private fun TestResultCard(
                 color = Color(0xFF9FB3C8),
             )
             ReferenceVsActualBlock(reference, result.session)
+        }
+    }
+}
+
+@Composable
+private fun PowerLossBlock(result: EngineTestUiResult) {
+    val ratedPower = result.profile.powerKw
+    if (ratedPower == null || ratedPower <= 0.0 || result.power.meanKw <= 0.0) {
+        Text("Падение мощности относительно профиля пока не считаю: нет паспортной мощности профиля или валидной оценки.", color = Color(0xFF9FB3C8), lineHeight = 18.sp, fontSize = 13.sp)
+        return
+    }
+    val lossPercent = ((1.0 - result.power.meanKw / ratedPower) * 100.0).coerceAtLeast(0.0)
+    val color = when {
+        lossPercent >= 25.0 -> Color(0xFFFF6B6B)
+        lossPercent >= 12.0 -> Color(0xFFFFD166)
+        else -> Color(0xFF42D392)
+    }
+    Text(
+        text = "Оценка потери мощности: ${lossPercent.roundDisplay()}% от профиля (${result.power.meanKw.roundDisplay()} кВт из ${ratedPower.roundDisplay()} кВт).",
+        color = color,
+        fontWeight = FontWeight.SemiBold,
+    )
+}
+
+@Composable
+private fun DeviationSummaryBlock(comparison: ReferenceComparisonReport?) {
+    val deviations = comparison?.deviations.orEmpty().take(4)
+    if (deviations.isEmpty()) {
+        Text("Критичных отклонений от эталонных кривых пока нет или данных мало.", color = Color(0xFF9FB3C8), lineHeight = 18.sp, fontSize = 13.sp)
+        return
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text("Главные отклонения от эталона:", color = Color.White, fontWeight = FontWeight.SemiBold)
+        deviations.forEach { deviation ->
+            val color = if (deviation.severity.name == "Significant") Color(0xFFFF6B6B) else Color(0xFFFFD166)
+            Text(
+                text = "${deviation.metric}: факт ${deviation.observed.roundDisplay()}, эталон ${deviation.expectedLow.roundDisplay()}-${deviation.expectedHigh.roundDisplay()} при ${deviation.x.roundDisplay()} ${deviation.xMetric}.",
+                color = color,
+                lineHeight = 18.sp,
+                fontSize = 13.sp,
+            )
         }
     }
 }
@@ -639,6 +702,18 @@ private fun ActualReferenceChart(curve: ReferenceCurve, samples: List<PidSample>
 
 private fun List<PidSample>.latestValue(pid: String): Double? =
     filter { it.pid == pid }.maxByOrNull { it.timestampMillis }?.value
+
+private fun streamRateHz(samples: List<PidSample>, startedAt: Long?): Double {
+    val now = System.currentTimeMillis()
+    val recent = samples.filter { it.timestampMillis >= now - 10_000L }
+    if (recent.size >= 2) {
+        val seconds = ((recent.maxOf { it.timestampMillis } - recent.minOf { it.timestampMillis }) / 1_000.0).coerceAtLeast(1.0)
+        return recent.size / seconds
+    }
+    val start = startedAt ?: return 0.0
+    val seconds = ((now - start) / 1_000.0).coerceAtLeast(1.0)
+    return samples.size / seconds
+}
 
 private fun List<PidSample>.nearest(timestampMillis: Long, maxDistanceMillis: Long): PidSample? =
     minByOrNull { kotlin.math.abs(it.timestampMillis - timestampMillis) }

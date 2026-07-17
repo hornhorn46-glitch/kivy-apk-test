@@ -1,14 +1,13 @@
 package com.autodoctor.aipro.transport.bluetooth
 
-import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.content.pm.PackageManager
 import com.autodoctor.aipro.core.obd.Elm327Connection
 import com.autodoctor.aipro.core.obd.ElmCommand
 import com.autodoctor.aipro.core.obd.ElmConnectionState
 import com.autodoctor.aipro.core.obd.ElmResponse
+import com.autodoctor.aipro.core.obd.ObdPermissionPolicy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +27,7 @@ class BluetoothElmConnection(
     private var socket: BluetoothSocket? = null
 
     override suspend fun open() = withContext(Dispatchers.IO) {
-        if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        if (!ObdPermissionPolicy.hasBluetoothConnectPermission(context)) {
             error("BLUETOOTH_CONNECT permission is required")
         }
         mutableState.value = ElmConnectionState.Connecting

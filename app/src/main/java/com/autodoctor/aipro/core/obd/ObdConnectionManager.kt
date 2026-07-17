@@ -1,9 +1,7 @@
 package com.autodoctor.aipro.core.obd
 
-import android.Manifest
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.usb.UsbManager
 import com.autodoctor.aipro.transport.AdapterKind
 import com.autodoctor.aipro.transport.ObdAdapterDescriptor
@@ -114,6 +112,6 @@ class ObdConnectionManager(
     }
 
     private fun hasBluetoothPermission(): Boolean {
-        return context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        return ObdPermissionPolicy.hasBluetoothConnectPermission(context)
     }
 }

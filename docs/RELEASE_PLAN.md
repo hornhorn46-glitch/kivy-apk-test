@@ -20,6 +20,14 @@
 - Safety screen before road tests with local legal/safety disclaimer and passenger/operator recommendation.
 - App signing, versioning, crash logging policy and privacy policy.
 
+## Completed After Release Review
+
+- Android 10/11/12+ Bluetooth permission policy split into a dedicated OBD permission module.
+- Engine-test PID selection reduced to a fast diagnostic profile to improve sample rate on weak ELM327 clones.
+- Cockpit now shows live OBD stream health in samples/second.
+- Invalid test captures no longer receive a final root-cause verdict; the UI explains what to repeat.
+- Result screen now shows estimated power loss versus profile and top reference-curve deviations.
+
 ## Accuracy Policy
 
 The app can report the controlled benchmark score inside development artifacts, but production copy must not claim 98% field accuracy until validated on an independent repair-confirmed fleet holdout.
